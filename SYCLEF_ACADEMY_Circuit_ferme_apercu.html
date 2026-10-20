@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>SYCLEF ACADEMY – Circuit d'eau fermé</title>
+<style>
+:root{
+  /* Charte SYCLEF */
+  --blue:#386FB6; --orange:#F4951F; --green:#94C356; --grey-l:#B7BECF; --grey-d:#66778F; --white:#FFFFFF;
+  --blue-08:rgba(56,111,182,.08); --blue-15:rgba(56,111,182,.15);
+  --grey-l-20:rgba(183,190,207,.20); --grey-l-35:rgba(183,190,207,.35);
+  --green-15:rgba(148,195,86,.15); --orange-15:rgba(244,149,31,.15);
+  --font:Calibri,Carlito,"Segoe UI",Arial,sans-serif;
+  --radius:18px;
+  --shadow:0 10px 30px rgba(102,119,143,.18);
+}
+@media (prefers-color-scheme:dark){:root{color-scheme:light}}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);color:var(--grey-d);background:var(--white);min-height:100vh;
+  font-size:clamp(15px,1.05vw + 10px,18px);line-height:1.45;-webkit-text-size-adjust:100%;overflow-x:hidden}
+/* décor discret : arcs inspirés du symbole (formes autour d'un même centre) */
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg span{position:absolute;border-radius:50%;border:clamp(18px,3vw,40px) solid transparent}
+.bg .a1{width:60vmax;height:60vmax;inset-block-start:-30vmax;inset-inline-end:-22vmax;border-color:var(--grey-l-20) transparent transparent transparent;transform:rotate(25deg)}
+.bg .a2{width:50vmax;height:50vmax;inset-block-end:-28vmax;inset-inline-start:-20vmax;border-color:transparent transparent var(--blue-08) transparent;transform:rotate(-20deg)}
+header{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px clamp(14px,3vw,36px);background:var(--white);border-block-end:1px solid var(--grey-l-35)}
+.logo{display:block;height:clamp(52px,7vw,76px);width:auto}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.lang{display:flex;align-items:center;gap:6px;font-size:.85em}
+.lang label{color:var(--grey-d)}
+.lang select{font:inherit;color:var(--blue);background:var(--white);border:2px solid var(--grey-l);border-radius:10px;
+  min-height:44px;padding:4px 8px;cursor:pointer}
+.lang select:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:clamp(14px,2.5vw,32px) clamp(12px,3vw,36px) 40px}
+.progress{display:flex;gap:8px;align-items:center;margin-block-end:14px;flex-wrap:wrap}
+.step{display:flex;align-items:center;gap:8px;font-size:.85em;font-weight:700;color:var(--grey-l);letter-spacing:.02em;text-transform:uppercase}
+.step i{font-style:normal;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid var(--grey-l);font-size:.9em}
+.step.on{color:var(--blue)} .step.on i{border-color:var(--blue);background:var(--blue);color:var(--white)}
+.step.done{color:var(--grey-d)} .step.done i{border-color:var(--green);background:var(--green);color:var(--white)}
+.sep{flex:0 0 28px;height:2px;background:var(--grey-l)}
+.qcard{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:clamp(16px,2.6vw,30px);
+  border-inline-start:8px solid var(--blue);margin-block-end:clamp(14px,2vw,24px)}
+.badge{display:inline-flex;align-items:center;gap:6px;background:var(--orange-15);color:var(--grey-d);font-weight:700;
+  border-radius:999px;padding:4px 14px;font-size:.85em;text-transform:uppercase;letter-spacing:.04em}
+.badge b{color:var(--orange);font-size:1.1em}
+h1{margin:10px 0 0;color:var(--blue);font-weight:700;line-height:1.25;font-size:clamp(1.25rem,1.6vw + .8rem,2.1rem)}
+.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(14px,2.2vw,28px);align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:clamp(14px,2.2vw,26px)}
+.card h2{margin:0 0 4px;font-size:1.05em;color:var(--blue);display:flex;align-items:center;gap:8px}
+.hint{margin:0 0 10px;font-size:.95em}
+/* Schéma */
+.diagram{position:relative}
+.diagram svg{display:block;width:100%;height:auto;max-height:52vh}
+.svg-t{font-family:var(--font);fill:var(--grey-d);font-size:15px;font-weight:700}
+.svg-center{font-family:var(--font);fill:var(--blue);font-size:19px;font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:8px;font-size:.88em;align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw-water{width:28px;height:10px;border-radius:6px;background:var(--blue)}
+.sw-start{width:14px;height:14px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 3px var(--orange-15)}
+.tools{display:flex;justify-content:flex-end;margin-top:6px}
+.btn-ghost{font:inherit;font-size:.85em;color:var(--blue);background:transparent;border:2px solid var(--blue-15);border-radius:999px;
+  min-height:44px;padding:6px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-ghost:focus-visible,.choice:focus-visible,.btn:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.caption{margin:10px 0 0;padding:10px 14px;border-radius:12px;background:var(--blue-08);color:var(--blue);font-weight:700;font-size:.95em;
+  display:none;align-items:center;gap:10px}
+.caption.show{display:flex;animation:pop .45s ease-out}
+/* Réponses */
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.6vw,16px);margin:6px 0 14px}
+.choice{font:inherit;font-weight:700;font-size:clamp(1.1rem,1vw + .8rem,1.5rem);letter-spacing:.04em;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:clamp(96px,14vw,140px);
+  border-radius:16px;border:3px solid var(--grey-l);background:var(--white);color:var(--grey-d);cursor:pointer;
+  transition:transform .15s ease,border-color .2s,background .2s,color .2s,box-shadow .2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;overflow-wrap:anywhere;text-align:center;padding:8px}
+.choice .ic{display:grid;place-items:center;width:clamp(40px,4vw,52px);height:clamp(40px,4vw,52px);border-radius:50%;font-size:1.15em;
+  background:var(--grey-l-35);color:var(--grey-d);transition:background .2s,color .2s}
+.choice:active{transform:scale(.97)}
+.choice[aria-pressed="true"]{border-color:var(--blue);background:var(--blue);color:var(--white);box-shadow:0 8px 22px rgba(56,111,182,.35)}
+.choice[aria-pressed="true"] .ic{background:var(--white);color:var(--blue)}
+.choice:disabled{cursor:default}
+.choice.is-right{border-color:var(--green)!important;box-shadow:0 0 0 4px var(--green-15)!important}
+.choice.locked:not([aria-pressed="true"]){opacity:.55}
+.btn{font:inherit;font-weight:700;font-size:1.05em;width:100%;min-height:56px;border-radius:14px;border:0;cursor:pointer;
+  background:var(--blue);color:var(--white);display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .2s,transform .15s;touch-action:manipulation}
+.btn:active{transform:scale(.98)}
+.btn:disabled{background:var(--grey-l);color:var(--white);cursor:not-allowed}
+.btn .arrow{display:inline-block;width:0;height:0;border-block:7px solid transparent;border-inline-start:10px solid currentColor}
+.sel-hint{font-size:.85em;margin:8px 0 0;text-align:center;min-height:1.3em}
+/* Feedback */
+.feedback{display:none;margin-top:4px}
+.feedback.show{display:block;animation:pop .5s ease-out}
+.fb-head{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:14px}
+.fb-head .fb-ic{flex:0 0 auto;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:1.4em;font-weight:700;color:var(--white)}
+.fb-head h3{margin:0;font-size:1.15em;color:var(--blue)}
+.fb-head p{margin:4px 0 0}
+.fb-ok .fb-head{background:var(--green-15);border-inline-start:6px solid var(--green)} .fb-ok .fb-ic{background:var(--green)}
+.fb-ko .fb-head{background:var(--orange-15);border-inline-start:6px solid var(--orange)} .fb-ko .fb-ic{background:var(--orange)}
+.answers{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.9em;margin:10px 2px}
+.answers b{color:var(--blue)}
+.explain{margin-top:10px;padding:14px 16px;border-radius:14px;background:var(--blue-08);border:2px dashed var(--blue-15)}
+.explain h4{margin:0 0 6px;color:var(--blue);font-size:1em;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.04em}
+.explain p{margin:0;font-size:1.02em}
+.fb-actions{display:grid;grid-template-columns:auto 1fr;gap:10px;margin-top:14px}
+@media (max-width:420px){.fb-actions{grid-template-columns:1fr}}
+.done{display:none;margin-top:14px;padding:14px 16px;border-radius:14px;background:var(--green-15);color:var(--grey-d);font-weight:700;align-items:center;gap:10px}
+.done.show{display:flex;animation:pop .45s ease-out}
+.done .ck{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--white);display:grid;place-items:center}
+footer{position:relative;z-index:1;text-align:center;font-size:.75em;color:var(--grey-l);padding:0 12px 18px}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* Animation du flux d'eau (pointillés qui avancent dans le sens horaire) */
+.flow{stroke-dasharray:14 22;animation:flow 1.1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-36}}
+.paused .flow{animation-play-state:paused}
+.trace{transition:none}
+.start-pulse{transform-box:fill-box;transform-origin:center;animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.6);opacity:0}}
+.paused .start-pulse{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.flow,.start-pulse{animation:none}.feedback.show,.caption.show,.done.show{animation:none}}
+@media (max-width:520px){
+  .logo{height:48px}
+  .lang label{display:none}
+  .fb-head .fb-ic{width:38px;height:38px}
+}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><span class="a1"></span><span class="a2"></span></div>
+<header>
+  <img class="logo" src="data:image/png;base64,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AAAAAIEiEAIAAABAoAiEAAAAABAoAiEAAAAABIpACAAAAACBIhACAAAAQKAIhAAAAAAQKAIhAAAAAASKQAgAAAAAgSIQAgAAAECgCIQAAAAAECgCIQAAAAAEikAIAAAAAIEiEAIAAABAoAiEAAAAABAoAiEAAAAABIpACAAAAACBIhACAAAAQKAIhAAAAAAQKAIhAAAAAASKQAgAAAAAgSIQAgAAAECgCIQAAAAAECgCIQAAAAAEikAIAAAAAIEiEAIAAABAoAiEAAAAABAoAiEAAAAABIpACAAAAACBIhACAAAAQKAIhAAAAAAQKAIhAAAAAASKQAgAAAAAgSIQAgAAAECgCIQAAAAAECgCIQAAAAAEikAIAAAAAIEiEAIAAABAoAiEAAAAABAoAiEAAAAABIpACAAAAACBIhACAAAAQKAIhAAAAAAQKAIhAAAAAASKQAgAAAAAgSIQAgAAAECgCIQAAAAAECgCIQAAAAAEikAIAAAAAIEiEAIAAABAoAiEAAAAABAoAiEAAAAABIpACAAAAACBIhACAAAAQKAIhAAAAAAQKAIhAAAAAASKQAgAAAAAgSIQAgAAAECgCIQAAAAAECgCIQAAAAAEikAIAAAAAIEiEAIAAABAoAiEAAAAABAoAiEAAAAABIpACAAAAACBIhACAAAAQKAIhAAAAAAQKAIhAAAAAASKQAgAAAAAgSIQAgAAAECgCIQAAAAAECgCIQAAAAAEikAIAAAAAIEiEAIAAABAoP4/+crCsr5xV/cAAAAASUVORK5CYII=" alt="SYCLEF ACADEMY">
+  <div class="hdr-right">
+    <div class="lang" id="langBox" hidden>
+      <label for="langSel" data-i18n="langLabel">Langue</label>
+      <select id="langSel"></select>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav class="progress" aria-label="progress" id="progressNav">
+    <div class="step on" id="st1"><i>1</i><span data-i18n="step1">Observer</span></div>
+    <div class="sep" aria-hidden="true"></div>
+    <div class="step" id="st2"><i>2</i><span data-i18n="step2">Répondre</span></div>
+    <div class="sep" aria-hidden="true"></div>
+    <div class="step" id="st3"><i>3</i><span data-i18n="step3">Comprendre</span></div>
+  </nav>
+
+  <section class="qcard" aria-labelledby="q">
+    <span class="badge"><b aria-hidden="true">?</b><span data-i18n="tag">Vrai ou faux</span></span>
+    <h1 id="q" data-i18n="question">Dans un circuit fermé, l’eau n’est normalement pas consommée pendant le fonctionnement. 💧</h1>
+  </section>
+
+  <div class="grid">
+    <!-- SCHÉMA TECHNIQUE : principe d'un circuit d'eau fermé (boucle simple, sens de circulation unique) -->
+    <section class="card diagram" id="diagramCard" aria-labelledby="dTitle">
+      <h2 id="dTitle"><span aria-hidden="true">↻</span><span data-i18n="diagTitle">Observez le circuit</span></h2>
+      <p class="hint" data-i18n="diagHint">Suivez l’eau : elle circule dans le circuit, en boucle.</p>
+      <svg id="svg" viewBox="0 0 440 290" role="img" aria-labelledby="svgTitle svgDesc">
+        <title id="svgTitle" data-i18n="svgTitle">Schéma de principe d’un circuit d’eau fermé</title>
+        <desc id="svgDesc" data-i18n="svgDesc">L’eau circule en boucle dans le circuit, dans un seul sens, et revient à son point de départ.</desc>
+        <defs>
+          <path id="loop" d="M130 70 H330 A50 50 0 0 1 380 120 V200 A50 50 0 0 1 330 250 H110 A50 50 0 0 1 60 200 V120 A50 50 0 0 1 110 70 Z"/>
+        </defs>
+        <!-- conduite (paroi) -->
+        <use href="#loop" fill="none" stroke="#B7BECF" stroke-width="34" stroke-linejoin="round"/>
+        <!-- eau -->
+        <use href="#loop" fill="none" stroke="#386FB6" stroke-width="22" stroke-linejoin="round"/>
+        <!-- mise en évidence de la boucle après validation -->
+        <use href="#loop" id="trace" class="trace" fill="none" stroke="#94C356" stroke-width="8" stroke-linecap="round" opacity="0"/>
+        <!-- flux animé -->
+        <use href="#loop" class="flow" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="5" stroke-linecap="round"/>
+        <!-- flèches de sens de circulation (sens horaire, cohérent sur toute la boucle) -->
+        <g id="arrows" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M222 62 L232 70 L222 78"/>
+          <path d="M372 152 L380 162 L388 152"/>
+          <path d="M228 242 L218 250 L228 258"/>
+          <path d="M52 168 L60 158 L68 168"/>
+        </g>
+        <!-- gouttes d'eau animées (positionnées par script le long de la boucle) -->
+        <g id="drops"></g>
+        <!-- point de départ -->
+        <circle class="start-pulse" cx="130" cy="70" r="11" fill="#F4951F" opacity=".6"/>
+        <circle cx="130" cy="70" r="11" fill="#F4951F" stroke="#FFFFFF" stroke-width="3"/>
+        <text class="svg-t" x="130" y="30" text-anchor="middle" data-i18n="startLabel">Point de départ</text>
+        <line x1="130" y1="38" x2="130" y2="52" stroke="#F4951F" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- libellé central -->
+        <g id="centerG">
+          <path d="M220 118 A22 22 0 1 1 200.95 129" fill="none" stroke="#386FB6" stroke-width="4" stroke-linecap="round"/>
+          <polygon points="205.2,121.7 194.6,125.3 207.3,132.7" fill="#386FB6"/>
+          <text class="svg-center" x="220" y="190" text-anchor="middle" data-i18n="centerLabel">Circuit fermé</text>
+        </g>
+      </svg>
+      <div class="legend">
+        <span><i class="sw-water" aria-hidden="true"></i><span data-i18n="legendWater">Eau en circulation (sens des flèches)</span></span>
+        <span><i class="sw-start" aria-hidden="true"></i><span data-i18n="startLabel">Point de départ</span></span>
+      </div>
+      <p class="caption" id="caption" role="status"><span aria-hidden="true">↻</span><span data-i18n="caption">L’eau revient à son point de départ et reste dans le circuit.</span></p>
+      <div class="tools">
+        <button type="button" class="btn-ghost" id="pauseBtn" aria-pressed="false"><span aria-hidden="true" id="pauseIc">❚❚</span><span id="pauseTxt" data-i18n="pause">Pause</span></button>
+      </div>
+    </section>
+
+    <!-- RÉPONSE -->
+    <section class="card" aria-labelledby="aTitle" id="answerCard">
+      <h2 id="aTitle"><span aria-hidden="true">✎</span><span data-i18n="answerTitle">Votre réponse</span></h2>
+      <p class="hint" data-i18n="instruction">Sélectionnez VRAI ou FAUX, puis validez.</p>
+      <div class="choices" role="group" aria-labelledby="q">
+        <button type="button" class="choice" id="btnTrue" aria-pressed="false" data-val="t"><span class="ic" aria-hidden="true">✓</span><span data-i18n="true">VRAI</span></button>
+        <button type="button" class="choice" id="btnFalse" aria-pressed="false" data-val="f"><span class="ic" aria-hidden="true">✕</span><span data-i18n="false">FAUX</span></button>
+      </div>
+      <button type="button" class="btn" id="btnValidate" disabled><span data-i18n="validate">Valider</span><i class="arrow" aria-hidden="true"></i></button>
+      <p class="sel-hint" id="selHint" data-i18n="selectFirst">Choisissez une réponse pour activer la validation.</p>
+
+      <div class="feedback" id="feedback" tabindex="-1" aria-live="polite">
+        <div class="fb-head">
+          <div class="fb-ic" id="fbIc" aria-hidden="true">✓</div>
+          <div><h3 id="fbTitle"></h3><p id="fbText"></p></div>
+        </div>
+        <div class="answers">
+          <span><span data-i18n="yourAnswer">Votre réponse</span> : <b id="yourAns"></b></span>
+          <span><span data-i18n="rightAnswer">Bonne réponse</span> : <b data-i18n="true">VRAI</b></span>
+        </div>
+        <div class="explain">
+          <h4><span aria-hidden="true">💡</span><span data-i18n="explainTitle">À retenir</span></h4>
+          <p data-i18n="explanation">Dans un circuit fermé, l’eau circule en boucle dans l’installation. Elle n’est normalement pas consommée pendant le fonctionnement.</p>
+        </div>
+        <div class="fb-actions">
+          <button type="button" class="btn-ghost" id="btnReplay"><span aria-hidden="true">↻</span><span data-i18n="replay">Revoir la boucle</span></button>
+          <button type="button" class="btn" id="btnFinish"><span data-i18n="finish">J’ai compris</span><i class="arrow" aria-hidden="true"></i></button>
+        </div>
+        <div class="done" id="done" role="status"><span class="ck" aria-hidden="true">✓</span><span data-i18n="done">Activité terminée. Vous pouvez passer à la suite.</span></div>
+      </div>
+    </section>
+  </div>
+</main>
+<footer>SYCLEF ACADEMY</footer>
+
+<script>
+/* ===== Configuration du package (injectée à la génération) ===== */
+var FORCED_LANG = null; /* null = package multilingue ; sinon code de langue imposé */
+
+/* ===== Textes ===== */
+var LANGS = {
+ "fr":{name:"Français",html:"fr",tag:"Vrai ou faux",step1:"Observer",step2:"Répondre",step3:"Comprendre",
+  question:"Dans un circuit fermé, l’eau n’est normalement pas consommée pendant le fonctionnement. 💧",
+  diagTitle:"Observez le circuit",diagHint:"Suivez l’eau : elle circule dans le circuit, en boucle.",
+  svgTitle:"Schéma de principe d’un circuit d’eau fermé",svgDesc:"L’eau circule en boucle dans le circuit, dans un seul sens, et revient à son point de départ.",
+  startLabel:"Point de départ",centerLabel:"Circuit fermé",legendWater:"Eau en circulation (sens des flèches)",
+  caption:"L’eau revient à son point de départ et reste dans le circuit.",pause:"Pause",play:"Lecture",
+  answerTitle:"Votre réponse",instruction:"Sélectionnez VRAI ou FAUX, puis validez.","true":"VRAI","false":"FAUX",
+  validate:"Valider",selectFirst:"Choisissez une réponse pour activer la validation.",
+  okTitle:"Bravo, c’est exact !",okText:"L’eau fait le tour du circuit et revient à son point de départ.",
+  koTitle:"Pas tout à fait… regardez le schéma !",koText:"L’eau fait le tour du circuit et revient à son point de départ : elle reste dans le circuit.",
+  yourAnswer:"Votre réponse",rightAnswer:"Bonne réponse",explainTitle:"À retenir",
+  explanation:"Dans un circuit fermé, l’eau circule en boucle dans l’installation. Elle n’est normalement pas consommée pendant le fonctionnement.",
+  replay:"Revoir la boucle",finish:"J’ai compris",done:"Activité terminée. Vous pouvez passer à la suite.",langLabel:"Langue",docTitle:"Circuit d’eau fermé"},
+ "en":{name:"English",html:"en",tag:"True or false",step1:"Observe",step2:"Answer",step3:"Understand",
+  question:"In a closed circuit, water is not normally consumed during operation. 💧",
+  diagTitle:"Observe the circuit",diagHint:"Follow the water: it flows around the circuit, in a loop.",
+  svgTitle:"Principle diagram of a closed water circuit",svgDesc:"Water flows in a loop around the circuit, in one direction, and returns to its starting point.",
+  startLabel:"Starting point",centerLabel:"Closed circuit",legendWater:"Circulating water (direction of arrows)",
+  caption:"The water returns to its starting point and stays in the circuit.",pause:"Pause",play:"Play",
+  answerTitle:"Your answer",instruction:"Select TRUE or FALSE, then submit.","true":"TRUE","false":"FALSE",
+  validate:"Submit",selectFirst:"Choose an answer to enable the Submit button.",
+  okTitle:"Well done, that’s correct!",okText:"The water travels around the circuit and returns to its starting point.",
+  koTitle:"Not quite… take a look at the diagram!",koText:"The water travels around the circuit and returns to its starting point: it stays in the circuit.",
+  yourAnswer:"Your answer",rightAnswer:"Correct answer",explainTitle:"Key point",
+  explanation:"In a closed circuit, water circulates in a loop through the installation. It is not normally consumed during operation.",
+  replay:"Replay the loop",finish:"Got it",done:"Activity completed. You can move on to the next step.",langLabel:"Language",docTitle:"Closed water circuit"},
+ "en-ie":{name:"English (Ireland)",html:"en-IE",tag:"True or false",step1:"Observe",step2:"Answer",step3:"Understand",
+  question:"In a closed circuit, water is not normally consumed during operation. 💧",
+  diagTitle:"Observe the circuit",diagHint:"Follow the water: it flows around the circuit, in a loop.",
+  svgTitle:"Principle diagram of a closed water circuit",svgDesc:"Water flows in a loop around the circuit, in one direction, and returns to its starting point.",
+  startLabel:"Starting point",centerLabel:"Closed circuit",legendWater:"Circulating water (direction of arrows)",
+  caption:"The water returns to its starting point and stays in the circuit.",pause:"Pause",play:"Play",
+  answerTitle:"Your answer",instruction:"Select TRUE or FALSE, then submit.","true":"TRUE","false":"FALSE",
+  validate:"Submit",selectFirst:"Choose an answer to enable the Submit button.",
+  okTitle:"Well done, that’s correct!",okText:"The water travels around the circuit and returns to its starting point.",
+  koTitle:"Not quite… have a look at the diagram!",koText:"The water travels around the circuit and returns to its starting point: it stays in the circuit.",
+  yourAnswer:"Your answer",rightAnswer:"Correct answer",explainTitle:"Key point",
+  explanation:"In a closed circuit, water circulates in a loop through the installation. It is not normally consumed during operation.",
+  replay:"Replay the loop",finish:"Got it",done:"Activity completed. You can move on to the next step.",langLabel:"Language",docTitle:"Closed water circuit"},
+ "es":{name:"Español",html:"es",tag:"Verdadero o falso",step1:"Observar",step2:"Responder",step3:"Comprender",
+  question:"En un circuito cerrado, el agua normalmente no se consume durante el funcionamiento. 💧",
+  diagTitle:"Observe el circuito",diagHint:"Siga el agua: circula por el circuito, en bucle.",
+  svgTitle:"Esquema de principio de un circuito de agua cerrado",svgDesc:"El agua circula en bucle por el circuito, en un solo sentido, y vuelve a su punto de partida.",
+  startLabel:"Punto de partida",centerLabel:"Circuito cerrado",legendWater:"Agua en circulación (sentido de las flechas)",
+  caption:"El agua vuelve a su punto de partida y permanece en el circuito.",pause:"Pausa",play:"Reproducir",
+  answerTitle:"Su respuesta",instruction:"Seleccione VERDADERO o FALSO y, a continuación, valide.","true":"VERDADERO","false":"FALSO",
+  validate:"Validar",selectFirst:"Elija una respuesta para activar la validación.",
+  okTitle:"¡Muy bien, es correcto!",okText:"El agua recorre el circuito y vuelve a su punto de partida.",
+  koTitle:"No del todo… ¡fíjese en el esquema!",koText:"El agua recorre el circuito y vuelve a su punto de partida: permanece en el circuito.",
+  yourAnswer:"Su respuesta",rightAnswer:"Respuesta correcta",explainTitle:"Para recordar",
+  explanation:"En un circuito cerrado, el agua circula en bucle por la instalación. Normalmente no se consume durante el funcionamiento.",
+  replay:"Ver de nuevo el bucle",finish:"Entendido",done:"Actividad completada. Puede continuar.",langLabel:"Idioma",docTitle:"Circuito de agua cerrado"},
+ "ro":{name:"Română",html:"ro",tag:"Adevărat sau fals",step1:"Observați",step2:"Răspundeți",step3:"Înțelegeți",
+  question:"Într-un circuit închis, apa nu este consumată în mod normal în timpul funcționării. 💧",
+  diagTitle:"Observați circuitul",diagHint:"Urmăriți apa: aceasta circulă prin circuit, în buclă.",
+  svgTitle:"Schema de principiu a unui circuit de apă închis",svgDesc:"Apa circulă în buclă prin circuit, într-un singur sens, și revine la punctul de plecare.",
+  startLabel:"Punct de plecare",centerLabel:"Circuit închis",legendWater:"Apă în circulație (sensul săgeților)",
+  caption:"Apa revine la punctul de plecare și rămâne în circuit.",pause:"Pauză",play:"Redare",
+  answerTitle:"Răspunsul dvs.",instruction:"Selectați ADEVĂRAT sau FALS, apoi validați.","true":"ADEVĂRAT","false":"FALS",
+  validate:"Validați",selectFirst:"Alegeți un răspuns pentru a activa validarea.",
+  okTitle:"Bravo, este corect!",okText:"Apa parcurge circuitul și revine la punctul de plecare.",
+  koTitle:"Nu chiar… priviți schema!",koText:"Apa parcurge circuitul și revine la punctul de plecare: rămâne în circuit.",
+  yourAnswer:"Răspunsul dvs.",rightAnswer:"Răspuns corect",explainTitle:"De reținut",
+  explanation:"Într-un circuit închis, apa circulă în buclă prin instalație. În mod normal, nu este consumată în timpul funcționării.",
+  replay:"Revedeți bucla",finish:"Am înțeles",done:"Activitate finalizată. Puteți trece mai departe.",langLabel:"Limbă",docTitle:"Circuit de apă închis"},
+ "it":{name:"Italiano",html:"it",tag:"Vero o falso",step1:"Osservare",step2:"Rispondere",step3:"Capire",
+  question:"In un circuito chiuso, l’acqua normalmente non viene consumata durante il funzionamento. 💧",
+  diagTitle:"Osservi il circuito",diagHint:"Segua l’acqua: circola nel circuito, ad anello.",
+  svgTitle:"Schema di principio di un circuito idraulico chiuso",svgDesc:"L’acqua circola ad anello nel circuito, in un solo senso, e ritorna al punto di partenza.",
+  startLabel:"Punto di partenza",centerLabel:"Circuito chiuso",legendWater:"Acqua in circolazione (senso delle frecce)",
+  caption:"L’acqua ritorna al punto di partenza e rimane nel circuito.",pause:"Pausa",play:"Riproduci",
+  answerTitle:"La sua risposta",instruction:"Selezioni VERO o FALSO, poi convalidi.","true":"VERO","false":"FALSO",
+  validate:"Convalida",selectFirst:"Scelga una risposta per attivare la convalida.",
+  okTitle:"Bravo, è corretto!",okText:"L’acqua percorre il circuito e ritorna al punto di partenza.",
+  koTitle:"Non proprio… osservi lo schema!",koText:"L’acqua percorre il circuito e ritorna al punto di partenza: rimane nel circuito.",
+  yourAnswer:"La sua risposta",rightAnswer:"Risposta corretta",explainTitle:"Da ricordare",
+  explanation:"In un circuito chiuso, l’acqua circola ad anello nell’impianto. Normalmente non viene consumata durante il funzionamento.",
+  replay:"Rivedi l’anello",finish:"Ho capito",done:"Attività completata. Può proseguire.",langLabel:"Lingua",docTitle:"Circuito idraulico chiuso"},
+ "nl-be":{name:"Nederlands (België)",html:"nl-BE",tag:"Juist of fout",step1:"Observeren",step2:"Antwoorden",step3:"Begrijpen",
+  question:"In een gesloten circuit wordt het water normaal gezien niet verbruikt tijdens de werking. 💧",
+  diagTitle:"Observeer het circuit",diagHint:"Volg het water: het stroomt rond in het circuit, in een lus.",
+  svgTitle:"Principeschema van een gesloten watercircuit",svgDesc:"Het water stroomt in een lus door het circuit, in één richting, en keert terug naar zijn vertrekpunt.",
+  startLabel:"Vertrekpunt",centerLabel:"Gesloten circuit",legendWater:"Circulerend water (richting van de pijlen)",
+  caption:"Het water keert terug naar zijn vertrekpunt en blijft in het circuit.",pause:"Pauze",play:"Afspelen",
+  answerTitle:"Uw antwoord",instruction:"Kies JUIST of FOUT en bevestig.","true":"JUIST","false":"FOUT",
+  validate:"Bevestigen",selectFirst:"Kies een antwoord om te kunnen bevestigen.",
+  okTitle:"Goed zo, dat klopt!",okText:"Het water stroomt rond in het circuit en keert terug naar zijn vertrekpunt.",
+  koTitle:"Niet helemaal… bekijk het schema!",koText:"Het water stroomt rond in het circuit en keert terug naar zijn vertrekpunt: het blijft in het circuit.",
+  yourAnswer:"Uw antwoord",rightAnswer:"Juist antwoord",explainTitle:"Om te onthouden",
+  explanation:"In een gesloten circuit circuleert het water in een lus door de installatie. Het wordt normaal gezien niet verbruikt tijdens de werking.",
+  replay:"Lus opnieuw bekijken",finish:"Begrepen",done:"Activiteit voltooid. U kunt verdergaan.",langLabel:"Taal",docTitle:"Gesloten watercircuit"},
+ "pl":{name:"Polski",html:"pl",tag:"Prawda czy fałsz",step1:"Obserwuj",step2:"Odpowiedz",step3:"Zrozum",
+  question:"W obiegu zamkniętym woda w normalnych warunkach nie jest zużywana podczas pracy. 💧",
+  diagTitle:"Obserwuj obieg",diagHint:"Śledź wodę: krąży w obiegu, w pętli.",
+  svgTitle:"Schemat zasady działania zamkniętego obiegu wody",svgDesc:"Woda krąży w pętli w obiegu, w jednym kierunku, i wraca do punktu początkowego.",
+  startLabel:"Punkt początkowy",centerLabel:"Obieg zamknięty",legendWater:"Krążąca woda (kierunek strzałek)",
+  caption:"Woda wraca do punktu początkowego i pozostaje w obiegu.",pause:"Pauza",play:"Odtwórz",
+  answerTitle:"Twoja odpowiedź",instruction:"Wybierz PRAWDA lub FAŁSZ, a następnie zatwierdź.","true":"PRAWDA","false":"FAŁSZ",
+  validate:"Zatwierdź",selectFirst:"Wybierz odpowiedź, aby móc ją zatwierdzić.",
+  okTitle:"Brawo, to prawidłowa odpowiedź!",okText:"Woda okrąża obieg i wraca do punktu początkowego.",
+  koTitle:"Nie do końca… spójrz na schemat!",koText:"Woda okrąża obieg i wraca do punktu początkowego: pozostaje w obiegu.",
+  yourAnswer:"Twoja odpowiedź",rightAnswer:"Prawidłowa odpowiedź",explainTitle:"Do zapamiętania",
+  explanation:"W obiegu zamkniętym woda krąży w pętli w instalacji. W normalnych warunkach nie jest zużywana podczas pracy.",
+  replay:"Zobacz pętlę ponownie",finish:"Rozumiem",done:"Aktywność ukończona. Możesz przejść dalej.",langLabel:"Język",docTitle:"Zamknięty obieg wody"}
+};
+var ORDER = ["fr","en","en-ie","es","ro","it","nl-be","pl"];
+var CORRECT = "t"; /* Bonne réponse : VRAI */
+
+/* ===== Couche SCORM (1.2 et 2004) ===== */
+var SCORM = (function(){
+  var api=null, v=null, started=new Date(), finished=false;
+  function find(w){var n=0;while(w&&n<12){if(w.API_1484_11){v="2004";return w.API_1484_11;}if(w.API){v="1.2";return w.API;}if(w.parent===w)break;w=w.parent;n++;}return null;}
+  function init(){
+    try{api=find(window);if(!api&&window.opener)api=find(window.opener);}catch(e){api=null;}
+    if(!api)return false;
+    try{var r=(v==="2004")?api.Initialize(""):api.LMSInitialize("");return String(r)==="true";}catch(e){return false;}
+  }
+  function get(k12,k04){if(!api)return "";try{return String(v==="2004"?api.GetValue(k04):api.LMSGetValue(k12)||"");}catch(e){return "";}}
+  function set(k12,k04,val){if(!api)return;try{if(v==="2004"){if(k04)api.SetValue(k04,String(val));}else{if(k12)api.LMSSetValue(k12,String(val));}}catch(e){}}
+  function commit(){if(!api)return;try{v==="2004"?api.Commit(""):api.LMSCommit("");}catch(e){}}
+  function pad(n){return (n<10?"0":"")+n;}
+  function sessionTime(){var s=Math.round((new Date()-started)/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=s%60;
+    return v==="2004"?("PT"+h+"H"+m+"M"+x+"S"):(pad(h).slice(-4)+":"+pad(m)+":"+pad(x));}
+  function finish(){if(!api||finished)return;finished=true;set("cmi.core.session_time","cmi.session_time",sessionTime());
+    try{v==="2004"?api.Terminate(""):api.LMSFinish("");}catch(e){}}
+  return {init:init,get:get,set:set,commit:commit,finish:finish,version:function(){return v;},active:function(){return !!api;},sessionTime:sessionTime};
+})();
+
+/* ===== Langue ===== */
+function normLang(code){
+  if(!code)return null; code=String(code).trim().toLowerCase().replace("_","-");
+  if(!code)return null;
+  if(LANGS[code])return code;
+  if(code.indexOf("en-ie")===0)return "en-ie";
+  var base=code.split("-")[0];
+  if(base==="nl")return "nl-be";
+  if(base==="ga")return "en-ie";
+  if(LANGS[base])return base;
+  return null;
+}
+var lang="fr", state={answer:null,validated:false,completed:false}, startTime=new Date();
+
+function t(k){return (LANGS[lang]&&LANGS[lang][k])||LANGS.fr[k]||"";}
+function applyLang(){
+  var L=LANGS[lang];
+  document.documentElement.lang=L.html;
+  document.title="SYCLEF ACADEMY – "+L.docTitle;
+  var els=document.querySelectorAll("[data-i18n]");
+  for(var i=0;i<els.length;i++){els[i].textContent=t(els[i].getAttribute("data-i18n"));}
+  document.getElementById("pauseTxt").textContent=paused?t("play"):t("pause");
+  if(state.validated)renderFeedback();
+}
+
+/* ===== Animation des gouttes le long de la boucle ===== */
+var loop=document.getElementById("loop"), dropsG=document.getElementById("drops"), NS="http://www.w3.org/2000/svg";
+var L_TOTAL=loop.getTotalLength(), N_DROPS=6, drops=[], speed=L_TOTAL/7000; /* un tour en 7 s */
+var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var paused=false, offset=0, last=null, tracer=null, traceAnim=null;
+for(var i=0;i<N_DROPS;i++){
+  var c=document.createElementNS(NS,"path");
+  c.setAttribute("d","M0 -9 C4 -3 6 0 6 3 A6 6 0 0 1 -6 3 C-6 0 -4 -3 0 -9Z");
+  c.setAttribute("fill","#FFFFFF");c.setAttribute("opacity",".95");
+  dropsG.appendChild(c);drops.push(c);
+}
+function placeDrops(){
+  for(var i=0;i<drops.length;i++){
+    var d=(offset+i*L_TOTAL/N_DROPS)%L_TOTAL, p=loop.getPointAtLength(d);
+    drops[i].setAttribute("transform","translate("+p.x.toFixed(1)+" "+p.y.toFixed(1)+")");
+  }
+}
+function tick(ts){
+  if(last===null)last=ts;var dt=ts-last;last=ts;
+  if(!paused&&!reduce){offset=(offset+dt*speed)%L_TOTAL;placeDrops();}
+  requestAnimationFrame(tick);
+}
+placeDrops();requestAnimationFrame(tick);
+
+/* Mise en évidence : tracé de la boucle complète depuis le point de départ jusqu'au retour */
+function highlightLoop(color){
+  var tr=document.getElementById("trace");
+  tr.setAttribute("stroke",color);tr.setAttribute("opacity","1");
+  tr.style.strokeDasharray=L_TOTAL+" "+L_TOTAL;
+  if(traceAnim)cancelAnimationFrame(traceAnim);
+  /* goutte témoin : part du point de départ, fait le tour, revient */
+  if(!tracer){tracer=document.createElementNS(NS,"circle");tracer.setAttribute("r","11");tracer.setAttribute("stroke","#FFFFFF");tracer.setAttribute("stroke-width","3");dropsG.parentNode.insertBefore(tracer,dropsG.nextSibling);}
+  tracer.setAttribute("fill",color);
+  var cap=document.getElementById("caption");cap.classList.remove("show");
+  if(reduce){tr.style.strokeDashoffset="0";var p0=loop.getPointAtLength(0);tracer.setAttribute("cx",p0.x);tracer.setAttribute("cy",p0.y);cap.classList.add("show");return;}
+  var dur=3200,t0=null;
+  function step(ts){
+    if(t0===null)t0=ts;var k=Math.min(1,(ts-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    tr.style.strokeDashoffset=String(L_TOTAL*(1-e));
+    var p=loop.getPointAtLength((e*L_TOTAL)%L_TOTAL);tracer.setAttribute("cx",p.x);tracer.setAttribute("cy",p.y);
+    if(k<1)traceAnim=requestAnimationFrame(step);else{var p0=loop.getPointAtLength(0);tracer.setAttribute("cx",p0.x);tracer.setAttribute("cy",p0.y);cap.classList.add("show");}
+  }
+  traceAnim=requestAnimationFrame(step);
+}
+
+/* ===== Interaction ===== */
+var bT=document.getElementById("btnTrue"), bF=document.getElementById("btnFalse"), bV=document.getElementById("btnValidate");
+function choose(val){
+  if(state.validated)return;
+  state.answer=val;
+  bT.setAttribute("aria-pressed",val==="t"?"true":"false");
+  bF.setAttribute("aria-pressed",val==="f"?"true":"false");
+  bV.disabled=false;document.getElementById("selHint").style.visibility="hidden";
+  setStep(2);
+}
+bT.addEventListener("click",function(){choose("t");});
+bF.addEventListener("click",function(){choose("f");});
+
+function setStep(n){
+  for(var i=1;i<=3;i++){var s=document.getElementById("st"+i);s.className="step"+(i<n?" done":(i===n?" on":""));}
+}
+function renderFeedback(){
+  var ok=state.answer===CORRECT, fb=document.getElementById("feedback");
+  fb.className="feedback show "+(ok?"fb-ok":"fb-ko");
+  document.getElementById("fbIc").textContent=ok?"✓":"↻";
+  document.getElementById("fbTitle").textContent=ok?t("okTitle"):t("koTitle");
+  document.getElementById("fbText").textContent=ok?t("okText"):t("koText");
+  document.getElementById("yourAns").textContent=state.answer==="t"?t("true"):t("false");
+}
+bV.addEventListener("click",function(){
+  if(!state.answer||state.validated)return;
+  state.validated=true;
+  var ok=state.answer===CORRECT;
+  bT.disabled=bF.disabled=true;bT.classList.add("locked");bF.classList.add("locked");bT.classList.add("is-right");
+  bV.style.display="none";document.getElementById("selHint").style.display="none";
+  renderFeedback();setStep(3);
+  highlightLoop(ok?"#94C356":"#F4951F");
+  var fb=document.getElementById("feedback");
+  /* Sur petit écran, montrer d'abord le schéma (boucle), puis le feedback */
+  if(window.innerWidth<=860){document.getElementById("diagramCard").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
+    setTimeout(function(){fb.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});fb.focus({preventScroll:true});},reduce?50:3600);}
+  else{fb.focus({preventScroll:true});}
+  scormAnswer(ok);
+});
+document.getElementById("btnReplay").addEventListener("click",function(){
+  highlightLoop(state.answer===CORRECT?"#94C356":"#F4951F");
+  document.getElementById("diagramCard").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
+});
+document.getElementById("btnFinish").addEventListener("click",function(){
+  scormComplete();
+  this.disabled=true;
+  var d=document.getElementById("done");d.classList.add("show");
+  var s=document.getElementById("st3");s.className="step done";
+});
+document.getElementById("pauseBtn").addEventListener("click",function(){
+  paused=!paused;document.getElementById("svg").classList.toggle("paused",paused);
+  this.setAttribute("aria-pressed",paused?"true":"false");
+  document.getElementById("pauseIc").textContent=paused?"▶":"❚❚";
+  document.getElementById("pauseTxt").textContent=paused?t("play"):t("pause");
+});
+
+/* ===== Enregistrements SCORM ===== */
+function stamp(){var d=new Date();function p(n){return (n<10?"0":"")+n;}
+  return {t12:p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds()),
+          t04:d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"T"+p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds())};}
+function latency(){var s=Math.max(0,Math.round((new Date()-startTime)/1000)),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=s%60;function p(n){return (n<10?"0":"")+n;}
+  return {l12:p(h)+":"+p(m)+":"+p(x),l04:"PT"+h+"H"+m+"M"+x+"S"};}
+function saveSuspend(step){SCORM.set("cmi.suspend_data","cmi.suspend_data",JSON.stringify({v:1,lang:lang,step:step,a:state.answer}));}
+function scormAnswer(ok){
+  if(!SCORM.active())return;
+  var n=parseInt(SCORM.get("cmi.interactions._count","cmi.interactions._count"),10);if(isNaN(n))n=0;
+  var p12="cmi.interactions."+n+".", p04=p12, st=stamp(), la=latency();
+  var is04=SCORM.version()==="2004";
+  SCORM.set(p12+"id",p04+"id","closed_circuit_water_true_false");
+  SCORM.set(p12+"type",p04+"type","true-false");
+  if(is04){SCORM.set(null,p04+"timestamp",st.t04);SCORM.set(null,p04+"correct_responses.0.pattern","true");
+    SCORM.set(null,p04+"learner_response",state.answer==="t"?"true":"false");SCORM.set(null,p04+"result",ok?"correct":"incorrect");
+    SCORM.set(null,p04+"latency",la.l04);SCORM.set(null,p04+"description","Closed circuit - water not consumed (lang: "+lang+")");}
+  else{SCORM.set(p12+"time",null,st.t12);SCORM.set(p12+"correct_responses.0.pattern",null,"t");
+    SCORM.set(p12+"student_response",null,state.answer);SCORM.set(p12+"result",null,ok?"correct":"wrong");SCORM.set(p12+"latency",null,la.l12);}
+  var sc=ok?100:0;
+  SCORM.set("cmi.core.score.min","cmi.score.min",0);SCORM.set("cmi.core.score.max","cmi.score.max",100);
+  SCORM.set("cmi.core.score.raw","cmi.score.raw",sc);SCORM.set(null,"cmi.score.scaled",ok?1:0);
+  SCORM.set("cmi.core.lesson_location","cmi.location","feedback");
+  SCORM.set(null,"cmi.progress_measure","0.66");
+  saveSuspend("feedback");
+  SCORM.commit();
+}
+function scormComplete(){
+  if(!SCORM.active())return;
+  var ok=state.answer===CORRECT;
+  SCORM.set("cmi.core.lesson_status","cmi.completion_status","completed");
+  SCORM.set(null,"cmi.success_status",ok?"passed":"failed");
+  SCORM.set(null,"cmi.progress_measure","1");
+  SCORM.set("cmi.core.lesson_location","cmi.location","done");
+  saveSuspend("done");
+  SCORM.set("cmi.core.exit","cmi.exit",SCORM.version()==="2004"?"normal":"");
+  SCORM.set("cmi.core.session_time","cmi.session_time",SCORM.sessionTime());
+  SCORM.commit();
+}
+
+/* ===== Démarrage ===== */
+(function boot(){
+  var connected=SCORM.init();
+  var saved=null;
+  if(connected){
+    try{saved=JSON.parse(SCORM.get("cmi.suspend_data","cmi.suspend_data")||"null");}catch(e){saved=null;}
+    var st=SCORM.get("cmi.core.lesson_status","cmi.completion_status");
+    if(st!=="completed"&&st!=="passed"&&st!=="failed"){
+      SCORM.set("cmi.core.lesson_status","cmi.completion_status","incomplete");
+      SCORM.set(null,"cmi.progress_measure","0.33");
+      SCORM.set("cmi.core.lesson_location","cmi.location","question");
+    }
+    if(st!=="completed"&&st!=="passed"&&st!=="failed")SCORM.set("cmi.core.exit","cmi.exit","suspend");
+    SCORM.commit();
+  }
+  /* Choix de la langue :
+     1) package mono-langue : langue imposée ;
+     2) langue transmise par le LMS via le champ SCORM standard
+        (cmi.student_preference.language en SCORM 1.2 / cmi.learner_preference.language en SCORM 2004) ;
+     3) langue choisie manuellement par l'apprenant lors d'une session précédente ;
+     4) paramètre d'URL ?lang=xx (test / paramétrage administrateur) ;
+     5) sinon : français. */
+  var chosen=null, source="default";
+  if(FORCED_LANG){chosen=FORCED_LANG;source="package";}
+  else{
+    var fromLms=connected?normLang(SCORM.get("cmi.student_preference.language","cmi.learner_preference.language")):null;
+    var fromSaved=saved&&saved.manual?normLang(saved.lang):null;
+    var m=/[?&]lang=([^&#]+)/i.exec(location.search), fromUrl=m?normLang(decodeURIComponent(m[1])):null;
+    if(fromSaved){chosen=fromSaved;source="learner";}
+    else if(fromLms){chosen=fromLms;source="lms";}
+    else if(fromUrl){chosen=fromUrl;source="url";}
+  }
+  lang=chosen||"fr";
+  window.__langSource=source;
+  /* Sélecteur de langue (package multilingue uniquement) */
+  if(!FORCED_LANG){
+    var sel=document.getElementById("langSel");
+    for(var i=0;i<ORDER.length;i++){var o=document.createElement("option");o.value=ORDER[i];o.textContent=LANGS[ORDER[i]].name;sel.appendChild(o);}
+    sel.value=lang;document.getElementById("langBox").hidden=false;
+    sel.addEventListener("change",function(){lang=sel.value;applyLang();
+      if(SCORM.active()){SCORM.set("cmi.suspend_data","cmi.suspend_data",JSON.stringify({v:1,lang:lang,manual:true,step:state.validated?"feedback":"question",a:state.answer}));SCORM.commit();}});
+  }
+  applyLang();
+  window.addEventListener("pagehide",function(){SCORM.finish();});
+  window.addEventListener("beforeunload",function(){SCORM.finish();});
+})();
+</script>
+</body>
+</html>
