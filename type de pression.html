@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>F03 | Comprendre les différents types de pression</title>
+<style>
+:root{
+  --blue:#386FB6;--blue-dark:#1C3D6E;--blue-ink:#24518F;
+  --blue-light:#EAF2FB;--blue-light-border:#8DB6E3;
+  --orange:#F4951F;--orange-bg:#FEF3E6;--orange-ink:#7A4300;
+  --green:#94C356;--green-bg:#F1F8E8;--green-ink:#365F14;
+  --bg:#F5F7FA;--card:#FFFFFF;--text:#1F2933;--muted:#4A5868;--line:#D5DDE7;
+  --radius:10px;
+  --shadow:0 1px 3px rgba(28,61,110,.08),0 1px 2px rgba(28,61,110,.05);
+  --focus:0 0 0 3px #FFFFFF,0 0 0 6px #1C3D6E;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Calibri,Arial,"Helvetica Neue",Helvetica,sans-serif;font-size:16px;line-height:1.42;overflow:hidden}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+button,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:none;box-shadow:var(--focus)}
+h2,h3{color:var(--blue-dark);line-height:1.2;margin:0}
+p{margin:0}
+sub{font-size:.68em;line-height:0;vertical-align:-.3em}
+[hidden]{display:none!important}
+
+/* ---------- Structure "diapo" ---------- */
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:1180px;margin:0 auto}
+.bar{flex:none;display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:2px solid var(--blue);background:var(--bg)}
+.tabs{display:flex;gap:6px;flex:1;min-width:0}
+.tab{display:flex;align-items:center;gap:8px;min-height:42px;padding:6px 12px;border:1px solid var(--line);background:var(--card);border-radius:999px;color:var(--blue-dark);font-weight:700;min-width:0;transition:background-color .2s,border-color .2s}
+.tab .n{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--blue-light);font-size:.85rem}
+.tab .tl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tab .ts{flex:none;font-size:.8rem;font-weight:700;color:var(--muted);display:inline-flex;align-items:center}
+.tab .ts svg{width:14px;height:14px}
+.tab[aria-selected="true"]{background:var(--blue-dark);border-color:var(--blue-dark);color:#fff}
+.tab[aria-selected="true"] .n{background:#fff;color:var(--blue-dark)}
+.tab[aria-selected="true"] .ts{color:#fff}
+.tab.done .ts{color:var(--green-ink)}
+.tab[aria-selected="true"].done .ts{color:#D9F0BD}
+.tab[aria-disabled="true"]{opacity:.62;cursor:not-allowed}
+.tab:not([aria-disabled="true"]):not([aria-selected="true"]):hover{border-color:var(--blue)}
+.lang{flex:none;display:flex;align-items:center;gap:6px;color:var(--muted)}
+.lang svg{width:18px;height:18px}
+.lang select{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 8px;min-height:40px;color:var(--blue-dark)}
+
+.stage{flex:1;min-height:0;position:relative}
+.slide{position:absolute;inset:0;overflow:auto;padding:12px 14px;animation:fade .22s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.hint{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:var(--blue-dark);color:#fff;padding:8px 14px;border-radius:8px;font-size:.9rem;max-width:90vw;box-shadow:var(--shadow);z-index:5}
+
+/* ---------- Diapo 1 ---------- */
+.s1{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:14px;height:100%;min-height:0}
+.ring{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-rows:auto 1fr 1fr auto;gap:10px;align-content:center;grid-template-areas:"prog prog prog" "b1 dial b2" "b3 dial b4" ". b5 .";min-height:0}
+.prog{grid-area:prog;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.prog-text{font-weight:700;color:var(--blue-dark)}
+.pbar{flex:1 1 120px;height:10px;background:#E3E9F1;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.pbar span{display:block;height:100%;width:0;background:var(--green);transition:width .35s ease}
+.ring [data-p="abs"]{grid-area:b1}.ring [data-p="rel"]{grid-area:b2}
+.ring [data-p="atm"]{grid-area:b3}.ring [data-p="diff"]{grid-area:b4}
+.ring [data-p="stat"]{grid-area:b5}
+.dial{grid-area:dial;align-self:center;width:clamp(120px,24vh,190px);position:relative}
+.dial svg{display:block;width:100%;height:auto}
+.dial .needle{transform-box:view-box;transform-origin:100px 100px;transition:transform .45s ease}
+.dial-center{position:absolute;left:0;right:0;top:62%;text-align:center;font-weight:700;color:var(--blue-dark);font-size:1.25rem;pointer-events:none}
+.pbtn{display:flex;align-items:center;gap:8px;width:100%;min-height:56px;text-align:start;background:var(--card);border:2px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:8px 10px;position:relative;transition:border-color .2s,background-color .2s;align-self:center}
+.pbtn:hover{border-color:var(--blue)}
+.pbtn .ico{width:34px;height:34px;flex:none;border-radius:8px;background:var(--blue-light);color:var(--blue);display:grid;place-items:center}
+.pbtn .ico svg{width:22px;height:22px}
+.pbtn .txt{display:flex;flex-direction:column;min-width:0;flex:1}
+.pbtn .name{font-weight:700;color:var(--blue-dark);line-height:1.15;overflow-wrap:anywhere;hyphens:auto}
+.pbtn .meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px}
+.pbtn .sym{color:var(--blue-ink);font-size:.95rem}
+.pbtn .status{display:inline-flex;align-items:center;gap:3px;font-size:.75rem;font-weight:700;color:var(--muted);border-radius:999px;padding:0 6px;border:1px solid var(--line);background:#F8FAFC}
+.pbtn .status svg{width:11px;height:11px}
+.pbtn.seen .status{color:var(--green-ink);border-color:var(--green);background:var(--green-bg)}
+.pbtn[aria-pressed="true"]{border-color:var(--blue-dark);background:var(--blue-light);box-shadow:inset 0 0 0 1px var(--blue-dark),var(--shadow)}
+.pbtn[aria-pressed="true"] .ico{background:var(--blue);color:#fff}
+
+.fcol{display:flex;flex-direction:column;gap:10px;min-height:0}
+.fiche{padding:14px 16px;flex:1;min-height:0;overflow:auto}
+.fiche-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;color:var(--muted)}
+.fiche-empty svg{width:52px;height:52px;color:var(--blue-light-border)}
+.fiche-empty h3{font-size:1.1rem}
+.fiche-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.fiche-sym{flex:none;min-width:58px;height:58px;padding:0 8px;border-radius:12px;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:1.45rem;font-weight:700}
+.fiche-head h3{font-size:1.25rem;min-width:0;overflow-wrap:anywhere}
+.fiche-head .symlbl{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--blue-ink);font-weight:700}
+.facts{margin:0;display:grid;gap:8px}
+.facts>div{border-inline-start:4px solid var(--blue);background:#F8FAFD;border-radius:0 8px 8px 0;padding:6px 10px}
+.facts dt{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700;color:var(--blue-ink)}
+.facts dd{margin:1px 0 0}
+.callout{margin-top:10px;border-radius:var(--radius);padding:9px 12px;border:1px solid;border-inline-start-width:6px}
+.callout-title{display:flex;align-items:center;gap:7px;font-weight:700;margin-bottom:2px;font-size:1rem}
+.callout-title svg{width:19px;height:19px;flex:none}
+.callout.remember{background:var(--green-bg);border-color:var(--green)}
+.callout.remember .callout-title{color:var(--green-ink)}
+.callout.practice{background:var(--blue-light);border-color:var(--blue-light-border)}
+.callout.practice .callout-title{color:var(--blue-ink)}
+.callout.vigil{background:var(--orange-bg);border-color:var(--orange);margin-top:0}
+.callout.vigil .callout-title{color:var(--orange-ink)}
+.cta{flex:none;align-self:flex-end;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:2px solid var(--blue-dark);background:var(--blue-dark);color:#fff;font-weight:700}
+.cta:hover{background:var(--blue);border-color:var(--blue)}
+.cta svg{width:18px;height:18px}
+
+/* ---------- Diapo 2 ---------- */
+.s2{display:flex;flex-direction:column;gap:12px;min-height:100%}
+.relrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:stretch}
+.formula{display:flex;align-items:center;justify-content:center;font-size:clamp(1.5rem,1.1rem + 1.6vw,2.1rem);font-weight:700;color:var(--blue-dark);padding:8px 16px;background:var(--card);border-radius:var(--radius);border:1px solid var(--line);box-shadow:var(--shadow);font-family:"Cambria Math",Cambria,"Times New Roman",serif;white-space:nowrap}
+.t{display:inline-block;white-space:nowrap;padding:0 .12em;border-radius:6px;border-bottom:3px solid transparent}
+.formula .op{padding:0 .2em}
+.hl{background:#FFF3C4!important;border-bottom-color:var(--blue-dark)!important;outline:2px solid var(--blue-dark);outline-offset:1px}
+.compose{display:flex;align-items:stretch;gap:8px;min-width:0}
+.compose .op{align-self:center;font-size:1.6rem;font-weight:700;color:var(--blue-dark);flex:none;width:22px;text-align:center}
+.zbtn{flex:1 1 0;min-width:0;min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;background:var(--card);border:2px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:6px}
+.zbtn:hover{border-color:var(--blue)}
+.zbtn .zname{font-weight:700;color:var(--blue-dark);overflow-wrap:anywhere;hyphens:auto;line-height:1.15}
+.zbtn .zsym{font-size:1.1rem;color:var(--blue-ink);font-weight:700}
+.zbtn .status{font-size:.72rem;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:3px}
+.zbtn .status svg{width:11px;height:11px}
+.zbtn.seen .status{color:var(--green-ink)}
+.zbtn[aria-pressed="true"]{border-color:var(--blue-dark);background:var(--blue-light);box-shadow:inset 0 0 0 1px var(--blue-dark),var(--shadow)}
+.relgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
+.relgrid>*{padding:10px 12px}
+.zexpl strong{color:var(--blue-dark);display:block}
+.zexpl .ph{color:var(--muted)}
+.relprog{margin-top:8px;font-size:.88rem;font-weight:700;color:var(--blue-ink)}
+.example h3{font-size:1.05rem;margin-bottom:6px}
+.exvals{margin:0;display:grid;gap:3px;font-size:.93rem}
+.exvals>div{display:flex;justify-content:space-between;gap:8px;padding:2px 6px;border-radius:6px;border-bottom:2px solid transparent}
+.exvals dt{color:var(--muted)}
+.exvals dd{margin:0;font-weight:700;color:var(--blue-dark);white-space:nowrap}
+.calc{margin-top:6px;font-family:"Cambria Math",Cambria,"Times New Roman",serif;font-size:1.25rem;font-weight:700;color:var(--blue-dark);text-align:center;padding:6px;border-radius:8px;border:1px dashed var(--blue-light-border)}
+.note{margin-top:6px;font-size:.85rem;color:var(--blue-ink)}
+.s-foot{display:flex;justify-content:flex-end;margin-top:auto}
+
+/* ---------- Diapo 3 ---------- */
+.s3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;min-height:100%;align-items:start}
+.scale{position:relative;padding-inline-start:44px}
+.scale .z{padding:8px 10px;font-size:.92rem;border-radius:6px;display:flex;align-items:center;min-height:clamp(52px,12vh,90px);color:var(--blue-dark)}
+.scale .zpos{background:linear-gradient(180deg,#D7E6F7,#EAF2FB)}
+.scale .zneg{background:linear-gradient(180deg,#EEF3F8,#F7F9FB)}
+.scale .latm{border-top:3px dashed var(--blue-dark);border-bottom:3px dashed var(--blue-dark);background:#fff;font-weight:700;color:var(--blue-dark);padding:6px 10px;margin:2px 0;font-size:.92rem}
+.scale .vac{background:var(--blue-dark);color:#fff;font-weight:700;padding:6px 10px;border-radius:6px;font-size:.92rem}
+.scale .floor{font-size:.78rem;color:var(--muted);padding:4px 2px 0}
+.scale .on{outline:3px solid var(--blue-dark);outline-offset:-3px}
+.marker{position:absolute;left:0;top:0;width:38px;height:38px;margin-top:-19px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;box-shadow:var(--shadow);transition:top .45s ease}
+.marker svg{width:20px;height:20px}
+.nright{display:flex;flex-direction:column;gap:10px}
+.nbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.nbtn{min-height:58px;text-align:center;background:var(--card);border:2px solid var(--line);border-radius:var(--radius);padding:6px;font-weight:700;color:var(--blue-dark);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;line-height:1.15}
+.nbtn:hover{border-color:var(--blue)}
+.nbtn .sign{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--blue-light);font-size:1.05rem}
+.nbtn .chk{display:inline-flex;color:var(--green-ink)}
+.nbtn .chk svg{width:13px;height:13px}
+.nbtn[aria-pressed="true"]{border-color:var(--blue-dark);background:var(--blue-light)}
+.nbtn[aria-pressed="true"] .sign{background:var(--blue-dark);color:#fff}
+.ncap{padding:8px 12px;border-radius:var(--radius);background:var(--card);border:1px solid var(--line);border-inline-start:5px solid var(--blue);min-height:3.2em}
+.nright .callout{margin-top:0}
+
+/* ---------- Fin ---------- */
+.final{position:absolute;inset:0;background:rgba(245,247,250,.94);display:flex;align-items:center;justify-content:center;padding:16px;z-index:4;animation:fade .25s ease}
+.final-card{max-width:560px;width:100%;padding:22px;background:var(--green-bg);border:2px solid var(--green);border-radius:var(--radius);box-shadow:0 6px 24px rgba(28,61,110,.15);text-align:center;max-height:100%;overflow:auto}
+.final h2{color:var(--green-ink);display:flex;align-items:center;justify-content:center;gap:10px;font-size:1.45rem}
+.final h2 svg{width:28px;height:28px;flex:none}
+.final h2:focus{outline:none}
+.final p{margin:10px 0 16px}
+.final-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.reset{min-height:46px;padding:8px 20px;border-radius:999px;border:2px solid var(--blue-dark);background:var(--blue-dark);color:#fff;font-weight:700;display:inline-flex;align-items:center;gap:8px}
+.reset:hover{background:var(--blue)}
+.reset svg{width:19px;height:19px}
+.ghost{min-height:46px;padding:8px 18px;border-radius:999px;border:2px solid var(--blue-dark);background:#fff;color:var(--blue-dark);font-weight:700}
+
+/* ---------- Adaptation ---------- */
+@media (max-width:1000px){
+  .relgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .relgrid .vigil{grid-column:1/-1}
+  .relrow{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:820px){
+  .tab .tl{display:none}
+  .tab[aria-selected="true"] .tl{display:block}
+}
+@media (max-width:700px){
+  .s1{grid-template-columns:minmax(0,1fr);height:auto}
+  .ring{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-template-areas:"prog prog" "b1 b2" "b3 b4" "b5 b5"}
+  .dial{display:none}
+  .fiche{overflow:visible}
+  .s3{grid-template-columns:minmax(0,1fr)}
+  .relgrid{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:520px){
+  body{font-size:15px}
+  .bar{flex-wrap:wrap}
+  .tabs{order:2;flex-basis:100%}
+  .lang{order:1;margin-inline-start:auto}
+  .compose{flex-direction:column}
+  .compose .op{width:auto;line-height:1}
+  .zbtn{min-height:56px;flex:none}
+  .nbtns{grid-template-columns:minmax(0,1fr)}
+  .nbtn{flex-direction:row;justify-content:flex-start;text-align:start;min-height:48px}
+  .slide{padding:10px}
+}
+@media (max-height:600px) and (min-width:701px){
+  body{font-size:15px}
+  .pbtn{min-height:48px;padding:6px 8px}
+  .fiche-sym{min-width:48px;height:48px;font-size:1.25rem}
+  .facts>div{padding:4px 10px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+}
+@media (prefers-color-scheme:dark){:root{color-scheme:light}}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1 class="sr-only" id="title"></h1>
+  <div class="bar">
+    <div class="tabs" role="tablist" id="tabs">
+      <button type="button" class="tab" role="tab" id="tab1" data-s="1" aria-controls="s1" aria-selected="true"><span class="n" aria-hidden="true">1</span><span class="tl" id="tl1"></span><span class="ts" id="ts1"></span></button>
+      <button type="button" class="tab" role="tab" id="tab2" data-s="2" aria-controls="s2" aria-selected="false" tabindex="-1"><span class="n" aria-hidden="true">2</span><span class="tl" id="tl2"></span><span class="ts" id="ts2"></span></button>
+      <button type="button" class="tab" role="tab" id="tab3" data-s="3" aria-controls="s3" aria-selected="false" tabindex="-1"><span class="n" aria-hidden="true">3</span><span class="tl" id="tl3"></span><span class="ts" id="ts3"></span></button>
+    </div>
+    <div class="lang">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
+      <select id="langSelect"></select>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <!-- Diapo 1 : les cinq pressions -->
+    <section class="slide" role="tabpanel" id="s1" aria-labelledby="tab1">
+      <div class="s1">
+        <div class="ring" role="group" id="ring" aria-labelledby="tl1">
+          <div class="prog">
+            <span class="prog-text" id="progressText"></span>
+            <div class="pbar" role="progressbar" id="progressBar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"><span id="progressFill"></span></div>
+          </div>
+          <div class="dial" aria-hidden="true">
+            <svg viewBox="0 0 200 200">
+              <circle cx="100" cy="100" r="94" fill="#FFFFFF" stroke="#386FB6" stroke-width="5"/>
+              <circle cx="100" cy="100" r="84" fill="none" stroke="#D5DDE7" stroke-width="1.5"/>
+              <g id="ticks" stroke="#1C3D6E" stroke-linecap="round"></g>
+              <g class="needle" id="needle"><path d="M100 26 L104.5 100 L95.5 100 Z" fill="#1C3D6E"/></g>
+              <circle cx="100" cy="100" r="9" fill="#386FB6" stroke="#1C3D6E" stroke-width="2"/>
+            </svg>
+            <div class="dial-center" id="dialCenter">?</div>
+          </div>
+        </div>
+        <div class="fcol">
+          <section class="card fiche" id="fiche" aria-labelledby="ficheTitle" tabindex="-1"></section>
+          <button type="button" class="cta" id="goRel" hidden><span id="goRelLbl"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diapo 2 : relation fondamentale -->
+    <section class="slide" role="tabpanel" id="s2" aria-labelledby="tab2" hidden>
+      <div class="s2">
+        <h2 class="sr-only" id="relTitle"></h2>
+        <div class="relrow">
+          <p class="formula" id="formula"></p>
+          <div class="compose" role="group" aria-labelledby="relTitle">
+            <button type="button" class="zbtn" data-z="rel" aria-pressed="false"></button>
+            <span class="op" aria-hidden="true">+</span>
+            <button type="button" class="zbtn" data-z="atm" aria-pressed="false"></button>
+            <span class="op" aria-hidden="true">=</span>
+            <button type="button" class="zbtn" data-z="abs" aria-pressed="false"></button>
+          </div>
+        </div>
+        <div class="relgrid">
+          <div class="card zexpl"><div id="zexpl"></div><p class="relprog" id="relProg"></p></div>
+          <section class="card example" aria-labelledby="exTitle">
+            <h3 id="exTitle"></h3>
+            <dl class="exvals">
+              <div data-ex="rel"><dt id="exRel"></dt><dd id="exRelV"></dd></div>
+              <div data-ex="atm"><dt id="exAtm"></dt><dd id="exAtmV"></dd></div>
+              <div data-ex="abs"><dt id="exAbs"></dt><dd id="exAbsV"></dd></div>
+            </dl>
+            <p class="calc" id="calc"></p>
+            <p class="note" id="exNote"></p>
+          </section>
+          <aside class="callout vigil" aria-labelledby="vigilTitle">
+            <h3 class="callout-title" id="vigilTitle"></h3>
+            <p id="vigilText"></p>
+          </aside>
+        </div>
+        <div class="s-foot">
+          <button type="button" class="cta" id="goNeg" hidden><span id="goNegLbl"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diapo 3 : pression relative négative -->
+    <section class="slide" role="tabpanel" id="s3" aria-labelledby="tab3" hidden>
+      <div class="s3">
+        <div class="scale" id="scale">
+          <div class="marker" id="marker" hidden aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 12h11M13 7l5 5-5 5"/></svg></div>
+          <div class="z zpos" id="sPos"></div>
+          <div class="latm" id="sAtm"></div>
+          <div class="z zneg" id="sNeg"></div>
+          <div class="vac" id="sVac"></div>
+          <p class="floor" id="sBelow"></p>
+        </div>
+        <div class="nright">
+          <h2 class="sr-only" id="negTitle"></h2>
+          <div class="nbtns" role="group" aria-labelledby="negTitle">
+            <button type="button" class="nbtn" data-n="pos" aria-pressed="false"><span class="sign" aria-hidden="true">+</span><span class="nl"></span><span class="chk"></span></button>
+            <button type="button" class="nbtn" data-n="zero" aria-pressed="false"><span class="sign" aria-hidden="true">0</span><span class="nl"></span><span class="chk"></span></button>
+            <button type="button" class="nbtn" data-n="neg" aria-pressed="false"><span class="sign" aria-hidden="true">&minus;</span><span class="nl"></span><span class="chk"></span></button>
+          </div>
+          <div class="ncap" id="ncap"></div>
+          <div class="callout remember">
+            <p class="callout-title" id="negMsgTitle"></p>
+            <p id="negMsg"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fin -->
+    <div class="final" id="final" hidden>
+      <section class="final-card" role="dialog" aria-modal="false" aria-labelledby="endTitle">
+        <h2 id="endTitle" tabindex="-1"></h2>
+        <p id="endText"></p>
+        <div class="final-actions">
+          <button type="button" class="reset" id="resetBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg>
+            <span id="resetLbl"></span>
+          </button>
+          <button type="button" class="ghost" id="closeBtn"></button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+<div class="hint" id="hint" hidden></div>
+<div class="sr-only" role="status" aria-live="polite" aria-atomic="true" id="live"></div>
+
+<script>
+(function(){
+"use strict";
+var I18N = {
+fr:{
+  tab1:"Types de pression",goRel:"Découvrir la relation fondamentale",goNeg:"Découvrir la pression relative négative",close:"Fermer",stepsLabel:"Étapes de l’activité",lockedTab:"Disponible après la consultation des cinq types de pression.",
+  langName:"Français",langLabel:"Langue",
+  module:"F03 | Les bases de l’hydraulique",
+  title:"Comprendre les différents types de pression",
+  progress:function(n){return n===1?"1/5 pression explorée":n+"/5 pressions explorées";},
+  groupTitle:"Les cinq types de pression",
+  statusDone:"Consultée",statusTodo:"À découvrir",selected:"Sélectionnée",
+  placeholderTitle:"Aucune pression sélectionnée",
+  placeholderText:"Choisissez un type de pression pour afficher sa fiche.",
+  lblSymbol:"Symbole",lblReference:"Référence",lblDefinition:"Définition",lblUsage:"Usage principal en CVC",
+  remember:"À retenir",practice:"En pratique",vigilance:"Point de vigilance",
+  p:{
+    abs:{name:"Pression absolue",ref:"Vide parfait, correspondant au zéro absolu de pression.",usage:"Calculs thermodynamiques et analyse des risques de cavitation.",msg:"La pression absolue est toujours définie par rapport au vide parfait. Elle ne peut pas être négative."},
+    rel:{name:"Pression relative",ref:"Pression atmosphérique locale, environ 1,013 bar.",usage:"Mesure par manomètre sur un réseau et affichage usuel de la pression d’une installation.",msg:"Un manomètre classique affiche généralement une pression relative par rapport à l’atmosphère."},
+    atm:{name:"Pression atmosphérique",ref:"Pression de l’air ambiant.",usage:"Conversion entre la pression absolue et la pression relative.",msg:"La pression atmosphérique sert de référence au calcul de la pression relative. Sa valeur est couramment proche de 1,013 bar."},
+    diff:{name:"Pression différentielle",ref:"Différence de pression entre deux points.",usage:"Contrôle de l’encrassement des filtres, mesure des pertes de charge et fonctionnement des pompes.",msg:"Une pression différentielle ne représente pas la pression en un seul point. Elle compare les pressions mesurées en deux points."},
+    stat:{name:"Pression statique",def:"Pression locale du fluide, indépendamment de l’effet lié à sa vitesse.",usage:"Pressurisation du réseau et maintien de conditions de fonctionnement adaptées.",msg:"La pression statique permet notamment d’analyser l’état de pressurisation d’un réseau."}
+  },
+  announceSelect:function(n){return "Fiche affichée : "+n+".";},
+  lockedText:"La relation fondamentale sera disponible après la consultation des cinq types de pression.",
+  announceUnlock:"Toutes les pressions ont été explorées. La partie « La relation fondamentale » est maintenant disponible.",
+  relTitle:"La relation fondamentale",
+  relIntro:"Sélectionnez chaque terme de la relation pour le mettre en évidence dans la formule et dans l’exemple.",
+  relProgress:function(n){return "Termes de la relation consultés : "+n+"/3";},
+  relPlaceholder:"Sélectionnez un terme pour afficher son explication.",
+  zone:{
+    rel:"La pression relative est mesurée par rapport à la pression atmosphérique locale. C’est la valeur généralement affichée par un manomètre classique.",
+    atm:"La pression atmosphérique est la pression de l’air ambiant. Elle sert de référence pour passer de la pression relative à la pression absolue.",
+    abs:"La pression absolue est mesurée par rapport au vide parfait. Elle s’obtient en ajoutant la pression atmosphérique à la pression relative."
+  },
+  exTitle:"Exemple chiffré",exRel:"Pression relative mesurée",exAtm:"Pression atmosphérique prise pour l’exemple",exAbs:"Pression absolue obtenue",
+  exNote:"Cet exemple utilise une pression atmosphérique de 1,013 bar.",dec:",",
+  vigilText:"Un manomètre classique affiche généralement une pression relative par rapport à l’atmosphère. Vérifiez toujours la référence indiquée : bar absolu ou bar relatif. Une confusion entre ces deux références peut entraîner une mauvaise interprétation de la mesure.",
+  negTitle:"Pression relative négative",
+  negIntro:"Sélectionnez une situation pour la situer par rapport à la pression atmosphérique.",
+  negBtn:{pos:"Pression relative positive",zero:"Pression relative nulle",neg:"Pression relative négative"},
+  negCap:{pos:"La pression mesurée est supérieure à la pression atmosphérique ({rel} > 0).",zero:"La pression mesurée est égale à la pression atmosphérique ({rel} = 0).",neg:"La pression mesurée est inférieure à la pression atmosphérique ({rel} < 0). La pression absolue reste au-dessus du vide parfait."},
+  negCapEmpty:"Sélectionnez une situation pour afficher son explication.",
+  negMsg:"Une pression relative négative signifie que la pression mesurée est inférieure à la pression atmosphérique. Cette situation peut notamment apparaître à l’aspiration d’une pompe. Elle ne correspond jamais à une pression absolue négative.",
+  scale:{pos:"Pression relative positive ({rel} > 0)",atm:"Pression atmosphérique : niveau de référence ({rel} = 0)",neg:"Pression relative négative ({rel} < 0)",vac:"Vide parfait : limite de la pression absolue ({abs} = 0)",below:"Aucune valeur en dessous : la pression absolue ne peut pas être négative."},
+  endTitle:"Exploration terminée",
+  endText:"Vous avez découvert les principales références de pression utilisées en CVC. Retenez surtout qu’un manomètre classique affiche généralement une pression relative.",
+  reset:"Revoir l’infographie",resetDone:"Infographie réinitialisée."
+},
+en:{
+  tab1:"Types of pressure",goRel:"Discover the fundamental relationship",goNeg:"Discover negative relative pressure",close:"Close",stepsLabel:"Activity steps",lockedTab:"Available once you have viewed all five types of pressure.",
+  langName:"English",langLabel:"Language",
+  module:"F03 | Hydraulics fundamentals",
+  title:"Understanding the different types of pressure",
+  progress:function(n){return n===1?"1/5 pressure type explored":n+"/5 pressure types explored";},
+  groupTitle:"The five types of pressure",
+  statusDone:"Viewed",statusTodo:"To discover",selected:"Selected",
+  placeholderTitle:"No pressure selected",
+  placeholderText:"Choose a type of pressure to display its information sheet.",
+  lblSymbol:"Symbol",lblReference:"Reference",lblDefinition:"Definition",lblUsage:"Main use in HVAC",
+  remember:"Key point",practice:"In practice",vigilance:"Caution",
+  p:{
+    abs:{name:"Absolute pressure",ref:"Perfect vacuum, corresponding to absolute zero pressure.",usage:"Thermodynamic calculations and analysis of cavitation risks.",msg:"Absolute pressure is always defined with respect to a perfect vacuum. It cannot be negative."},
+    rel:{name:"Relative (gauge) pressure",ref:"Local atmospheric pressure, approximately 1.013 bar.",usage:"Measurement with a pressure gauge on a network and the usual display of an installation’s pressure.",msg:"A standard pressure gauge generally displays a relative pressure, referenced to the atmosphere."},
+    atm:{name:"Atmospheric pressure",ref:"Pressure of the ambient air.",usage:"Conversion between absolute pressure and relative pressure.",msg:"Atmospheric pressure is the reference used to calculate relative pressure. Its value is commonly close to 1.013 bar."},
+    diff:{name:"Differential pressure",ref:"Difference in pressure between two points.",usage:"Monitoring filter clogging, measuring pressure losses and pump operation.",msg:"A differential pressure does not represent the pressure at a single point. It compares the pressures measured at two points."},
+    stat:{name:"Static pressure",def:"Local pressure of the fluid, independent of the effect related to its velocity.",usage:"Network pressurisation and maintaining suitable operating conditions.",msg:"Static pressure is used, in particular, to analyse the pressurisation status of a network."}
+  },
+  announceSelect:function(n){return "Information sheet displayed: "+n+".";},
+  lockedText:"The fundamental relationship will become available once you have viewed all five types of pressure.",
+  announceUnlock:"You have explored all the pressures. The section “The fundamental relationship” is now available.",
+  relTitle:"The fundamental relationship",
+  relIntro:"Select each term of the relationship to highlight it in the formula and in the example.",
+  relProgress:function(n){return "Terms of the relationship viewed: "+n+"/3";},
+  relPlaceholder:"Select a term to display its explanation.",
+  zone:{
+    rel:"Relative pressure is measured with respect to local atmospheric pressure. It is the value generally displayed by a standard pressure gauge.",
+    atm:"Atmospheric pressure is the pressure of the ambient air. It is the reference used to move from relative pressure to absolute pressure.",
+    abs:"Absolute pressure is measured with respect to a perfect vacuum. It is obtained by adding atmospheric pressure to relative pressure."
+  },
+  exTitle:"Worked example",exRel:"Measured relative pressure",exAtm:"Atmospheric pressure used for the example",exAbs:"Resulting absolute pressure",
+  exNote:"This example uses an atmospheric pressure of 1.013 bar.",dec:".",
+  vigilText:"A standard pressure gauge generally displays a relative pressure, referenced to the atmosphere. Always check the reference indicated: bar absolute or bar relative (gauge). Confusing these two references can lead to a misinterpretation of the measurement.",
+  negTitle:"Negative relative pressure",
+  negIntro:"Select a situation to position it with respect to atmospheric pressure.",
+  negBtn:{pos:"Positive relative pressure",zero:"Zero relative pressure",neg:"Negative relative pressure"},
+  negCap:{pos:"The measured pressure is higher than atmospheric pressure ({rel} > 0).",zero:"The measured pressure is equal to atmospheric pressure ({rel} = 0).",neg:"The measured pressure is lower than atmospheric pressure ({rel} < 0). Absolute pressure remains above a perfect vacuum."},
+  negCapEmpty:"Select a situation to display its explanation.",
+  negMsg:"A negative relative pressure means that the measured pressure is lower than atmospheric pressure. This situation can occur, in particular, on the suction side of a pump. It never corresponds to a negative absolute pressure.",
+  scale:{pos:"Positive relative pressure ({rel} > 0)",atm:"Atmospheric pressure: reference level ({rel} = 0)",neg:"Negative relative pressure ({rel} < 0)",vac:"Perfect vacuum: limit of absolute pressure ({abs} = 0)",below:"No values below: absolute pressure cannot be negative."},
+  endTitle:"Exploration complete",
+  endText:"You have discovered the main pressure references used in HVAC. Above all, remember that a standard pressure gauge generally displays a relative pressure.",
+  reset:"Review the infographic",resetDone:"Infographic reset."
+},
+es:{
+  tab1:"Tipos de presión",goRel:"Descubrir la relación fundamental",goNeg:"Descubrir la presión relativa negativa",close:"Cerrar",stepsLabel:"Etapas de la actividad",lockedTab:"Disponible después de consultar los cinco tipos de presión.",
+  langName:"Español",langLabel:"Idioma",
+  module:"F03 | Fundamentos de hidráulica",
+  title:"Comprender los distintos tipos de presión",
+  progress:function(n){return n===1?"1/5 presión explorada":n+"/5 presiones exploradas";},
+  groupTitle:"Los cinco tipos de presión",
+  statusDone:"Consultada",statusTodo:"Por descubrir",selected:"Seleccionada",
+  placeholderTitle:"Ninguna presión seleccionada",
+  placeholderText:"Elija un tipo de presión para ver su ficha.",
+  lblSymbol:"Símbolo",lblReference:"Referencia",lblDefinition:"Definición",lblUsage:"Uso principal en climatización",
+  remember:"Para recordar",practice:"En la práctica",vigilance:"Punto de atención",
+  p:{
+    abs:{name:"Presión absoluta",ref:"Vacío perfecto, que corresponde al cero absoluto de presión.",usage:"Cálculos termodinámicos y análisis de los riesgos de cavitación.",msg:"La presión absoluta se define siempre con respecto al vacío perfecto. No puede ser negativa."},
+    rel:{name:"Presión relativa",ref:"Presión atmosférica local, aproximadamente 1,013 bar.",usage:"Medición con manómetro en una red e indicación habitual de la presión de una instalación.",msg:"Un manómetro convencional suele indicar una presión relativa con respecto a la atmósfera."},
+    atm:{name:"Presión atmosférica",ref:"Presión del aire ambiente.",usage:"Conversión entre la presión absoluta y la presión relativa.",msg:"La presión atmosférica sirve de referencia para calcular la presión relativa. Su valor suele ser cercano a 1,013 bar."},
+    diff:{name:"Presión diferencial",ref:"Diferencia de presión entre dos puntos.",usage:"Control de la colmatación de los filtros, medición de las pérdidas de carga y funcionamiento de las bombas.",msg:"Una presión diferencial no representa la presión en un solo punto. Compara las presiones medidas en dos puntos."},
+    stat:{name:"Presión estática",def:"Presión local del fluido, independientemente del efecto debido a su velocidad.",usage:"Presurización de la red y mantenimiento de unas condiciones de funcionamiento adecuadas.",msg:"La presión estática permite, en particular, analizar el estado de presurización de una red."}
+  },
+  announceSelect:function(n){return "Ficha mostrada: "+n+".";},
+  lockedText:"La relación fundamental estará disponible después de consultar los cinco tipos de presión.",
+  announceUnlock:"Ha explorado todas las presiones. La parte «La relación fundamental» ya está disponible.",
+  relTitle:"La relación fundamental",
+  relIntro:"Seleccione cada término de la relación para resaltarlo en la fórmula y en el ejemplo.",
+  relProgress:function(n){return "Términos de la relación consultados: "+n+"/3";},
+  relPlaceholder:"Seleccione un término para ver su explicación.",
+  zone:{
+    rel:"La presión relativa se mide con respecto a la presión atmosférica local. Es el valor que suele indicar un manómetro convencional.",
+    atm:"La presión atmosférica es la presión del aire ambiente. Sirve de referencia para pasar de la presión relativa a la presión absoluta.",
+    abs:"La presión absoluta se mide con respecto al vacío perfecto. Se obtiene sumando la presión atmosférica a la presión relativa."
+  },
+  exTitle:"Ejemplo numérico",exRel:"Presión relativa medida",exAtm:"Presión atmosférica considerada en el ejemplo",exAbs:"Presión absoluta obtenida",
+  exNote:"Este ejemplo utiliza una presión atmosférica de 1,013 bar.",dec:",",
+  vigilText:"Un manómetro convencional suele indicar una presión relativa con respecto a la atmósfera. Compruebe siempre la referencia indicada: bar absoluto o bar relativo. Confundir estas dos referencias puede llevar a una interpretación errónea de la medida.",
+  negTitle:"Presión relativa negativa",
+  negIntro:"Seleccione una situación para situarla con respecto a la presión atmosférica.",
+  negBtn:{pos:"Presión relativa positiva",zero:"Presión relativa nula",neg:"Presión relativa negativa"},
+  negCap:{pos:"La presión medida es superior a la presión atmosférica ({rel} > 0).",zero:"La presión medida es igual a la presión atmosférica ({rel} = 0).",neg:"La presión medida es inferior a la presión atmosférica ({rel} < 0). La presión absoluta sigue estando por encima del vacío perfecto."},
+  negCapEmpty:"Seleccione una situación para ver su explicación.",
+  negMsg:"Una presión relativa negativa significa que la presión medida es inferior a la presión atmosférica. Esta situación puede darse, en particular, en la aspiración de una bomba. Nunca corresponde a una presión absoluta negativa.",
+  scale:{pos:"Presión relativa positiva ({rel} > 0)",atm:"Presión atmosférica: nivel de referencia ({rel} = 0)",neg:"Presión relativa negativa ({rel} < 0)",vac:"Vacío perfecto: límite de la presión absoluta ({abs} = 0)",below:"Ningún valor por debajo: la presión absoluta no puede ser negativa."},
+  endTitle:"Exploración completada",
+  endText:"Ha descubierto las principales referencias de presión utilizadas en climatización. Recuerde sobre todo que un manómetro convencional suele indicar una presión relativa.",
+  reset:"Volver a ver la infografía",resetDone:"Infografía reiniciada."
+},
+it:{
+  tab1:"Tipi di pressione",goRel:"Scopri la relazione fondamentale",goNeg:"Scopri la pressione relativa negativa",close:"Chiudi",stepsLabel:"Fasi dell’attività",lockedTab:"Disponibile dopo aver consultato i cinque tipi di pressione.",
+  langName:"Italiano",langLabel:"Lingua",
+  module:"F03 | Fondamenti di idraulica",
+  title:"Comprendere i diversi tipi di pressione",
+  progress:function(n){return n===1?"1/5 pressione esplorata":n+"/5 pressioni esplorate";},
+  groupTitle:"I cinque tipi di pressione",
+  statusDone:"Consultata",statusTodo:"Da scoprire",selected:"Selezionata",
+  placeholderTitle:"Nessuna pressione selezionata",
+  placeholderText:"Scegli un tipo di pressione per visualizzarne la scheda.",
+  lblSymbol:"Simbolo",lblReference:"Riferimento",lblDefinition:"Definizione",lblUsage:"Utilizzo principale nel settore HVAC",
+  remember:"Da ricordare",practice:"In pratica",vigilance:"Punto di attenzione",
+  p:{
+    abs:{name:"Pressione assoluta",ref:"Vuoto perfetto, corrispondente allo zero assoluto di pressione.",usage:"Calcoli termodinamici e analisi dei rischi di cavitazione.",msg:"La pressione assoluta è sempre definita rispetto al vuoto perfetto. Non può essere negativa."},
+    rel:{name:"Pressione relativa",ref:"Pressione atmosferica locale, circa 1,013 bar.",usage:"Misura con manometro su una rete e indicazione abituale della pressione di un impianto.",msg:"Un manometro tradizionale indica generalmente una pressione relativa rispetto all’atmosfera."},
+    atm:{name:"Pressione atmosferica",ref:"Pressione dell’aria ambiente.",usage:"Conversione tra pressione assoluta e pressione relativa.",msg:"La pressione atmosferica è il riferimento per il calcolo della pressione relativa. Il suo valore è comunemente vicino a 1,013 bar."},
+    diff:{name:"Pressione differenziale",ref:"Differenza di pressione tra due punti.",usage:"Controllo dell’intasamento dei filtri, misura delle perdite di carico e funzionamento delle pompe.",msg:"Una pressione differenziale non rappresenta la pressione in un solo punto. Confronta le pressioni misurate in due punti."},
+    stat:{name:"Pressione statica",def:"Pressione locale del fluido, indipendentemente dall’effetto legato alla sua velocità.",usage:"Pressurizzazione della rete e mantenimento di condizioni di funzionamento adeguate.",msg:"La pressione statica consente in particolare di analizzare lo stato di pressurizzazione di una rete."}
+  },
+  announceSelect:function(n){return "Scheda visualizzata: "+n+".";},
+  lockedText:"La relazione fondamentale sarà disponibile dopo aver consultato i cinque tipi di pressione.",
+  announceUnlock:"Hai esplorato tutte le pressioni. La sezione «La relazione fondamentale» è ora disponibile.",
+  relTitle:"La relazione fondamentale",
+  relIntro:"Seleziona ogni termine della relazione per evidenziarlo nella formula e nell’esempio.",
+  relProgress:function(n){return "Termini della relazione consultati: "+n+"/3";},
+  relPlaceholder:"Seleziona un termine per visualizzarne la spiegazione.",
+  zone:{
+    rel:"La pressione relativa è misurata rispetto alla pressione atmosferica locale. È il valore generalmente indicato da un manometro tradizionale.",
+    atm:"La pressione atmosferica è la pressione dell’aria ambiente. Serve da riferimento per passare dalla pressione relativa alla pressione assoluta.",
+    abs:"La pressione assoluta è misurata rispetto al vuoto perfetto. Si ottiene sommando la pressione atmosferica alla pressione relativa."
+  },
+  exTitle:"Esempio numerico",exRel:"Pressione relativa misurata",exAtm:"Pressione atmosferica considerata nell’esempio",exAbs:"Pressione assoluta ottenuta",
+  exNote:"Questo esempio utilizza una pressione atmosferica di 1,013 bar.",dec:",",
+  vigilText:"Un manometro tradizionale indica generalmente una pressione relativa rispetto all’atmosfera. Verifica sempre il riferimento indicato: bar assoluto o bar relativo. Confondere questi due riferimenti può portare a un’errata interpretazione della misura.",
+  negTitle:"Pressione relativa negativa",
+  negIntro:"Seleziona una situazione per collocarla rispetto alla pressione atmosferica.",
+  negBtn:{pos:"Pressione relativa positiva",zero:"Pressione relativa nulla",neg:"Pressione relativa negativa"},
+  negCap:{pos:"La pressione misurata è superiore alla pressione atmosferica ({rel} > 0).",zero:"La pressione misurata è uguale alla pressione atmosferica ({rel} = 0).",neg:"La pressione misurata è inferiore alla pressione atmosferica ({rel} < 0). La pressione assoluta resta al di sopra del vuoto perfetto."},
+  negCapEmpty:"Seleziona una situazione per visualizzarne la spiegazione.",
+  negMsg:"Una pressione relativa negativa significa che la pressione misurata è inferiore alla pressione atmosferica. Questa situazione può verificarsi in particolare all’aspirazione di una pompa. Non corrisponde mai a una pressione assoluta negativa.",
+  scale:{pos:"Pressione relativa positiva ({rel} > 0)",atm:"Pressione atmosferica: livello di riferimento ({rel} = 0)",neg:"Pressione relativa negativa ({rel} < 0)",vac:"Vuoto perfetto: limite della pressione assoluta ({abs} = 0)",below:"Nessun valore al di sotto: la pressione assoluta non può essere negativa."},
+  endTitle:"Esplorazione completata",
+  endText:"Hai scoperto i principali riferimenti di pressione utilizzati nel settore HVAC. Ricorda soprattutto che un manometro tradizionale indica generalmente una pressione relativa.",
+  reset:"Rivedi l’infografica",resetDone:"Infografica reimpostata."
+},
+ro:{
+  tab1:"Tipuri de presiune",goRel:"Descoperiți relația fundamentală",goNeg:"Descoperiți presiunea relativă negativă",close:"Închideți",stepsLabel:"Etapele activității",lockedTab:"Disponibil după consultarea celor cinci tipuri de presiune.",
+  langName:"Română",langLabel:"Limbă",
+  module:"F03 | Bazele hidraulicii",
+  title:"Înțelegerea diferitelor tipuri de presiune",
+  progress:function(n){return n===1?"1/5 presiune explorată":n+"/5 presiuni explorate";},
+  groupTitle:"Cele cinci tipuri de presiune",
+  statusDone:"Consultată",statusTodo:"De descoperit",selected:"Selectată",
+  placeholderTitle:"Nicio presiune selectată",
+  placeholderText:"Alegeți un tip de presiune pentru a afișa fișa acestuia.",
+  lblSymbol:"Simbol",lblReference:"Referință",lblDefinition:"Definiție",lblUsage:"Utilizare principală în HVAC",
+  remember:"De reținut",practice:"În practică",vigilance:"Punct de atenție",
+  p:{
+    abs:{name:"Presiune absolută",ref:"Vid perfect, corespunzător zeroului absolut de presiune.",usage:"Calcule termodinamice și analiza riscurilor de cavitație.",msg:"Presiunea absolută este întotdeauna definită în raport cu vidul perfect. Nu poate fi negativă."},
+    rel:{name:"Presiune relativă",ref:"Presiunea atmosferică locală, aproximativ 1,013 bar.",usage:"Măsurarea cu manometrul pe o rețea și afișarea uzuală a presiunii unei instalații.",msg:"Un manometru clasic afișează, în general, o presiune relativă în raport cu atmosfera."},
+    atm:{name:"Presiune atmosferică",ref:"Presiunea aerului ambiant.",usage:"Conversia între presiunea absolută și presiunea relativă.",msg:"Presiunea atmosferică servește drept referință pentru calculul presiunii relative. Valoarea sa este, de obicei, apropiată de 1,013 bar."},
+    diff:{name:"Presiune diferențială",ref:"Diferența de presiune dintre două puncte.",usage:"Controlul colmatării filtrelor, măsurarea pierderilor de sarcină și funcționarea pompelor.",msg:"O presiune diferențială nu reprezintă presiunea într-un singur punct. Ea compară presiunile măsurate în două puncte."},
+    stat:{name:"Presiune statică",def:"Presiunea locală a fluidului, independent de efectul legat de viteza acestuia.",usage:"Presurizarea rețelei și menținerea unor condiții de funcționare adecvate.",msg:"Presiunea statică permite, în special, analiza stării de presurizare a unei rețele."}
+  },
+  announceSelect:function(n){return "Fișă afișată: "+n+".";},
+  lockedText:"Relația fundamentală va fi disponibilă după consultarea celor cinci tipuri de presiune.",
+  announceUnlock:"Ați explorat toate presiunile. Secțiunea „Relația fundamentală” este acum disponibilă.",
+  relTitle:"Relația fundamentală",
+  relIntro:"Selectați fiecare termen al relației pentru a-l evidenția în formulă și în exemplu.",
+  relProgress:function(n){return "Termeni ai relației consultați: "+n+"/3";},
+  relPlaceholder:"Selectați un termen pentru a afișa explicația.",
+  zone:{
+    rel:"Presiunea relativă se măsoară în raport cu presiunea atmosferică locală. Este valoarea afișată, în general, de un manometru clasic.",
+    atm:"Presiunea atmosferică este presiunea aerului ambiant. Ea servește drept referință pentru trecerea de la presiunea relativă la presiunea absolută.",
+    abs:"Presiunea absolută se măsoară în raport cu vidul perfect. Se obține adunând presiunea atmosferică la presiunea relativă."
+  },
+  exTitle:"Exemplu numeric",exRel:"Presiunea relativă măsurată",exAtm:"Presiunea atmosferică luată în calcul pentru exemplu",exAbs:"Presiunea absolută obținută",
+  exNote:"Acest exemplu utilizează o presiune atmosferică de 1,013 bar.",dec:",",
+  vigilText:"Un manometru clasic afișează, în general, o presiune relativă în raport cu atmosfera. Verificați întotdeauna referința indicată: bar absolut sau bar relativ. O confuzie între aceste două referințe poate duce la o interpretare greșită a măsurătorii.",
+  negTitle:"Presiune relativă negativă",
+  negIntro:"Selectați o situație pentru a o poziționa în raport cu presiunea atmosferică.",
+  negBtn:{pos:"Presiune relativă pozitivă",zero:"Presiune relativă nulă",neg:"Presiune relativă negativă"},
+  negCap:{pos:"Presiunea măsurată este mai mare decât presiunea atmosferică ({rel} > 0).",zero:"Presiunea măsurată este egală cu presiunea atmosferică ({rel} = 0).",neg:"Presiunea măsurată este mai mică decât presiunea atmosferică ({rel} < 0). Presiunea absolută rămâne deasupra vidului perfect."},
+  negCapEmpty:"Selectați o situație pentru a afișa explicația.",
+  negMsg:"O presiune relativă negativă înseamnă că presiunea măsurată este mai mică decât presiunea atmosferică. Această situație poate apărea, în special, la aspirația unei pompe. Ea nu corespunde niciodată unei presiuni absolute negative.",
+  scale:{pos:"Presiune relativă pozitivă ({rel} > 0)",atm:"Presiune atmosferică: nivel de referință ({rel} = 0)",neg:"Presiune relativă negativă ({rel} < 0)",vac:"Vid perfect: limita presiunii absolute ({abs} = 0)",below:"Nicio valoare sub acest nivel: presiunea absolută nu poate fi negativă."},
+  endTitle:"Explorare finalizată",
+  endText:"Ați descoperit principalele referințe de presiune utilizate în domeniul HVAC. Rețineți, mai ales, că un manometru clasic afișează, în general, o presiune relativă.",
+  reset:"Revedeți infografia",resetDone:"Infografia a fost reinițializată."
+},
+pl:{
+  tab1:"Rodzaje ciśnienia",goRel:"Poznaj zależność podstawową",goNeg:"Poznaj ujemne ciśnienie względne",close:"Zamknij",stepsLabel:"Etapy ćwiczenia",lockedTab:"Dostępne po zapoznaniu się z pięcioma rodzajami ciśnienia.",
+  langName:"Polski",langLabel:"Język",
+  module:"F03 | Podstawy hydrauliki",
+  title:"Zrozumienie różnych rodzajów ciśnienia",
+  progress:function(n){return "Poznane rodzaje ciśnienia: "+n+"/5";},
+  groupTitle:"Pięć rodzajów ciśnienia",
+  statusDone:"Przejrzane",statusTodo:"Do poznania",selected:"Wybrane",
+  placeholderTitle:"Nie wybrano rodzaju ciśnienia",
+  placeholderText:"Wybierz rodzaj ciśnienia, aby wyświetlić jego kartę.",
+  lblSymbol:"Symbol",lblReference:"Punkt odniesienia",lblDefinition:"Definicja",lblUsage:"Główne zastosowanie w HVAC",
+  remember:"Do zapamiętania",practice:"W praktyce",vigilance:"Uwaga",
+  p:{
+    abs:{name:"Ciśnienie bezwzględne",ref:"Próżnia doskonała, odpowiadająca bezwzględnemu zeru ciśnienia.",usage:"Obliczenia termodynamiczne i analiza ryzyka kawitacji.",msg:"Ciśnienie bezwzględne jest zawsze określane względem próżni doskonałej. Nie może być ujemne."},
+    rel:{name:"Ciśnienie względne",ref:"Lokalne ciśnienie atmosferyczne, około 1,013 bar.",usage:"Pomiar manometrem w sieci i typowe wskazanie ciśnienia w instalacji.",msg:"Klasyczny manometr wskazuje zazwyczaj ciśnienie względne, odniesione do ciśnienia atmosferycznego."},
+    atm:{name:"Ciśnienie atmosferyczne",ref:"Ciśnienie otaczającego powietrza.",usage:"Przeliczanie między ciśnieniem bezwzględnym a ciśnieniem względnym.",msg:"Ciśnienie atmosferyczne stanowi punkt odniesienia do obliczania ciśnienia względnego. Jego wartość jest zwykle zbliżona do 1,013 bar."},
+    diff:{name:"Ciśnienie różnicowe",ref:"Różnica ciśnień między dwoma punktami.",usage:"Kontrola zanieczyszczenia filtrów, pomiar strat ciśnienia i praca pomp.",msg:"Ciśnienie różnicowe nie przedstawia ciśnienia w jednym punkcie. Porównuje ciśnienia zmierzone w dwóch punktach."},
+    stat:{name:"Ciśnienie statyczne",def:"Lokalne ciśnienie płynu, niezależne od efektu związanego z jego prędkością.",usage:"Utrzymywanie ciśnienia w sieci oraz odpowiednich warunków pracy.",msg:"Ciśnienie statyczne pozwala w szczególności przeanalizować stan ciśnienia w sieci."}
+  },
+  announceSelect:function(n){return "Wyświetlono kartę: "+n+".";},
+  lockedText:"Zależność podstawowa będzie dostępna po zapoznaniu się z pięcioma rodzajami ciśnienia.",
+  announceUnlock:"Poznano wszystkie rodzaje ciśnienia. Część „Zależność podstawowa” jest teraz dostępna.",
+  relTitle:"Zależność podstawowa",
+  relIntro:"Wybierz każdy człon zależności, aby wyróżnić go we wzorze i w przykładzie.",
+  relProgress:function(n){return "Przejrzane człony zależności: "+n+"/3";},
+  relPlaceholder:"Wybierz człon, aby wyświetlić wyjaśnienie.",
+  zone:{
+    rel:"Ciśnienie względne mierzy się względem lokalnego ciśnienia atmosferycznego. Tę wartość wskazuje zazwyczaj klasyczny manometr.",
+    atm:"Ciśnienie atmosferyczne to ciśnienie otaczającego powietrza. Stanowi punkt odniesienia przy przechodzeniu od ciśnienia względnego do ciśnienia bezwzględnego.",
+    abs:"Ciśnienie bezwzględne mierzy się względem próżni doskonałej. Otrzymuje się je, dodając ciśnienie atmosferyczne do ciśnienia względnego."
+  },
+  exTitle:"Przykład liczbowy",exRel:"Zmierzone ciśnienie względne",exAtm:"Ciśnienie atmosferyczne przyjęte w przykładzie",exAbs:"Otrzymane ciśnienie bezwzględne",
+  exNote:"W tym przykładzie przyjęto ciśnienie atmosferyczne 1,013 bar.",dec:",",
+  vigilText:"Klasyczny manometr wskazuje zazwyczaj ciśnienie względne, odniesione do ciśnienia atmosferycznego. Zawsze sprawdzaj podany punkt odniesienia: bar bezwzględny czy bar względny. Pomylenie tych dwóch punktów odniesienia może prowadzić do błędnej interpretacji pomiaru.",
+  negTitle:"Ujemne ciśnienie względne",
+  negIntro:"Wybierz sytuację, aby umiejscowić ją względem ciśnienia atmosferycznego.",
+  negBtn:{pos:"Dodatnie ciśnienie względne",zero:"Zerowe ciśnienie względne",neg:"Ujemne ciśnienie względne"},
+  negCap:{pos:"Zmierzone ciśnienie jest wyższe od ciśnienia atmosferycznego ({rel} > 0).",zero:"Zmierzone ciśnienie jest równe ciśnieniu atmosferycznemu ({rel} = 0).",neg:"Zmierzone ciśnienie jest niższe od ciśnienia atmosferycznego ({rel} < 0). Ciśnienie bezwzględne pozostaje powyżej próżni doskonałej."},
+  negCapEmpty:"Wybierz sytuację, aby wyświetlić wyjaśnienie.",
+  negMsg:"Ujemne ciśnienie względne oznacza, że zmierzone ciśnienie jest niższe od ciśnienia atmosferycznego. Taka sytuacja może wystąpić zwłaszcza po stronie ssawnej pompy. Nigdy nie oznacza ono ujemnego ciśnienia bezwzględnego.",
+  scale:{pos:"Dodatnie ciśnienie względne ({rel} > 0)",atm:"Ciśnienie atmosferyczne: poziom odniesienia ({rel} = 0)",neg:"Ujemne ciśnienie względne ({rel} < 0)",vac:"Próżnia doskonała: granica ciśnienia bezwzględnego ({abs} = 0)",below:"Brak wartości poniżej: ciśnienie bezwzględne nie może być ujemne."},
+  endTitle:"Eksploracja zakończona",
+  endText:"Znasz już główne punkty odniesienia ciśnienia stosowane w instalacjach HVAC. Zapamiętaj przede wszystkim, że klasyczny manometr wskazuje zazwyczaj ciśnienie względne.",
+  reset:"Obejrzyj infografikę ponownie",resetDone:"Infografika została zresetowana."
+},
+nl:{
+  tab1:"Soorten druk",goRel:"Ontdek de basisrelatie",goNeg:"Ontdek negatieve relatieve druk",close:"Sluiten",stepsLabel:"Stappen van de activiteit",lockedTab:"Beschikbaar nadat je de vijf soorten druk hebt bekeken.",
+  langName:"Nederlands",langLabel:"Taal",
+  module:"F03 | De basis van hydraulica",
+  title:"De verschillende soorten druk begrijpen",
+  progress:function(n){return n===1?"1/5 soort druk verkend":n+"/5 soorten druk verkend";},
+  groupTitle:"De vijf soorten druk",
+  statusDone:"Bekeken",statusTodo:"Nog te ontdekken",selected:"Geselecteerd",
+  placeholderTitle:"Geen druk geselecteerd",
+  placeholderText:"Kies een soort druk om de bijbehorende infokaart te tonen.",
+  lblSymbol:"Symbool",lblReference:"Referentie",lblDefinition:"Definitie",lblUsage:"Belangrijkste toepassing in de klimaattechniek",
+  remember:"Om te onthouden",practice:"In de praktijk",vigilance:"Aandachtspunt",
+  p:{
+    abs:{name:"Absolute druk",ref:"Volmaakt vacuüm, dat overeenkomt met het absolute nulpunt van de druk.",usage:"Thermodynamische berekeningen en analyse van het risico op cavitatie.",msg:"Absolute druk wordt altijd gedefinieerd ten opzichte van volmaakt vacuüm. Ze kan niet negatief zijn."},
+    rel:{name:"Relatieve druk",ref:"Plaatselijke atmosferische druk, ongeveer 1,013 bar.",usage:"Meting met een manometer op een leidingnet en gebruikelijke weergave van de druk van een installatie.",msg:"Een klassieke manometer geeft doorgaans een relatieve druk weer ten opzichte van de atmosfeer."},
+    atm:{name:"Atmosferische druk",ref:"Druk van de omgevingslucht.",usage:"Omrekening tussen absolute druk en relatieve druk.",msg:"De atmosferische druk dient als referentie voor de berekening van de relatieve druk. De waarde ligt doorgaans dicht bij 1,013 bar."},
+    diff:{name:"Drukverschil (differentiaaldruk)",ref:"Verschil in druk tussen twee punten.",usage:"Controle van filtervervuiling, meting van drukverliezen en werking van pompen.",msg:"Een drukverschil geeft niet de druk in één enkel punt weer. Het vergelijkt de drukken die in twee punten zijn gemeten."},
+    stat:{name:"Statische druk",def:"Plaatselijke druk van het fluïdum, los van het effect van de snelheid ervan.",usage:"Op druk brengen van het leidingnet en handhaven van geschikte bedrijfsomstandigheden.",msg:"Met de statische druk kun je onder meer de druktoestand van een leidingnet analyseren."}
+  },
+  announceSelect:function(n){return "Infokaart weergegeven: "+n+".";},
+  lockedText:"De basisrelatie wordt beschikbaar nadat je de vijf soorten druk hebt bekeken.",
+  announceUnlock:"Je hebt alle soorten druk verkend. Het onderdeel ‘De basisrelatie’ is nu beschikbaar.",
+  relTitle:"De basisrelatie",
+  relIntro:"Selecteer elke term van de relatie om die in de formule en in het voorbeeld te markeren.",
+  relProgress:function(n){return "Bekeken termen van de relatie: "+n+"/3";},
+  relPlaceholder:"Selecteer een term om de uitleg te tonen.",
+  zone:{
+    rel:"De relatieve druk wordt gemeten ten opzichte van de plaatselijke atmosferische druk. Dit is de waarde die een klassieke manometer doorgaans weergeeft.",
+    atm:"De atmosferische druk is de druk van de omgevingslucht. Ze dient als referentie om van relatieve druk naar absolute druk over te gaan.",
+    abs:"De absolute druk wordt gemeten ten opzichte van volmaakt vacuüm. Je verkrijgt ze door de atmosferische druk op te tellen bij de relatieve druk."
+  },
+  exTitle:"Rekenvoorbeeld",exRel:"Gemeten relatieve druk",exAtm:"Atmosferische druk aangenomen voor het voorbeeld",exAbs:"Verkregen absolute druk",
+  exNote:"In dit voorbeeld wordt een atmosferische druk van 1,013 bar gebruikt.",dec:",",
+  vigilText:"Een klassieke manometer geeft doorgaans een relatieve druk weer ten opzichte van de atmosfeer. Controleer altijd de aangegeven referentie: bar absoluut of bar relatief. Een verwarring tussen deze twee referenties kan leiden tot een verkeerde interpretatie van de meting.",
+  negTitle:"Negatieve relatieve druk",
+  negIntro:"Selecteer een situatie om die te situeren ten opzichte van de atmosferische druk.",
+  negBtn:{pos:"Positieve relatieve druk",zero:"Relatieve druk gelijk aan nul",neg:"Negatieve relatieve druk"},
+  negCap:{pos:"De gemeten druk is hoger dan de atmosferische druk ({rel} > 0).",zero:"De gemeten druk is gelijk aan de atmosferische druk ({rel} = 0).",neg:"De gemeten druk is lager dan de atmosferische druk ({rel} < 0). De absolute druk blijft boven volmaakt vacuüm."},
+  negCapEmpty:"Selecteer een situatie om de uitleg te tonen.",
+  negMsg:"Een negatieve relatieve druk betekent dat de gemeten druk lager is dan de atmosferische druk. Deze situatie kan zich met name voordoen aan de zuigzijde van een pomp. Ze komt nooit overeen met een negatieve absolute druk.",
+  scale:{pos:"Positieve relatieve druk ({rel} > 0)",atm:"Atmosferische druk: referentieniveau ({rel} = 0)",neg:"Negatieve relatieve druk ({rel} < 0)",vac:"Volmaakt vacuüm: grens van de absolute druk ({abs} = 0)",below:"Geen waarden hieronder: absolute druk kan niet negatief zijn."},
+  endTitle:"Verkenning voltooid",
+  endText:"Je hebt de belangrijkste drukreferenties ontdekt die in de klimaattechniek worden gebruikt. Onthoud vooral dat een klassieke manometer doorgaans een relatieve druk weergeeft.",
+  reset:"Infographic opnieuw bekijken",resetDone:"Infographic opnieuw ingesteld."
+},
+pt:{
+  tab1:"Tipos de pressão",goRel:"Descobrir a relação fundamental",goNeg:"Descobrir a pressão relativa negativa",close:"Fechar",stepsLabel:"Etapas da atividade",lockedTab:"Disponível após a consulta dos cinco tipos de pressão.",
+  langName:"Português",langLabel:"Idioma",
+  module:"F03 | Fundamentos de hidráulica",
+  title:"Compreender os diferentes tipos de pressão",
+  progress:function(n){return n===1?"1/5 pressão explorada":n+"/5 pressões exploradas";},
+  groupTitle:"Os cinco tipos de pressão",
+  statusDone:"Consultada",statusTodo:"Por descobrir",selected:"Selecionada",
+  placeholderTitle:"Nenhuma pressão selecionada",
+  placeholderText:"Escolha um tipo de pressão para apresentar a respetiva ficha.",
+  lblSymbol:"Símbolo",lblReference:"Referência",lblDefinition:"Definição",lblUsage:"Utilização principal em AVAC",
+  remember:"A reter",practice:"Na prática",vigilance:"Ponto de atenção",
+  p:{
+    abs:{name:"Pressão absoluta",ref:"Vácuo perfeito, correspondente ao zero absoluto de pressão.",usage:"Cálculos termodinâmicos e análise dos riscos de cavitação.",msg:"A pressão absoluta é sempre definida em relação ao vácuo perfeito. Não pode ser negativa."},
+    rel:{name:"Pressão relativa",ref:"Pressão atmosférica local, cerca de 1,013 bar.",usage:"Medição com manómetro numa rede e indicação habitual da pressão de uma instalação.",msg:"Um manómetro convencional indica geralmente uma pressão relativa em relação à atmosfera."},
+    atm:{name:"Pressão atmosférica",ref:"Pressão do ar ambiente.",usage:"Conversão entre a pressão absoluta e a pressão relativa.",msg:"A pressão atmosférica serve de referência para o cálculo da pressão relativa. O seu valor é normalmente próximo de 1,013 bar."},
+    diff:{name:"Pressão diferencial",ref:"Diferença de pressão entre dois pontos.",usage:"Controlo da colmatação dos filtros, medição das perdas de carga e funcionamento das bombas.",msg:"Uma pressão diferencial não representa a pressão num único ponto. Compara as pressões medidas em dois pontos."},
+    stat:{name:"Pressão estática",def:"Pressão local do fluido, independentemente do efeito associado à sua velocidade.",usage:"Pressurização da rede e manutenção de condições de funcionamento adequadas.",msg:"A pressão estática permite, nomeadamente, analisar o estado de pressurização de uma rede."}
+  },
+  announceSelect:function(n){return "Ficha apresentada: "+n+".";},
+  lockedText:"A relação fundamental ficará disponível após a consulta dos cinco tipos de pressão.",
+  announceUnlock:"Explorou todas as pressões. A parte «A relação fundamental» já está disponível.",
+  relTitle:"A relação fundamental",
+  relIntro:"Selecione cada termo da relação para o destacar na fórmula e no exemplo.",
+  relProgress:function(n){return "Termos da relação consultados: "+n+"/3";},
+  relPlaceholder:"Selecione um termo para apresentar a respetiva explicação.",
+  zone:{
+    rel:"A pressão relativa é medida em relação à pressão atmosférica local. É o valor geralmente indicado por um manómetro convencional.",
+    atm:"A pressão atmosférica é a pressão do ar ambiente. Serve de referência para passar da pressão relativa à pressão absoluta.",
+    abs:"A pressão absoluta é medida em relação ao vácuo perfeito. Obtém-se somando a pressão atmosférica à pressão relativa."
+  },
+  exTitle:"Exemplo numérico",exRel:"Pressão relativa medida",exAtm:"Pressão atmosférica considerada no exemplo",exAbs:"Pressão absoluta obtida",
+  exNote:"Este exemplo utiliza uma pressão atmosférica de 1,013 bar.",dec:",",
+  vigilText:"Um manómetro convencional indica geralmente uma pressão relativa em relação à atmosfera. Verifique sempre a referência indicada: bar absoluto ou bar relativo. Uma confusão entre estas duas referências pode levar a uma interpretação errada da medição.",
+  negTitle:"Pressão relativa negativa",
+  negIntro:"Selecione uma situação para a posicionar em relação à pressão atmosférica.",
+  negBtn:{pos:"Pressão relativa positiva",zero:"Pressão relativa nula",neg:"Pressão relativa negativa"},
+  negCap:{pos:"A pressão medida é superior à pressão atmosférica ({rel} > 0).",zero:"A pressão medida é igual à pressão atmosférica ({rel} = 0).",neg:"A pressão medida é inferior à pressão atmosférica ({rel} < 0). A pressão absoluta mantém-se acima do vácuo perfeito."},
+  negCapEmpty:"Selecione uma situação para apresentar a respetiva explicação.",
+  negMsg:"Uma pressão relativa negativa significa que a pressão medida é inferior à pressão atmosférica. Esta situação pode ocorrer, nomeadamente, na aspiração de uma bomba. Nunca corresponde a uma pressão absoluta negativa.",
+  scale:{pos:"Pressão relativa positiva ({rel} > 0)",atm:"Pressão atmosférica: nível de referência ({rel} = 0)",neg:"Pressão relativa negativa ({rel} < 0)",vac:"Vácuo perfeito: limite da pressão absoluta ({abs} = 0)",below:"Nenhum valor abaixo: a pressão absoluta não pode ser negativa."},
+  endTitle:"Exploração concluída",
+  endText:"Descobriu as principais referências de pressão utilizadas em AVAC. Retenha sobretudo que um manómetro convencional indica geralmente uma pressão relativa.",
+  reset:"Rever a infografia",resetDone:"Infografia reiniciada."
+},
+de:{
+  tab1:"Druckarten",goRel:"Grundbeziehung entdecken",goNeg:"Negativen Relativdruck entdecken",close:"Schließen",stepsLabel:"Schritte der Aktivität",lockedTab:"Verfügbar, sobald Sie die fünf Druckarten angesehen haben.",
+  langName:"Deutsch",langLabel:"Sprache",
+  module:"F03 | Grundlagen der Hydraulik",
+  title:"Die verschiedenen Druckarten verstehen",
+  progress:function(n){return n===1?"1/5 Druckart erkundet":n+"/5 Druckarten erkundet";},
+  groupTitle:"Die fünf Druckarten",
+  statusDone:"Angesehen",statusTodo:"Noch zu entdecken",selected:"Ausgewählt",
+  placeholderTitle:"Keine Druckart ausgewählt",
+  placeholderText:"Wählen Sie eine Druckart, um ihr Informationsblatt anzuzeigen.",
+  lblSymbol:"Symbol",lblReference:"Bezugspunkt",lblDefinition:"Definition",lblUsage:"Hauptanwendung in der HLK-Technik",
+  remember:"Merke",practice:"In der Praxis",vigilance:"Achtung",
+  p:{
+    abs:{name:"Absolutdruck",ref:"Absolutes Vakuum, das dem absoluten Nullpunkt des Drucks entspricht.",usage:"Thermodynamische Berechnungen und Analyse der Kavitationsgefahr.",msg:"Der Absolutdruck ist immer auf das absolute Vakuum bezogen. Er kann nicht negativ sein."},
+    rel:{name:"Relativdruck",ref:"Örtlicher atmosphärischer Druck, ca. 1,013 bar.",usage:"Messung mit einem Manometer im Netz und übliche Anzeige des Anlagendrucks.",msg:"Ein herkömmliches Manometer zeigt in der Regel einen Relativdruck an, bezogen auf die Atmosphäre."},
+    atm:{name:"Atmosphärischer Druck",ref:"Druck der Umgebungsluft.",usage:"Umrechnung zwischen Absolutdruck und Relativdruck.",msg:"Der atmosphärische Druck dient als Bezugspunkt für die Berechnung des Relativdrucks. Sein Wert liegt üblicherweise bei etwa 1,013 bar."},
+    diff:{name:"Differenzdruck",ref:"Druckunterschied zwischen zwei Punkten.",usage:"Überwachung der Filterverschmutzung, Messung von Druckverlusten und Betrieb von Pumpen.",msg:"Ein Differenzdruck gibt nicht den Druck an einem einzelnen Punkt an. Er vergleicht die an zwei Punkten gemessenen Drücke."},
+    stat:{name:"Statischer Druck",def:"Örtlicher Druck des Fluids, unabhängig von der Wirkung seiner Geschwindigkeit.",usage:"Druckhaltung im Netz und Aufrechterhaltung geeigneter Betriebsbedingungen.",msg:"Mit dem statischen Druck lässt sich insbesondere der Druckhaltezustand eines Netzes analysieren."}
+  },
+  announceSelect:function(n){return "Informationsblatt angezeigt: "+n+".";},
+  lockedText:"Die Grundbeziehung wird verfügbar, sobald Sie die fünf Druckarten angesehen haben.",
+  announceUnlock:"Sie haben alle Druckarten erkundet. Der Teil „Die Grundbeziehung“ ist jetzt verfügbar.",
+  relTitle:"Die Grundbeziehung",
+  relIntro:"Wählen Sie jeden Term der Beziehung aus, um ihn in der Formel und im Beispiel hervorzuheben.",
+  relProgress:function(n){return "Angesehene Terme der Beziehung: "+n+"/3";},
+  relPlaceholder:"Wählen Sie einen Term aus, um seine Erklärung anzuzeigen.",
+  zone:{
+    rel:"Der Relativdruck wird gegenüber dem örtlichen atmosphärischen Druck gemessen. Diesen Wert zeigt ein herkömmliches Manometer in der Regel an.",
+    atm:"Der atmosphärische Druck ist der Druck der Umgebungsluft. Er dient als Bezugspunkt, um vom Relativdruck zum Absolutdruck zu gelangen.",
+    abs:"Der Absolutdruck wird gegenüber dem absoluten Vakuum gemessen. Er ergibt sich, indem man den atmosphärischen Druck zum Relativdruck addiert."
+  },
+  exTitle:"Rechenbeispiel",exRel:"Gemessener Relativdruck",exAtm:"Für das Beispiel angenommener atmosphärischer Druck",exAbs:"Ermittelter Absolutdruck",
+  exNote:"Dieses Beispiel verwendet einen atmosphärischen Druck von 1,013 bar.",dec:",",
+  vigilText:"Ein herkömmliches Manometer zeigt in der Regel einen Relativdruck an, bezogen auf die Atmosphäre. Prüfen Sie stets den angegebenen Bezug: bar absolut oder bar relativ. Eine Verwechslung dieser beiden Bezüge kann zu einer falschen Interpretation der Messung führen.",
+  negTitle:"Negativer Relativdruck",
+  negIntro:"Wählen Sie eine Situation aus, um sie im Verhältnis zum atmosphärischen Druck einzuordnen.",
+  negBtn:{pos:"Positiver Relativdruck",zero:"Relativdruck gleich null",neg:"Negativer Relativdruck"},
+  negCap:{pos:"Der gemessene Druck ist höher als der atmosphärische Druck ({rel} > 0).",zero:"Der gemessene Druck ist gleich dem atmosphärischen Druck ({rel} = 0).",neg:"Der gemessene Druck ist niedriger als der atmosphärische Druck ({rel} < 0). Der Absolutdruck bleibt oberhalb des absoluten Vakuums."},
+  negCapEmpty:"Wählen Sie eine Situation aus, um ihre Erklärung anzuzeigen.",
+  negMsg:"Ein negativer Relativdruck bedeutet, dass der gemessene Druck niedriger ist als der atmosphärische Druck. Diese Situation kann insbesondere auf der Saugseite einer Pumpe auftreten. Sie entspricht niemals einem negativen Absolutdruck.",
+  scale:{pos:"Positiver Relativdruck ({rel} > 0)",atm:"Atmosphärischer Druck: Bezugsniveau ({rel} = 0)",neg:"Negativer Relativdruck ({rel} < 0)",vac:"Absolutes Vakuum: Grenze des Absolutdrucks ({abs} = 0)",below:"Keine Werte darunter: Der Absolutdruck kann nicht negativ sein."},
+  endTitle:"Erkundung abgeschlossen",
+  endText:"Sie haben die wichtigsten Druckbezüge der HLK-Technik kennengelernt. Merken Sie sich vor allem: Ein herkömmliches Manometer zeigt in der Regel einen Relativdruck an.",
+  reset:"Infografik erneut ansehen",resetDone:"Infografik zurückgesetzt."
+}
+};
+
+var LANGS=["fr","en","es","it","ro","pl","nl","pt","de"];
+var KEYS=["abs","rel","atm","diff","stat"];
+var SYM={abs:"p<sub>abs</sub>",rel:"p<sub>rel</sub>",atm:"p<sub>atm</sub>",diff:"&Delta;p",stat:"p<sub>stat</sub>"};
+var SYM_SR={abs:"p abs",rel:"p rel",atm:"p atm",diff:"delta p",stat:"p stat"};
+var CALLOUT={abs:"remember",rel:"practice",atm:"remember",diff:"practice",stat:"remember"};
+var ANGLE={abs:-60,rel:60,atm:-120,diff:120,stat:180};
+var ICON={
+  abs:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke-dasharray="2.5 2.5"/><path d="M12 9.2c1.5 0 2.3 1.2 2.3 2.8s-.8 2.8-2.3 2.8-2.3-1.2-2.3-2.8.8-2.8 2.3-2.8z"/></svg>',
+  rel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4.2 16.5a8.5 8.5 0 1 1 15.6 0"/><path d="M12 13.5l4-5"/><circle cx="12" cy="13.5" r="1.4"/><path d="M8 20h8"/></svg>',
+  atm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0"/><path d="M3 13c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0"/><path d="M12 16v5M9.5 18.5L12 21l2.5-2.5"/></svg>',
+  diff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="5.5" cy="12" r="2.5"/><circle cx="18.5" cy="12" r="2.5"/><path d="M8 12h8"/><path d="M12 4.5l3.5 5.5h-7z"/></svg>',
+  stat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2.5 8.5h19M2.5 15.5h19"/><path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.6" stroke-linecap="round"/></svg>'
+};
+var ICO_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>';
+var ICO_DOT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="7"/></svg>';
+var ICO_LOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>';
+var ICO_REMEMBER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>';
+var ICO_PRACTICE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5.2 5.2L4 17l3 3 5.3-5.3a4 4 0 0 0 5.2-5.2l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>';
+var ICO_WARN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3.5L2.5 20h19z"/><path d="M12 10v4.5M12 17v.5"/></svg>';
+var ICO_EMPTY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4.2 16.5a8.5 8.5 0 1 1 15.6 0"/><path d="M12 13.5V7"/><circle cx="12" cy="13.5" r="1.4"/></svg>';
+var ICO_DONE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>';
+
+var state;
+function freshState(lang){return {lang:lang,slide:1,current:null,seen:{},zone:null,zonesSeen:{},neg:null,negSeen:{},unlocked:false,done:false,finalOpen:false};}
+function count(o){var n=0;for(var k in o){if(o.hasOwnProperty(k))n++;}return n;}
+function $(id){return document.getElementById(id);}
+function each(sel,fn){Array.prototype.forEach.call(document.querySelectorAll(sel),fn);}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function T(){return I18N[state.lang];}
+function fmt(s){
+  var o=esc(s).replace(/\{abs\}/g,SYM.abs).replace(/\{rel\}/g,SYM.rel).replace(/\{atm\}/g,SYM.atm).replace(/\{stat\}/g,SYM.stat);
+  if(state.lang==="fr"){o=o.replace(/ ([:;!?»])/g,"\u00a0$1").replace(/« /g,"«\u00a0");}
+  return o;
+}
+function plain(s){return String(s).replace(/\{(abs|rel|atm|stat)\}/g,function(m,k){return SYM_SR[k];});}
+function setHTML(id,s){$(id).innerHTML=fmt(s);}
+function num(v){return v.replace(".",T().dec);}
+var liveTimer=null;
+function announce(msg){
+  var live=$("live");live.textContent="";
+  if(liveTimer)clearTimeout(liveTimer);
+  liveTimer=setTimeout(function(){live.textContent=plain(msg);},60);
+}
+var hintTimer=null;
+function hint(msg){
+  var h=$("hint");h.textContent=plain(msg);h.hidden=false;
+  if(hintTimer)clearTimeout(hintTimer);
+  hintTimer=setTimeout(function(){h.hidden=true;},2600);
+}
+
+/* ---------- Construction ---------- */
+function buildTicks(){
+  var html="";
+  for(var i=0;i<36;i++){
+    var a=i*10*Math.PI/180,major=(i%3===0),r1=major?72:77,r2=84;
+    html+='<line x1="'+(100+r1*Math.sin(a)).toFixed(2)+'" y1="'+(100-r1*Math.cos(a)).toFixed(2)+'" x2="'+(100+r2*Math.sin(a)).toFixed(2)+'" y2="'+(100-r2*Math.cos(a)).toFixed(2)+'" stroke-width="'+(major?2.4:1.2)+'"/>';
+  }
+  $("ticks").innerHTML=html;
+}
+function buildButtons(){
+  var ring=$("ring");
+  KEYS.forEach(function(k){
+    var b=document.createElement("button");
+    b.type="button";b.className="pbtn";
+    b.setAttribute("data-p",k);b.setAttribute("aria-pressed","false");b.setAttribute("aria-controls","fiche");
+    b.innerHTML='<span class="ico">'+ICON[k]+'</span><span class="txt"><span class="name"></span><span class="meta"><span class="sym" aria-hidden="true">'+SYM[k]+'</span><span class="status"></span></span></span>';
+    b.addEventListener("click",function(){selectPressure(k);});
+    ring.appendChild(b);
+  });
+}
+function buildLang(){
+  var sel=$("langSelect");
+  LANGS.forEach(function(l){var o=document.createElement("option");o.value=l;o.textContent=I18N[l].langName;o.lang=l;sel.appendChild(o);});
+  sel.addEventListener("change",function(){state.lang=sel.value;renderAll();});
+}
+
+/* ---------- Rendu ---------- */
+function renderStatic(){
+  var t=T();
+  document.documentElement.lang=state.lang;
+  document.title=t.module+" – "+t.title;
+  $("langSelect").value=state.lang;
+  $("langSelect").setAttribute("aria-label",t.langLabel);
+  $("tabs").setAttribute("aria-label",t.stepsLabel);
+  setHTML("title",t.title);
+  setHTML("tl1",t.tab1);setHTML("tl2",t.relTitle);setHTML("tl3",t.negTitle);
+  setHTML("relTitle",t.relTitle);setHTML("negTitle",t.negTitle);
+  setHTML("goRelLbl",t.goRel);setHTML("goNegLbl",t.goNeg);
+  setHTML("exTitle",t.exTitle);setHTML("exRel",t.exRel);setHTML("exAtm",t.exAtm);setHTML("exAbs",t.exAbs);setHTML("exNote",t.exNote);
+  $("exRelV").innerHTML=SYM.rel+" = 2&nbsp;bar";
+  $("exAtmV").innerHTML=SYM.atm+" = "+num("1.013")+"&nbsp;bar";
+  $("exAbsV").innerHTML=SYM.abs+" = "+num("3.013")+"&nbsp;bar";
+  $("vigilTitle").innerHTML=ICO_WARN+"<span>"+fmt(t.vigilance)+"</span>";
+  setHTML("vigilText",t.vigilText);
+  $("negMsgTitle").innerHTML=ICO_REMEMBER+"<span>"+fmt(t.remember)+"</span>";
+  setHTML("negMsg",t.negMsg);
+  setHTML("sPos",t.scale.pos);setHTML("sAtm",t.scale.atm);setHTML("sNeg",t.scale.neg);setHTML("sVac",t.scale.vac);setHTML("sBelow",t.scale.below);
+  $("endTitle").innerHTML=ICO_DONE+"<span>"+fmt(t.endTitle)+"</span>";
+  setHTML("endText",t.endText);setHTML("resetLbl",t.reset);$("closeBtn").textContent=t.close;
+}
+function renderTabs(){
+  var t=T(),n=count(state.seen),z=count(state.zonesSeen),g=count(state.negSeen);
+  var status={1:n===5?ICO_CHECK:(n+"/5"),2:state.unlocked?(z===3?ICO_CHECK:(z+"/3")):ICO_LOCK,3:state.unlocked?(g===3?ICO_CHECK:(g+"/3")):ICO_LOCK};
+  var done={1:n===5,2:z===3,3:g===3};
+  var names={1:t.tab1,2:t.relTitle,3:t.negTitle};
+  [1,2,3].forEach(function(i){
+    var b=$("tab"+i),locked=(i>1&&!state.unlocked),sel=(state.slide===i);
+    $("ts"+i).innerHTML=status[i];
+    b.classList.toggle("done",done[i]);
+    b.setAttribute("aria-selected",sel?"true":"false");
+    b.setAttribute("tabindex",sel?"0":"-1");
+    if(locked){b.setAttribute("aria-disabled","true");}else{b.removeAttribute("aria-disabled");}
+    var extra=locked?t.lockedTab:(done[i]?t.statusDone:"");
+    b.setAttribute("aria-label",i+". "+names[i]+(extra?" – "+extra:""));
+    b.title=locked?t.lockedTab:names[i];
+    $("s"+i).hidden=!sel;
+  });
+}
+function renderProgress(){
+  var t=T(),n=count(state.seen),bar=$("progressBar");
+  $("progressText").textContent=t.progress(n);
+  bar.setAttribute("aria-valuenow",String(n));
+  bar.setAttribute("aria-valuetext",t.progress(n));
+  bar.setAttribute("aria-label",t.progress(n));
+  $("progressFill").style.width=(n/5*100)+"%";
+  $("goRel").hidden=!state.unlocked;
+}
+function renderButtons(){
+  var t=T();
+  each(".pbtn",function(b){
+    var k=b.getAttribute("data-p"),seen=!!state.seen[k];
+    b.querySelector(".name").textContent=t.p[k].name;
+    b.querySelector(".status").innerHTML=(seen?ICO_CHECK:ICO_DOT)+"<span>"+esc(seen?t.statusDone:t.statusTodo)+"</span>";
+    b.classList.toggle("seen",seen);
+    b.setAttribute("aria-pressed",state.current===k?"true":"false");
+    b.setAttribute("aria-label",t.p[k].name+", "+SYM_SR[k]+" – "+(seen?t.statusDone:t.statusTodo));
+  });
+  $("dialCenter").innerHTML=state.current?SYM[state.current]:"?";
+  $("needle").style.transform="rotate("+(state.current?ANGLE[state.current]:0)+"deg)";
+}
+function renderFiche(){
+  var t=T(),f=$("fiche"),k=state.current;
+  if(!k){f.innerHTML='<div class="fiche-empty">'+ICO_EMPTY+'<h3 id="ficheTitle">'+fmt(t.placeholderTitle)+'</h3><p>'+fmt(t.placeholderText)+'</p></div>';return;}
+  var p=t.p[k],type=CALLOUT[k],isStat=(k==="stat");
+  f.innerHTML='<div class="fiche-head"><span class="fiche-sym">'+SYM[k]+'</span><div><span class="symlbl">'+fmt(t.lblSymbol)+(state.lang==="fr"?"\u00a0: ":": ")+SYM[k]+'</span><h3 id="ficheTitle">'+fmt(p.name)+'</h3></div></div>'+
+    '<dl class="facts"><div><dt>'+fmt(isStat?t.lblDefinition:t.lblReference)+'</dt><dd>'+fmt(isStat?p.def:p.ref)+'</dd></div>'+
+    '<div><dt>'+fmt(t.lblUsage)+'</dt><dd>'+fmt(p.usage)+'</dd></div></dl>'+
+    '<div class="callout '+type+'" role="note"><p class="callout-title">'+(type==="remember"?ICO_REMEMBER:ICO_PRACTICE)+'<span>'+fmt(type==="remember"?t.remember:t.practice)+'</span></p><p>'+fmt(p.msg)+'</p></div>';
+}
+function renderRelation(){
+  var t=T(),z=state.zone;
+  function term(key,inner){return '<span class="t'+(z===key?' hl':'')+'">'+inner+'</span>';}
+  $("formula").innerHTML=term("abs",SYM.abs)+'<span class="op">=</span>'+term("rel",SYM.rel)+'<span class="op">+</span>'+term("atm",SYM.atm);
+  $("calc").innerHTML=term("abs",SYM.abs)+' = '+term("rel","2")+' + '+term("atm",num("1.013"))+' = '+term("abs",num("3.013")+"&nbsp;bar");
+  each(".exvals>div",function(e){e.classList.toggle("hl",e.getAttribute("data-ex")===z);});
+  each(".zbtn",function(b){
+    var k=b.getAttribute("data-z"),seen=!!state.zonesSeen[k];
+    b.innerHTML='<span class="zname">'+fmt(t.p[k].name)+'</span><span class="zsym" aria-hidden="true">'+SYM[k]+'</span><span class="status">'+(seen?ICO_CHECK:ICO_DOT)+'<span>'+esc(seen?t.statusDone:t.statusTodo)+'</span></span>';
+    b.classList.toggle("seen",seen);
+    b.setAttribute("aria-pressed",z===k?"true":"false");
+    b.setAttribute("aria-label",t.p[k].name+", "+SYM_SR[k]+" – "+(seen?t.statusDone:t.statusTodo));
+  });
+  $("zexpl").innerHTML=z?'<strong>'+fmt(t.p[z].name)+'</strong>'+fmt(t.zone[z]):'<span class="ph">'+fmt(t.relPlaceholder)+'</span>';
+  $("relProg").textContent=t.relProgress(count(state.zonesSeen));
+  $("goNeg").hidden=count(state.zonesSeen)<3;
+}
+function renderNeg(){
+  var t=T(),n=state.neg;
+  each(".nbtn",function(b){
+    var k=b.getAttribute("data-n"),seen=!!state.negSeen[k];
+    b.querySelector(".nl").textContent=t.negBtn[k];
+    b.querySelector(".chk").innerHTML=seen?ICO_CHECK:"";
+    b.setAttribute("aria-pressed",n===k?"true":"false");
+    b.setAttribute("aria-label",t.negBtn[k]+(seen?" – "+t.statusDone:""));
+  });
+  $("ncap").innerHTML=n?'<strong>'+fmt(t.negBtn[n])+'</strong><br>'+fmt(t.negCap[n]):fmt(t.negCapEmpty);
+  $("sPos").classList.toggle("on",n==="pos");
+  $("sAtm").classList.toggle("on",n==="zero");
+  $("sNeg").classList.toggle("on",n==="neg");
+  placeMarker();
+}
+function placeMarker(){
+  var m=$("marker"),n=state.neg;
+  if(!n||$("s3").hidden){m.hidden=true;return;}
+  var tg=n==="pos"?$("sPos"):(n==="zero"?$("sAtm"):$("sNeg"));
+  m.hidden=false;m.style.top=(tg.offsetTop+tg.offsetHeight/2)+"px";
+}
+function renderFinal(){$("final").hidden=!state.finalOpen;}
+function renderAll(){renderStatic();renderTabs();renderProgress();renderButtons();renderFiche();renderRelation();renderNeg();renderFinal();}
+
+/* ---------- Navigation ---------- */
+function goSlide(i,focusTab){
+  var t=T();
+  if(i>1&&!state.unlocked){hint(t.lockedTab);announce(t.lockedTab);return;}
+  state.slide=i;
+  renderTabs();
+  $("s"+i).scrollTop=0;
+  placeMarker();
+  if(focusTab)$("tab"+i).focus();
+}
+function onTabKey(e){
+  var i=parseInt(e.currentTarget.getAttribute("data-s"),10),order=state.unlocked?[1,2,3]:[1],pos=order.indexOf(i),next=null;
+  if(e.key==="ArrowRight"||e.key==="ArrowDown")next=order[(pos+1)%order.length];
+  else if(e.key==="ArrowLeft"||e.key==="ArrowUp")next=order[(pos-1+order.length)%order.length];
+  else if(e.key==="Home")next=order[0];
+  else if(e.key==="End")next=order[order.length-1];
+  if(next!==null){e.preventDefault();goSlide(next,true);}
+}
+
+/* ---------- Interactions ---------- */
+function checkDone(){
+  if(!state.done&&count(state.seen)===5&&count(state.zonesSeen)===3&&count(state.negSeen)===3){
+    state.done=true;state.finalOpen=true;return true;
+  }
+  return false;
+}
+function openFinalFocus(){
+  renderFinal();
+  var t=T();
+  announce(t.endTitle+". "+t.endText);
+  setTimeout(function(){$("endTitle").focus();},30);
+}
+function selectPressure(k){
+  var t=T();
+  state.current=k;state.seen[k]=true;
+  var msg=t.announceSelect(t.p[k].name)+" "+t.progress(count(state.seen))+".";
+  if(!state.unlocked&&count(state.seen)===5){state.unlocked=true;msg+=" "+t.announceUnlock;}
+  renderTabs();renderProgress();renderButtons();renderFiche();
+  announce(msg);
+  if(window.innerWidth<=700){var f=$("fiche");if(f.scrollIntoView)f.scrollIntoView({behavior:"smooth",block:"start"});}
+  else{$("fiche").scrollTop=0;}
+}
+function selectZone(k){
+  var t=T();
+  state.zone=k;state.zonesSeen[k]=true;
+  var fin=checkDone();
+  renderTabs();renderRelation();
+  announce(t.p[k].name+". "+t.zone[k]+" "+t.relProgress(count(state.zonesSeen))+".");
+  if(fin)openFinalFocus();
+}
+function selectNeg(k){
+  var t=T();
+  state.neg=k;state.negSeen[k]=true;
+  var fin=checkDone();
+  renderTabs();renderNeg();
+  announce(t.negBtn[k]+". "+t.negCap[k]);
+  if(fin)openFinalFocus();
+}
+function closeFinal(){state.finalOpen=false;renderFinal();$("tab"+state.slide).focus();}
+function resetAll(){
+  var lang=state.lang;state=freshState(lang);renderAll();
+  $("tab1").focus();
+  var t=T();announce(t.resetDone+" "+t.progress(0)+".");
+}
+
+function init(){
+  var lang="fr";
+  try{var m=/[?&]lang=([a-z]{2})/.exec(window.location.search);if(m&&I18N[m[1]])lang=m[1];}catch(e){}
+  state=freshState(lang);
+  buildTicks();buildButtons();buildLang();
+  [1,2,3].forEach(function(i){var b=$("tab"+i);b.addEventListener("click",function(){goSlide(i,false);});b.addEventListener("keydown",onTabKey);});
+  $("goRel").addEventListener("click",function(){goSlide(2,true);});
+  $("goNeg").addEventListener("click",function(){goSlide(3,true);});
+  each(".zbtn",function(b){b.addEventListener("click",function(){selectZone(b.getAttribute("data-z"));});});
+  each(".nbtn",function(b){b.addEventListener("click",function(){selectNeg(b.getAttribute("data-n"));});});
+  $("resetBtn").addEventListener("click",resetAll);
+  $("closeBtn").addEventListener("click",closeFinal);
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&state.finalOpen)closeFinal();});
+  var rt=null;
+  window.addEventListener("resize",function(){if(rt)clearTimeout(rt);rt=setTimeout(placeMarker,120);});
+  renderAll();
+}
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",init);}else{init();}
+})();
+</script>
+</body>
+</html>
