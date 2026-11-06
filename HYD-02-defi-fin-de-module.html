@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>HYD-02 | Pressions et hauteur manométrique – Relevez le défi de fin de module</title>
+<style>
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden}
+:root{--k:1;--fs:calc(var(--k) * clamp(14px, 0.55vw + 0.85vh + 3px, 19px));--cyan:#55C2FB;--orange:#FA9035;--ok:#5EE0A0;--ko:#FF9A8C;--line:rgba(170,210,255,.30);--muted:#CFDDF2}
+body{font-family:Calibri,Arial,sans-serif;color:#F4F8FF;background:#0b2350;font-size:var(--fs);line-height:1.3;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse 80% 55% at 50% -8%,rgba(103,164,225,.55),transparent 60%),radial-gradient(ellipse 60% 50% at 88% 110%,rgba(85,194,251,.16),transparent 60%),linear-gradient(180deg,#1d5296 0%,#164382 35%,#0f3268 70%,#0a234c 100%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:32px 32px}
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+#app{height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:3px solid #FFD27A;outline-offset:2px}
+.ic{width:1.15em;height:1.15em;flex:none;display:inline-block;vertical-align:middle}
+
+/* En-tête */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:clamp(6px,1.2vh,14px) clamp(10px,2vw,28px)}
+.mod{margin:0;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.8em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tools{display:flex;align-items:center;gap:10px;flex:none}
+.tbtn{min-height:44px;min-width:44px;display:inline-flex;align-items:center;gap:.45em;padding:0 .9em;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.08);font-weight:700;font-size:.9em}
+.tbtn:hover{background:rgba(255,255,255,.15)}
+.langbox{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:12px;padding:0 4px 0 12px;min-height:44px}
+.langbox label{font-weight:700;font-size:.9em}
+select{font:inherit;color:#fff;background:#12396f;border:1px solid var(--line);border-radius:9px;min-height:40px;padding:0 6px;max-width:100%}
+
+/* Progression */
+.prog{display:flex;align-items:center;gap:clamp(8px,2vw,22px);padding:0 clamp(10px,2vw,28px) clamp(6px,1.1vh,12px)}
+.prog[hidden],.nav[hidden]{display:none}
+.ptxt{margin:0;font-weight:700;white-space:nowrap;font-size:.95em}
+.dots{display:flex;list-style:none;margin:0;padding:0;flex:1;align-items:center;min-width:0}
+.dots li{flex:1;display:flex;align-items:center;min-width:0}
+.dots li:last-child{flex:0 0 auto}
+.dot{width:clamp(20px,2.3vw,28px);height:clamp(20px,2.3vw,28px);border-radius:50%;display:grid;place-items:center;font-size:.72em;font-weight:700;border:2px solid rgba(207,221,242,.45);color:rgba(235,243,255,.75);background:rgba(255,255,255,.05);flex:none;transition:transform .25s}
+.dot svg{width:70%;height:70%}
+.dot.done{background:var(--cyan);border-color:var(--cyan);color:#0b2350}
+.dot.cur{border-color:var(--orange);color:#fff;background:rgba(250,144,53,.28);transform:scale(1.2);box-shadow:0 0 0 4px rgba(250,144,53,.22)}
+.seg{flex:1;height:3px;margin:0 4px;border-radius:2px;background:rgba(207,221,242,.22)}
+.seg.done{background:var(--cyan)}
+
+/* Zone principale */
+main{min-height:0;overflow:hidden;padding:0 clamp(10px,2vw,28px);display:grid;grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr)}
+main>*{min-height:0;min-width:0}
+.card{background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 34px rgba(0,12,45,.35),inset 0 1px 0 rgba(255,255,255,.14);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.fit{overflow:hidden}
+.btn{min-height:44px;min-width:44px;padding:.45em 1.1em;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.09);font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.45em;line-height:1.1}
+.btn:hover:not(:disabled){background:rgba(255,255,255,.17)}
+.btn.pri{background:linear-gradient(180deg,#FFB06A,#FA9035);color:#0b1f3f;border-color:#FFC896;box-shadow:0 6px 18px rgba(250,144,53,.35)}
+.btn.pri:hover:not(:disabled){background:linear-gradient(180deg,#FFC08A,#FF9C45)}
+.btn:disabled{opacity:.45;box-shadow:none}
+.btn.big{font-size:1.2em;padding:.6em 2.1em}
+h1,h2,h3{margin:0;line-height:1.15}
+
+/* Introduction */
+.intro{display:grid;place-items:center;min-height:0;padding-bottom:clamp(6px,1.4vh,16px)}
+.icard{width:min(980px,100%);max-height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(6px,1.5vh,16px);padding:clamp(12px,2.2vw,30px)}
+.icard img{width:100%;height:auto;max-height:30vh;object-fit:cover;border-radius:14px;min-height:0;flex:0 1 auto;box-shadow:0 10px 30px rgba(0,10,40,.4)}
+.intro.c1 .icard img{max-height:16vh}
+.intro.c2 .icard img{display:none}
+h1{font-size:2.15em}
+.lead{margin:0;font-size:1.15em;font-weight:700}
+.case{margin:0;color:var(--muted);max-width:52em}
+.meta{margin:0;font-size:.85em;border:1px solid var(--line);border-radius:999px;padding:.25em .9em;color:#E6F0FF}
+
+/* Étape */
+.step{display:grid;gap:clamp(8px,1.4vw,18px);grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);padding-bottom:2px}
+.visual{order:-1;display:flex;flex-direction:column;padding:clamp(6px,1vw,14px);min-height:0;min-width:0}
+.qpanel{display:flex;flex-direction:column;gap:.5em;padding:clamp(10px,1.4vw,22px);min-height:0;min-width:0}
+.stagewrap{flex:1;min-height:0;min-width:0;container-type:size;display:grid;place-items:center}
+.stage{position:relative;width:min(100cqw,calc(100cqh * 5 / 3));height:min(100cqh,calc(100cqw * 3 / 5))}
+.stage>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.qhead{display:flex;align-items:center;gap:.6em;flex-wrap:wrap}
+.badge{background:var(--orange);color:#0b1f3f;font-weight:700;border-radius:999px;padding:.12em .7em;font-size:.8em;white-space:nowrap}
+h2{font-size:1.3em}
+.sit{margin:0;color:var(--muted)}
+.sit .lab{display:inline-block;font-weight:700;color:#fff;font-size:.74em;text-transform:uppercase;letter-spacing:.06em;margin-inline-end:.5em;border:1px solid var(--line);border-radius:6px;padding:0 .4em;vertical-align:1px}
+.q{margin:0;font-weight:700;font-size:1.08em;color:#fff}
+.hint{margin:0;font-size:.86em;color:var(--muted)}
+.inter{display:flex;flex-direction:column;gap:.42em}
+.qpanel>*{flex-shrink:0}
+.qpanel{container-type:inline-size}
+@container (min-width:440px){.arow{flex-direction:row;align-items:center;gap:.6em}.arow label{flex:0 0 36%}.arow select{flex:1;min-width:0}}
+.step.c1 .hint{display:none}
+.step.c3.answered .sit{display:none}
+.opts{display:flex;flex-direction:column;gap:.42em}
+.opt{display:flex;align-items:center;gap:.7em;text-align:start;width:100%;min-height:44px;padding:.42em .8em;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);line-height:1.2}
+.opt:hover:not(:disabled){background:rgba(255,255,255,.13)}
+.opt .rad{flex:none;width:1.15em;height:1.15em;border-radius:50%;border:2px solid #D7E8F8;display:grid;place-items:center}
+.opt[aria-pressed="true"]{border:2px solid var(--cyan);background:rgba(85,194,251,.17)}
+.opt[aria-pressed="true"] .rad::after{content:"";width:.55em;height:.55em;border-radius:50%;background:var(--cyan)}
+.opt .otx{flex:1}
+.opt .mk{flex:none;display:flex}
+.opt:disabled{cursor:default}
+.tf{display:grid;grid-template-columns:1fr 1fr}
+.tf .opt{justify-content:center;font-size:1.15em;font-weight:700;min-height:54px}
+.tf .opt .otx{flex:0 1 auto}
+.is-ok{border-color:var(--ok)!important;border-width:2px!important;background:rgba(94,224,160,.15)!important}
+.is-ko{border-color:var(--ko)!important;border-width:2px!important;background:rgba(255,154,140,.14)!important}
+
+/* Association */
+.arow{display:flex;flex-direction:column;gap:.2em}
+.arow label{font-weight:700;display:flex;align-items:center;gap:.4em}
+.arow select{width:100%;min-height:44px;font-size:.92em}
+.sheet{height:100%;display:flex;flex-direction:column;gap:.6em;justify-content:center;padding:.4em .6em}
+.sh-t{margin:0;font-weight:700;text-transform:uppercase;letter-spacing:.07em;font-size:.85em;color:var(--cyan);border-bottom:1px solid var(--line);padding-bottom:.35em}
+.srow{display:grid;grid-template-columns:auto minmax(0,.8fr) minmax(0,1.4fr);align-items:center;gap:.7em;padding:.5em .6em;border:1px dashed rgba(207,221,242,.4);border-radius:12px;background:rgba(6,24,56,.35)}
+.srow.filled{border-style:solid;border-color:rgba(85,194,251,.65)}
+.sic svg{width:clamp(28px,3.4vw,46px);height:auto;display:block}
+.sn{font-weight:700}
+.sv{color:var(--muted);font-size:.9em}
+.srow.filled .sv{color:#fff}
+
+/* Saisie numérique */
+.numl{font-weight:700}
+.numrow{display:flex;align-items:center;gap:.6em}
+.numrow input{font:inherit;font-size:1.25em;width:7em;min-height:48px;border-radius:10px;border:2px solid var(--line);background:rgba(4,20,48,.6);color:#fff;padding:0 .5em}
+.numrow input::placeholder{color:#9FB4D3}
+.unit{font-weight:700;font-size:1.1em}
+
+/* Classement */
+.ord{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.32em}
+.ord li{display:flex;align-items:center;gap:.5em;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.06);padding:.12em .25em .12em .6em;min-height:44px}
+.pos{font-weight:700;color:var(--muted);width:1.2em;flex:none}
+.let{flex:none;width:1.7em;height:1.7em;border-radius:50%;background:var(--orange);color:#0b1f3f;font-weight:700;display:grid;place-items:center;font-size:.85em}
+.ord .otx{flex:1;line-height:1.15}
+.mv{flex:none;width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.09);display:grid;place-items:center}
+.mv:hover:not(:disabled){background:rgba(255,255,255,.18)}
+.mv:disabled{opacity:.3}
+.ord .mk{display:flex;padding:0 .4em}
+
+/* Étiquettes et zones */
+.chips{display:flex;flex-wrap:wrap;gap:.5em}
+.chip{min-height:44px;padding:.3em .95em;border-radius:999px;border:2px dashed rgba(207,221,242,.65);background:rgba(10,35,76,.65);font-weight:700;touch-action:none;-webkit-user-select:none;user-select:none}
+.chip:hover:not(:disabled){background:rgba(30,70,130,.8)}
+.chip[aria-pressed="true"]{border-style:solid;border-color:var(--orange);background:rgba(250,144,53,.25)}
+.chip .where{font-weight:400;color:var(--muted);font-size:.85em}
+.chip.dragging{opacity:.4}
+.chip:disabled{cursor:default;opacity:.75}
+.ghost{position:fixed;z-index:50;pointer-events:none;transform:translate(-50%,-50%);padding:.3em .9em;border-radius:999px;border:2px solid var(--orange);background:#16437f;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.zbtn,.hs,.dz{position:absolute;border-radius:14px;display:flex;flex-direction:column;align-items:center;min-width:44px;min-height:44px}
+.zbtn{border:2px dashed rgba(207,221,242,.5);background:transparent;justify-content:flex-start;padding-top:.4em}
+.zbtn:hover:not(:disabled),.hs:hover:not(:disabled){background:rgba(85,194,251,.1)}
+.zbtn[aria-pressed="true"],.hs[aria-pressed="true"]{border:3px solid var(--cyan);background:rgba(85,194,251,.13)}
+.hs{border:2px dashed rgba(207,221,242,.6);background:transparent;justify-content:flex-end;padding:.15em}
+.ztag{background:rgba(8,26,56,.9);border:1px solid var(--line);border-radius:999px;padding:.15em .75em;font-weight:700;font-size:.92em;display:inline-flex;gap:.35em;align-items:center;line-height:1.15;text-align:center}
+.hs .ztag{font-size:.86em;padding:.12em .55em}
+.selm{font-weight:400;color:var(--cyan)}
+.zbtn:disabled,.hs:disabled,.dz:disabled{cursor:default}
+.dz{border:2px dashed rgba(250,144,53,.8);background:rgba(8,26,56,.78);justify-content:center;text-align:center;padding:.15em .3em;font-size:.92em;line-height:1.1}
+.dz .zn{font-size:.78em;color:var(--muted);font-weight:700;text-transform:uppercase;display:inline-flex;gap:.3em;align-items:center}
+.dz .zv{font-weight:700}
+.dz.filled{border-style:solid;border-color:var(--cyan)}
+.dz.hover{background:rgba(250,144,53,.3)}
+
+/* Retour pédagogique */
+.fb{border-radius:14px;padding:.55em .85em;border:1px solid;display:flex;flex-direction:column;gap:.28em}
+.fb.ok{border-color:rgba(94,224,160,.65);background:rgba(16,80,58,.5)}
+.fb.ko{border-color:rgba(255,154,140,.65);background:rgba(96,30,42,.5)}
+.fb-t{margin:0;font-weight:700;display:flex;align-items:center;gap:.4em;font-size:1.05em}
+.fb-x,.fb-k{margin:0;font-size:.95em}
+.fb-k .tag{display:inline-block;font-size:.74em;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:rgba(85,194,251,.22);border:1px solid rgba(85,194,251,.55);border-radius:6px;padding:0 .4em;margin-inline-end:.45em;vertical-align:1px}
+
+/* Résultat */
+.result{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(8px,1.4vw,18px);padding-bottom:2px}
+.rcard{padding:clamp(12px,1.6vw,24px);display:flex;flex-direction:column;gap:.6em;min-height:0}
+.rs-top{display:flex;align-items:center;gap:1.2em;flex-wrap:wrap}
+.ring{width:clamp(90px,20vh,170px);height:auto;flex:none}
+.rnum{fill:#fff;font:700 28px Calibri,Arial,sans-serif}
+.kpis{display:flex;flex-direction:column;gap:.5em}
+.kpi{margin:0;display:flex;flex-direction:column}
+.kpi span{color:var(--muted);font-size:.85em}
+.kpi strong{font-size:1.6em;line-height:1.1}
+.lvl{margin:0;font-weight:700;font-size:1.25em;display:flex;align-items:center;gap:.45em}
+.lvl3{color:#A8F5CF}.lvl2{color:#FFD9A8}.lvl1{color:#FFC2B8}
+.lmsg{margin:0;color:var(--muted)}
+h3{font-size:.95em;color:var(--cyan);text-transform:uppercase;letter-spacing:.05em}
+.rsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:.35em}
+.rsteps li{display:flex;flex-direction:column;align-items:center;gap:.15em;padding:.3em .1em;border-radius:10px;border:1px solid var(--line);font-size:.85em;font-weight:700}
+.rsteps li.ok{border-color:rgba(94,224,160,.55)}
+.rsteps li.ko{border-color:rgba(255,154,140,.55)}
+.notions{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.3em}
+.notions li{display:flex;gap:.55em;align-items:center}
+.nn{flex:none;width:1.6em;height:1.6em;border-radius:50%;border:1px solid var(--ko);display:grid;place-items:center;font-size:.8em;font-weight:700}
+.none{margin:0;color:var(--muted)}
+.rbtns{margin-top:auto;display:flex;flex-wrap:wrap;gap:.6em;padding-top:.3em}
+
+/* Revoir mes réponses */
+.review{display:flex;flex-direction:column;gap:.55em;padding-bottom:2px}
+.rgrid{display:grid;gap:.55em;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
+.pp9 .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pp6 .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pp3 .rgrid{grid-template-columns:minmax(0,1fr)}
+.rv{padding:.5em .75em;display:flex;flex-direction:column;gap:.22em;min-height:0;overflow:hidden;font-size:.86em}
+.rv p{margin:0}
+.rv.ok{border-color:rgba(94,224,160,.5)}
+.rv.ko{border-color:rgba(255,154,140,.5)}
+.rvh{display:flex;align-items:center;justify-content:space-between;gap:.4em}
+.rv .st{display:inline-flex;align-items:center;gap:.3em;font-weight:700}
+.rv h3{font-size:1em;text-transform:none;letter-spacing:0;color:#fff}
+.lab2{font-weight:700;color:var(--cyan)}
+
+/* Navigation */
+.nav{display:flex;align-items:center;gap:10px;padding:clamp(6px,1.2vh,14px) clamp(10px,2vw,28px);padding-bottom:max(clamp(6px,1.2vh,14px),env(safe-area-inset-bottom))}
+.nav .sp{flex:1;margin:0;font-size:.82em;color:var(--muted);text-align:center}
+
+/* SVG */
+.zonebg{fill:rgba(255,255,255,.035);stroke:rgba(207,221,242,.25);stroke-dasharray:5 6}
+.pipe{fill:none;stroke:#4A3020;stroke-width:13;stroke-linecap:round;stroke-linejoin:round}
+.pipe-in{fill:none;stroke:#C0835A;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.flow{fill:none;stroke:#8FE3FF;stroke-width:3.4;stroke-linecap:round;stroke-dasharray:7 13;animation:flow 3.4s linear infinite;filter:url(#glow)}
+.flow.fast{animation-duration:2.4s}
+.flow.slow{stroke:#7EE8D2;stroke-width:7;stroke-dasharray:12 8;animation-duration:9s}
+.flow.weak{stroke-dasharray:3 17;animation-duration:6s}
+.flow.big{stroke-width:5}
+.flow.still{animation:pulse 5s ease-in-out infinite;stroke-dasharray:none;opacity:.55;stroke-width:3}
+@keyframes flow{to{stroke-dashoffset:-40}}
+@keyframes pulse{50%{opacity:.95}}
+.spin{animation:spin 8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.drop{animation:drop 2.4s linear infinite;opacity:0}
+.drop.d2{animation-delay:-.8s}.drop.d3{animation-delay:-1.6s}
+@keyframes drop{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(46px);opacity:0}}
+.paused *,.paused *::before,.paused *::after{animation-play-state:paused!important}
+.lbl{fill:#EEF5FF;font:700 19px Calibri,Arial,sans-serif;paint-order:stroke;stroke:#0a2148;stroke-width:5px;stroke-linejoin:round}
+.tagt{fill:#fff;font:700 18px Calibri,Arial,sans-serif}
+.lett{fill:#0b1f3f;font:700 21px Calibri,Arial,sans-serif}
+
+@media (min-aspect-ratio:1/1) and (min-width:561px){.step.c2.answered .sit{display:none}}
+/* Écrans portrait / étroits : visuel au-dessus de la question */
+@media (max-aspect-ratio:1/1),(max-width:560px){
+  .step{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,34%) minmax(0,1fr)}
+  .step.c1{grid-template-rows:minmax(0,25%) minmax(0,1fr)}
+  .step.c2.answered,.step.c3.answered{grid-template-rows:minmax(0,1fr)}
+  .step.c2.answered .visual,.step.c3.answered .visual{display:none}
+  .result{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+  .ring{width:clamp(80px,14vh,130px)}
+  .rsteps{grid-template-columns:repeat(9,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .mod{display:none}
+  .top{justify-content:flex-end}
+  .nav .btxt,.tbtn .btxt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .nav .sp{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .nav{justify-content:space-between}
+  .ptxt{font-size:.85em}
+  .rsteps li{font-size:.75em}
+  .rsteps li .ic{width:1em;height:1em}
+  h1{font-size:1.7em}
+}
+@media (max-height:500px){
+  .top{padding-top:4px;padding-bottom:4px}
+  .prog{padding-bottom:4px}
+  .nav{padding-top:4px;padding-bottom:4px}
+  .icard img{max-height:22vh}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;scroll-behavior:auto!important}
+}
+
+/* ===== Compléments HYD-02 ===== */
+.hero{width:100%;height:auto;max-height:30vh;border-radius:14px;min-height:0;flex:0 1 auto;box-shadow:0 10px 30px rgba(0,10,40,.4)}
+.intro.c1 .hero{max-height:16vh}
+.intro.c2 .hero{display:none}
+.fx{white-space:nowrap;font-family:Calibri,Arial,sans-serif;font-weight:700;color:#FFE3B8}
+.fx sub{font-size:.72em;line-height:0}
+.opt.sm{min-height:44px;padding:.35em .7em;width:auto;flex:1 1 auto}
+.segs{display:flex;flex-wrap:wrap;gap:.4em}
+.grp{display:flex;flex-direction:column;gap:.3em;padding:.45em .6em;border:1px solid var(--line);border-radius:12px;background:rgba(6,24,56,.3)}
+.glab{margin:0;font-weight:700}
+.gsel{margin:0;color:var(--cyan);font-weight:700}
+.fxcard{border:1px solid rgba(85,194,251,.5);border-radius:14px;background:rgba(6,24,56,.45);padding:.6em .9em;display:flex;flex-direction:column;gap:.25em}
+.fxl{margin:0;font-size:.78em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--cyan)}
+.fxm{margin:0;font-size:1.35em}
+.fxd{margin:0;color:#fff;font-weight:700}
+.checks{display:grid;grid-template-columns:1fr;gap:.35em}
+@container (min-width:520px){.checks{grid-template-columns:1fr 1fr}}
+.chk{display:flex;align-items:center;gap:.6em;text-align:start;min-height:44px;padding:.35em .65em;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);line-height:1.15;font-size:.95em}
+.chk:hover:not([aria-disabled="true"]){background:rgba(255,255,255,.13)}
+.chk .box{flex:none;width:1.15em;height:1.15em;border-radius:4px;border:2px solid #D7E8F8;display:grid;place-items:center}
+.chk[aria-checked="true"]{border:2px solid var(--cyan);background:rgba(85,194,251,.17)}
+.chk[aria-checked="true"] .box{background:var(--cyan);border-color:var(--cyan)}
+.chk[aria-checked="true"] .box::after{content:"";width:.32em;height:.6em;border:solid #0b2350;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.chk .otx{flex:1}.chk .mk{flex:none;display:flex}
+.chk[aria-disabled="true"]{cursor:default}
+.is-miss{border:2px dashed var(--ok)!important}
+.vbtn{position:absolute;display:flex;align-items:center;justify-content:center;gap:.35em;min-width:44px;min-height:44px;border-radius:12px;border:2px solid rgba(207,221,242,.6);background:rgba(8,26,56,.85);font-weight:700;font-size:1em;padding:0 .4em}
+.vbtn:hover:not(:disabled){background:rgba(30,70,130,.9)}
+.vbtn[aria-pressed="true"]{border:3px solid var(--cyan);background:rgba(85,194,251,.25)}
+.vbtn:disabled{cursor:default}
+.hs.gauge{justify-content:flex-start;padding-top:.2em}
+.dz .zn{text-transform:none;font-size:.82em;line-height:1.1}
+/* SVG HYD-02 */
+.lbl.sym{font-size:22px}
+.lbl.small{font-size:15px;fill:#CFDDF2}
+.sbs{font-size:70%}
+.fxbox{fill:rgba(6,24,56,.75);stroke:#55C2FB;stroke-width:1.5}
+.fxs{fill:#FFE3B8;font:700 21px Calibri,Arial,sans-serif}
+.sbox{fill:rgba(6,24,56,.6);stroke:rgba(170,210,255,.45);stroke-width:1.5}
+.sbox.empty{stroke-dasharray:6 5;stroke:#FA9035}
+.big1{fill:#fff;font:700 24px Calibri,Arial,sans-serif}
+.gnum{fill:#0B2350;font:700 15px Calibri,Arial,sans-serif}
+.gunit{fill:#36506F;font:700 14px Calibri,Arial,sans-serif}
+.lcd{fill:#8FE3FF;font:700 20px Calibri,Arial,sans-serif}
+.tagr{fill:rgba(8,26,56,.9);stroke:#55C2FB;stroke-width:1.5}
+.tagr.big{stroke:#FA9035;stroke-width:2.5}
+.tagr.q{stroke:#FA9035;stroke-dasharray:5 4}
+.flow.up{animation-duration:4.5s}
+.flow.slow2{animation-duration:6s}
+.bub{animation:bub 3s ease-in-out infinite}
+@keyframes bub{50%{transform:translateY(-6px)}}
+.fill{transition:y .5s ease,height .5s ease}
+.rsteps.n8{grid-template-columns:repeat(8,minmax(0,1fr))}
+.pp8 .rgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.pp4 .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pp2 .rgrid{grid-template-columns:minmax(0,1fr)}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+
+</style>
+</head>
+<body>
+<svg class="defs" aria-hidden="true" focusable="false">
+ <defs>
+  <filter id="glow" filterUnits="userSpaceOnUse" x="-50" y="-50" width="700" height="460"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <radialGradient id="gBlue" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#7BC0FF"/><stop offset=".55" stop-color="#1F5FAE"/><stop offset="1" stop-color="#12396F"/></radialGradient>
+  <linearGradient id="gWhite" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C9D6E6"/></linearGradient>
+  <linearGradient id="gRed" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF7A7A"/><stop offset="1" stop-color="#A3121A"/></linearGradient>
+  <linearGradient id="gBrass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE29A"/><stop offset=".5" stop-color="#D2A23A"/><stop offset="1" stop-color="#8A6414"/></linearGradient>
+  <linearGradient id="gSteel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF3F9"/><stop offset="1" stop-color="#94A7BF"/></linearGradient>
+  <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FE3FF"/><stop offset="1" stop-color="#1E7FD0"/></linearGradient>
+  <linearGradient id="gRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FE3FF"/><stop offset="1" stop-color="#55C2FB"/></linearGradient>
+ </defs>
+</svg>
+<div id="app">
+ <header class="top">
+  <p class="mod" id="mod"></p>
+  <div class="tools">
+   <button type="button" class="tbtn" id="pauseBtn"></button>
+   <div class="langbox"><label for="langSel" id="langLbl">Langue</label><select id="langSel"></select></div>
+  </div>
+ </header>
+ <div class="prog" id="prog" role="group" hidden></div>
+ <main id="main"></main>
+ <footer class="nav" id="nav" hidden></footer>
+</div>
+<div id="live" class="sr" aria-live="polite" aria-atomic="true"></div>
+<script>
+(function(){
+"use strict";
+/* ==========================================================
+   TRADUCTIONS HYD-02 — un objet par langue (fr = langue source)
+   Jetons de formules (rendus en HTML avec indices) :
+   {F1} pabs = prel + patm   {F2} Δp = ρ × g × Δz   {F3} H = Δp / (ρ × g)   {patm}
+   ========================================================== */
+const L = {
+/* ---------------------------- FRANÇAIS ---------------------------- */
+fr: { name: "Français", ui: {
+  lang: "Langue", module: "HYD-02 | Pressions et hauteur manométrique", start: "Commencer", prev: "Précédent", next: "Suivant",
+  validate: "Valider", result: "Voir mon résultat", pause: "Pause", resume: "Reprendre",
+  pauseAria: "Pause : mettre en pause les animations", resumeAria: "Reprendre les animations",
+  stepOf: "Étape {n} sur {t}", progress: "Progression du défi", stDone: "terminée", stCur: "en cours", stTodo: "à venir",
+  introTitle: "Relevez le défi de fin de module",
+  introLead: "Vous avez découvert les notions essentielles de ce module. À vous maintenant de les mettre en pratique !",
+  introCase: "Vous intervenez sur un réseau hydraulique CVC dont les performances doivent être contrôlées. Plusieurs relevés de pression sont disponibles. Votre mission : analyser les mesures, effectuer les bons calculs et vérifier le fonctionnement de l'installation.",
+  introMeta: "8 étapes · 1 décision ou 1 calcul par étape · une étude de cas fil rouge",
+  introAlt: "Illustration : manomètre raccordé à une tuyauterie d'eau en circulation.",
+  situation: "Situation", ok: "Bonne réponse", ko: "Réponse incorrecte", remember: "À retenir",
+  needAnswer: "Répondez, puis validez pour continuer.", selected: "Sélectionné", notSel: "Non sélectionné",
+  hDrag: "Glissez une carte sur une zone, ou sélectionnez-la puis choisissez la zone.", hMulti: "Plusieurs réponses possibles.",
+  choose: "Choisir…", zoneEmpty: "Déposez une carte", data: "Données",
+  labelSel: "Carte « {l} » sélectionnée. Choisissez maintenant une zone.", placed: "« {l} » placée dans « {z} ».", removed: "Zone « {z} » vidée.",
+  finalTitle: "Votre résultat", score: "Score", rate: "Taux de réussite", passed: "Étapes réussies",
+  toReview: "Notions à revoir", noneReview: "Aucune : toutes les notions sont acquises.",
+  lvl3t: "Maîtrise solide", lvl3m: "Excellent travail : vous savez interpréter des pressions, convertir et calculer une hauteur manométrique.",
+  lvl2t: "Acquis satisfaisants, quelques notions à consolider", lvl2m: "Bonne base. Revoyez les notions signalées avant de poursuivre le parcours.",
+  lvl1t: "Révision recommandée", lvl1m: "Reprenez les séquences liées aux notions à revoir, puis relevez à nouveau le défi.",
+  review: "Revoir mes réponses", restart: "Recommencer le défi", back: "Retour au résultat", reviewTitle: "Synthèse de vos réponses",
+  success: "Réussie", fail: "À revoir", yours: "Votre réponse", expected: "Réponse attendue", noAnswer: "Sans réponse",
+  step: "Étape", page: "Page {n} sur {t}", prevPage: "Page précédente", nextPage: "Page suivante",
+  scoreAria: "Score : {s} sur {t}", multiAns: "{c} bonne(s) action(s) sur 6 · {w} erreur(s)", allBut: "Toutes, sauf :"
+ }, steps: [
+ { title: "Quelle pression mesurez-vous ?",
+   sit: "Avant de contrôler le réseau, vous faites le point sur les pressions citées dans le dossier technique.",
+   q: "Associez chaque pression à sa référence et à son usage.",
+   items: ["Pression absolue", "Pression relative", "Pression atmosphérique", "Pression différentielle", "Pression statique"],
+   choices: ["Vide parfait : calculs physiques, cavitation", "Atmosphère locale : manomètre de réseau", "Air ambiant : conversion absolue ↔ relative", "Écart p2 − p1 : pompe, filtre, vanne", "Pression locale du fluide : pressurisation"],
+   svg: { vac: "Vide parfait", atm: "Atmosphère", net: "Réseau", filter: "Filtre", pump: "Pompe" },
+   ok: "Chaque pression a sa référence. Un manomètre de réseau affiche généralement une pression relative ; on retrouve l'absolue avec {F1}.",
+   ko: "L'absolue part du vide parfait, la relative de l'atmosphère locale, et la différentielle compare deux points. Un manomètre de réseau affiche généralement une pression relative : {F1}.",
+   key: "Notez toujours la référence : bar(a), bar(g) ou Δp. N'additionnez jamais des valeurs de références différentes sans conversion.",
+   notion: "Références de pression",
+   alt: "Échelle des pressions : vide parfait à 0 bar(a), pression atmosphérique, pression du réseau. À droite, une pompe et un filtre équipé d'un manomètre différentiel." },
+ { title: "Une pression négative ?",
+   sit: "À l'aspiration d'une pompe, le manomètre affiche −0,2 bar(g). Un collègue pense que l'appareil est défectueux.",
+   q: "Comment interprétez-vous cette valeur ?",
+   opts: ["Une pression absolue négative de −0,2 bar", "Une pression supérieure de 0,2 bar à l'atmosphère", "Une pression inférieure de 0,2 bar à l'atmosphère", "Une mesure impossible : l'appareil est faux"],
+   svg: { asp: "Aspiration", pump: "Pompe" },
+   ok: "Le « g » signale une pression relative. −0,2 bar(g) signifie 0,2 bar sous l'atmosphère : avec {patm} = 1,0 bar, la pression absolue reste positive, environ 0,8 bar(a).",
+   ko: "Une pression absolue ne peut pas être négative : son zéro est le vide parfait. Ici, la valeur relative indique 0,2 bar sous l'atmosphère, ce qui peut apparaître à l'aspiration d'une pompe.",
+   key: "Pression relative négative = pression inférieure à l'atmosphère, jamais une pression absolue négative.",
+   notion: "Références de pression",
+   alt: "Manomètre gradué de −1 à 3 bar(g), aiguille sur −0,2 bar(g), installé à l'aspiration d'une pompe." },
+ { title: "Pression et altitude",
+   sit: "Dans un bâtiment, le point haut du réseau se trouve 20 m au-dessus du point bas. Le circuit est fermé et rempli d'eau.",
+   q: "Sur le schéma, sélectionnez la différence de pression hydrostatique entre ces deux points.",
+   svg: { high: "Point haut", low: "Point bas", pump: "Pompe" },
+   ok: "{F2} = 1 000 × 9,81 × 20 ≈ 196 200 Pa, soit environ 2 bar. Ordre de grandeur utile : 10 m d'eau ≈ 1 bar.",
+   ko: "Appliquez {F2} : 1 000 × 9,81 × 20 ≈ 196 200 Pa, soit environ 2 bar. Retenez : environ 0,1 bar par mètre d'eau.",
+   key: "En circuit fermé, les colonnes montante et descendante se compensent : la pompe ne soulève pas tout le bâtiment, mais la pression doit rester suffisante au point haut.",
+   notion: "Hydrostatique",
+   alt: "Bâtiment équipé d'un circuit fermé : point bas et point haut séparés de 20 m. Valeurs proposées : 0,2 bar, 2 bar, 20 bar et 200 bar." },
+ { title: "De la pression à la hauteur",
+   sit: "Un relevé indique une différence de pression de 80 kPa sur un réseau d'eau. Vous devez l'exprimer en hauteur d'eau.",
+   q: "Réalisez le calcul guidé en deux étapes.",
+   groups: [{ label: "1. Convertir en pascals : 80 kPa =" }, { label: "2. Calculer {F3} :" }],
+   svg: { water: "Eau", result: "Résultat" },
+   ok: "80 kPa = 80 000 Pa, puis H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Contrôle : 1 bar ≈ 10,2 mCE, donc 0,8 bar ≈ 8,2 mCE.",
+   ko: "Convertissez d'abord : 1 kPa = 1 000 Pa, donc 80 kPa = 80 000 Pa. Puis H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Repère : 100 kPa ≈ 10,2 mCE.",
+   key: "Méthode : pression en Pa, masse volumique réelle du fluide, {F3}, puis contrôle de l'ordre de grandeur.",
+   notion: "Conversions",
+   alt: "Chaîne de calcul : 80 kPa, conversion en pascals, formule H = Δp / (ρ × g) avec ρ ≈ 1 000 kg/m³ et g ≈ 9,81 m/s², puis colonne d'eau graduée en mètres." },
+ { title: "Contrôlez la pompe",
+   sit: "Deux manomètres encadrent le circulateur : 1,8 bar(g) et 2,8 bar(g). Les prises sont à la même altitude, sur des diamètres comparables.",
+   q: "Sélectionnez le manomètre de refoulement sur le schéma, puis choisissez la hauteur fournie.",
+   groups: [{ label: "1. Manomètre de refoulement :", opts: ["Manomètre A", "Manomètre B"] }, { label: "2. Hauteur manométrique simplifiée :" }],
+   svg: { flow: "Sens de circulation" },
+   ok: "Le refoulement est en aval de la pompe : Δp = 2,8 − 1,8 = 1 bar = 100 kPa, soit H ≈ 10,2 mCE.",
+   ko: "Le refoulement se situe en aval de la pompe, côté pression la plus élevée. Δp = 2,8 − 1,8 = 1 bar = 100 kPa, puis {F3} ≈ 10,2 mCE.",
+   key: "La HMT simplifiée se déduit de la différence refoulement − aspiration lorsque les différences de vitesse et d'altitude sont négligeables.",
+   notion: "Hauteur manométrique",
+   alt: "Circulateur entre deux manomètres : A à 1,8 bar(g) en amont et B à 2,8 bar(g) en aval, flèche indiquant le sens de circulation." },
+ { title: "Pression statique ou HMT ?",
+   sit: "Le dossier indique deux relevés : 2 bar(g) sur le réseau à l'arrêt, et une différence de 0,8 bar créée par la pompe en marche.",
+   q: "Placez chaque relevé dans la bonne fonction. Une carte est un piège.",
+   zones: ["Pressurisation statique du réseau", "Hauteur produite par la pompe"],
+   labels: ["2 bar(g), réseau à l'arrêt", "Δp de 0,8 bar, pompe en marche", "20 mCE fournis par la pompe"],
+   svg: { off: "Arrêt", on: "Marche" },
+   ok: "La pression à l'arrêt traduit le remplissage du réseau ; la Δp en marche traduit l'énergie apportée par la pompe, soit environ 8,15 mCE. La carte « 20 mCE » confond les deux.",
+   ko: "Un réseau pressurisé à 2 bar à l'arrêt ne signifie pas que la pompe fournit 20 mCE. La HMT se déduit de l'augmentation de pression entre aspiration et refoulement, en marche : ici 0,8 bar.",
+   key: "Pression statique ≠ HMT : ce sont deux fonctions différentes.",
+   notion: "Pression statique / HMT",
+   alt: "Réseau fermé avec un manomètre de pressurisation à 2 bar(g) à l'arrêt et deux manomètres autour de la pompe en marche, avec une Δp de 0,8 bar." },
+ { title: "Fiabilisez votre mesure",
+   sit: "Vous préparez une mesure de Δp aux bornes d'un échangeur avec un manomètre différentiel.",
+   q: "Sélectionnez toutes les actions à réaliser avant et pendant la mesure.",
+   items: ["Identifier le fluide, sa température et son taux de glycol", "Vérifier l'unité, la plage et le zéro de l'instrument", "Repérer les prises amont et aval", "Stabiliser le fonctionnement avant de relever", "Purger les flexibles si la procédure le permet", "Noter le sens de Δp, le débit, la vitesse et les vannes", "Relever pendant le démarrage pour gagner du temps", "Conclure le diagnostic à partir de la seule Δp"],
+   svg: { up: "Amont", down: "Aval", hx: "Échangeur", flow: "Sens de circulation" },
+   ok: "Ces précautions rendent la mesure exploitable et comparable. Une Δp seule ne suffit pas : on la croise avec le débit, les vannes, la vitesse de pompe et la température.",
+   ko: "Une mesure fiable exige un fonctionnement stabilisé, un instrument vérifié, des prises identifiées et des conditions notées. Une Δp seule n'identifie pas la cause d'une anomalie.",
+   key: "Une valeur de Δp seule ne suffit pas à établir un diagnostic : précisez toujours les points, le signe et les conditions.",
+   notion: "Mesure",
+   alt: "Échangeur sur une tuyauterie, prises amont et aval reliées par deux flexibles à un manomètre différentiel. Une bulle d'air est visible dans un flexible ; un thermomètre équipe la conduite." },
+ { title: "Diagnostic final du circulateur",
+   sit: "Circuit fermé d'eau. Aspiration 1,5 bar(g), refoulement 2,3 bar(g), prises au même niveau. Point haut 12 m au-dessus du manomètre ; point bas à l'arrêt : 1,8 bar(g).",
+   q: "Menez le diagnostic en trois décisions.",
+   groups: [{ label: "1. Hauteur fournie par la pompe" }, { label: "2. Pression théorique au point haut, à l'arrêt" },
+     { label: "3. Conclusion", opts: ["La pompe maintient seule la pression au point haut", "Statique et pompe remplissent deux fonctions différentes", "La pression à l'arrêt mesure la HMT de la pompe"] }],
+   svg: { high: "Point haut", low: "Point bas · arrêt", asp: "Aspiration", ref: "Refoulement" },
+   ok: "Δp = 2,3 − 1,5 = 0,8 bar = 80 kPa, soit ≈ 8,15 mCE. Au point haut : 1,8 − 12 × 0,0981 ≈ 0,62 bar(g). Pressurisation et pompe ont deux rôles distincts.",
+   ko: "Pompe : 0,8 bar = 80 kPa, soit ≈ 8,15 mCE. Chute statique vers le point haut : 12 × 0,0981 ≈ 1,18 bar, donc ≈ 0,62 bar(g) au point haut. La pompe ne remplace pas la pressurisation.",
+   key: "La pressurisation statique du réseau et la différence de pression créée par la pompe remplissent deux fonctions différentes.",
+   notion: "Diagnostic",
+   alt: "Bâtiment : circulateur en partie basse avec 1,5 bar(g) à l'aspiration et 2,3 bar(g) au refoulement, manomètre de point bas à 1,8 bar(g) à l'arrêt, colonne de 12 m jusqu'au point haut." }
+ ]},
+
+/* ---------------------------- ENGLISH ---------------------------- */
+en: { name: "English", ui: {
+  lang: "Language", module: "HYD-02 | Pressures and pump head", start: "Start", prev: "Previous", next: "Next",
+  validate: "Submit", result: "See my result", pause: "Pause", resume: "Resume",
+  pauseAria: "Pause the animations", resumeAria: "Resume the animations",
+  stepOf: "Step {n} of {t}", progress: "Challenge progress", stDone: "completed", stCur: "current", stTodo: "upcoming",
+  introTitle: "Take on the end-of-module challenge",
+  introLead: "You have discovered the key concepts of this module. Now it's your turn to put them into practice!",
+  introCase: "You are working on an HVAC hydronic network whose performance needs to be checked. Several pressure readings are available. Your mission: analyse the measurements, carry out the right calculations and check that the installation is working properly.",
+  introMeta: "8 steps · 1 decision or 1 calculation per step · one common case study",
+  introAlt: "Illustration: pressure gauge connected to a pipe with circulating water.",
+  situation: "Situation", ok: "Correct answer", ko: "Incorrect answer", remember: "Key point",
+  needAnswer: "Answer, then submit to continue.", selected: "Selected", notSel: "Not selected",
+  hDrag: "Drag a card onto a zone, or select it and then choose the zone.", hMulti: "Several answers possible.",
+  choose: "Choose…", zoneEmpty: "Drop a card here", data: "Data",
+  labelSel: "Card “{l}” selected. Now choose a zone.", placed: "“{l}” placed in “{z}”.", removed: "Zone “{z}” emptied.",
+  finalTitle: "Your result", score: "Score", rate: "Success rate", passed: "Steps passed",
+  toReview: "Concepts to review", noneReview: "None: all concepts are mastered.",
+  lvl3t: "Solid mastery", lvl3m: "Excellent work: you can interpret pressures, convert units and calculate a pump head.",
+  lvl2t: "Satisfactory knowledge, a few concepts to consolidate", lvl2m: "Good foundation. Review the flagged concepts before continuing the learning path.",
+  lvl1t: "Review recommended", lvl1m: "Go back over the sequences linked to the concepts to review, then take the challenge again.",
+  review: "Review my answers", restart: "Restart the challenge", back: "Back to result", reviewTitle: "Summary of your answers",
+  success: "Passed", fail: "To review", yours: "Your answer", expected: "Expected answer", noAnswer: "No answer",
+  step: "Step", page: "Page {n} of {t}", prevPage: "Previous page", nextPage: "Next page",
+  scoreAria: "Score: {s} out of {t}", multiAns: "{c} correct action(s) out of 6 · {w} error(s)", allBut: "All except:"
+ }, steps: [
+ { title: "Which pressure are you measuring?",
+   sit: "Before checking the network, you review the pressures mentioned in the technical file.",
+   q: "Match each pressure with its reference and its use.",
+   items: ["Absolute pressure", "Gauge (relative) pressure", "Atmospheric pressure", "Differential pressure", "Static pressure"],
+   choices: ["Perfect vacuum: physical calculations, cavitation", "Local atmosphere: network pressure gauge", "Ambient air: absolute ↔ gauge conversion", "Difference p2 − p1: pump, filter, valve", "Local fluid pressure: system pressurisation"],
+   svg: { vac: "Perfect vacuum", atm: "Atmosphere", net: "Network", filter: "Filter", pump: "Pump" },
+   ok: "Each pressure has its own reference. A network gauge usually displays a gauge pressure; the absolute pressure is found with {F1}.",
+   ko: "Absolute pressure starts from a perfect vacuum, gauge pressure from the local atmosphere, and differential pressure compares two points. A network gauge usually displays a gauge pressure: {F1}.",
+   key: "Always note the reference: bar(a), bar(g) or Δp. Never add values with different references without converting them.",
+   notion: "Pressure references",
+   alt: "Pressure scale: perfect vacuum at 0 bar(a), atmospheric pressure, network pressure. On the right, a pump and a filter fitted with a differential pressure gauge." },
+ { title: "A negative pressure?",
+   sit: "On the suction side of a pump, the gauge reads −0.2 bar(g). A colleague thinks the instrument is faulty.",
+   q: "How do you interpret this value?",
+   opts: ["A negative absolute pressure of −0.2 bar", "A pressure 0.2 bar above atmospheric pressure", "A pressure 0.2 bar below atmospheric pressure", "An impossible reading: the instrument is wrong"],
+   svg: { asp: "Suction", pump: "Pump" },
+   ok: "The “g” indicates a gauge pressure. −0.2 bar(g) means 0.2 bar below atmospheric pressure: with {patm} = 1.0 bar, the absolute pressure remains positive, about 0.8 bar(a).",
+   ko: "An absolute pressure cannot be negative: its zero is a perfect vacuum. Here, the gauge value indicates 0.2 bar below atmospheric pressure, which can occur on the suction side of a pump.",
+   key: "Negative gauge pressure = pressure below atmospheric pressure, never a negative absolute pressure.",
+   notion: "Pressure references",
+   alt: "Pressure gauge graduated from −1 to 3 bar(g), needle at −0.2 bar(g), installed on the suction side of a pump." },
+ { title: "Pressure and height",
+   sit: "In a building, the high point of the network is 20 m above the low point. The circuit is closed and filled with water.",
+   q: "On the diagram, select the hydrostatic pressure difference between these two points.",
+   svg: { high: "High point", low: "Low point", pump: "Pump" },
+   ok: "{F2} = 1 000 × 9.81 × 20 ≈ 196 200 Pa, i.e. about 2 bar. Useful order of magnitude: 10 m of water ≈ 1 bar.",
+   ko: "Apply {F2}: 1 000 × 9.81 × 20 ≈ 196 200 Pa, i.e. about 2 bar. Remember: about 0.1 bar per metre of water.",
+   key: "In a closed circuit, the rising and falling columns balance each other: the pump does not lift the whole building, but pressure must remain sufficient at the high point.",
+   notion: "Hydrostatics",
+   alt: "Building with a closed circuit: low point and high point 20 m apart. Values offered: 0.2 bar, 2 bar, 20 bar and 200 bar." },
+ { title: "From pressure to head",
+   sit: "A reading shows a pressure difference of 80 kPa on a water network. You need to express it as a head of water.",
+   q: "Complete the guided calculation in two steps.",
+   groups: [{ label: "1. Convert to pascals: 80 kPa =" }, { label: "2. Calculate {F3}:" }],
+   svg: { water: "Water", result: "Result" },
+   ok: "80 kPa = 80 000 Pa, then H = 80 000 / (1 000 × 9.81) ≈ 8.15 mCE. Check: 1 bar ≈ 10.2 mCE, so 0.8 bar ≈ 8.2 mCE.",
+   ko: "Convert first: 1 kPa = 1 000 Pa, so 80 kPa = 80 000 Pa. Then H = 80 000 / (1 000 × 9.81) ≈ 8.15 mCE. Reference point: 100 kPa ≈ 10.2 mCE.",
+   key: "Method: pressure in Pa, actual fluid density, {F3}, then check the order of magnitude.",
+   notion: "Conversions",
+   alt: "Calculation chain: 80 kPa, conversion to pascals, formula H = Δp / (ρ × g) with ρ ≈ 1 000 kg/m³ and g ≈ 9.81 m/s², then a water column graduated in metres." },
+ { title: "Check the pump",
+   sit: "Two gauges are fitted on either side of the circulator: 1.8 bar(g) and 2.8 bar(g). The tappings are at the same height, on comparable diameters.",
+   q: "Select the discharge gauge on the diagram, then choose the head supplied.",
+   groups: [{ label: "1. Discharge gauge:", opts: ["Gauge A", "Gauge B"] }, { label: "2. Simplified pump head:" }],
+   svg: { flow: "Direction of flow" },
+   ok: "The discharge is downstream of the pump: Δp = 2.8 − 1.8 = 1 bar = 100 kPa, i.e. H ≈ 10.2 mCE.",
+   ko: "The discharge is downstream of the pump, on the higher-pressure side. Δp = 2.8 − 1.8 = 1 bar = 100 kPa, then {F3} ≈ 10.2 mCE.",
+   key: "The simplified pump head is derived from the discharge − suction difference when velocity and height differences are negligible.",
+   notion: "Pump head",
+   alt: "Circulator between two gauges: A at 1.8 bar(g) upstream and B at 2.8 bar(g) downstream, with an arrow showing the direction of flow." },
+ { title: "Static pressure or pump head?",
+   sit: "The file gives two readings: 2 bar(g) on the network at rest, and a difference of 0.8 bar created by the pump when running.",
+   q: "Place each reading under the correct function. One card is a trap.",
+   zones: ["Static pressurisation of the network", "Head produced by the pump"],
+   labels: ["2 bar(g), network at rest", "Δp of 0.8 bar, pump running", "20 mCE supplied by the pump"],
+   svg: { off: "At rest", on: "Running" },
+   ok: "The pressure at rest reflects how the network is filled; the Δp when running reflects the energy added by the pump, about 8.15 mCE. The “20 mCE” card confuses the two.",
+   ko: "A network pressurised to 2 bar at rest does not mean that the pump supplies 20 mCE. The pump head comes from the pressure increase between suction and discharge when running: here 0.8 bar.",
+   key: "Static pressure ≠ pump head: they are two different functions.",
+   notion: "Static pressure / pump head",
+   alt: "Closed network with a pressurisation gauge at 2 bar(g) at rest and two gauges around the running pump, with a Δp of 0.8 bar." },
+ { title: "Make your measurement reliable",
+   sit: "You are preparing a Δp measurement across a heat exchanger with a differential pressure gauge.",
+   q: "Select all the actions to carry out before and during the measurement.",
+   items: ["Identify the fluid, its temperature and glycol content", "Check the instrument's unit, range and zero", "Locate the upstream and downstream tappings", "Stabilise operation before taking the reading", "Bleed the hoses if the procedure allows it", "Record the Δp sign, flow rate, pump speed and valves", "Take the reading during start-up to save time", "Base the diagnosis on the Δp value alone"],
+   svg: { up: "Upstream", down: "Downstream", hx: "Heat exchanger", flow: "Direction of flow" },
+   ok: "These precautions make the measurement usable and comparable. A Δp alone is not enough: cross-check it with flow rate, valves, pump speed and temperature.",
+   ko: "A reliable measurement requires stable operation, a checked instrument, identified tappings and recorded conditions. A Δp alone does not identify the cause of a fault.",
+   key: "A Δp value alone is not enough to make a diagnosis: always state the points, the sign and the conditions.",
+   notion: "Measurement",
+   alt: "Heat exchanger on a pipe, upstream and downstream tappings connected by two hoses to a differential pressure gauge. An air bubble is visible in one hose; a thermometer is fitted on the pipe." },
+ { title: "Final circulator diagnosis",
+   sit: "Closed water circuit. Suction 1.5 bar(g), discharge 2.3 bar(g), tappings at the same level. High point 12 m above the gauge; low point at rest: 1.8 bar(g).",
+   q: "Carry out the diagnosis in three decisions.",
+   groups: [{ label: "1. Head supplied by the pump" }, { label: "2. Theoretical pressure at the high point, at rest" },
+     { label: "3. Conclusion", opts: ["The pump alone maintains pressure at the high point", "Static pressure and the pump have two different functions", "The pressure at rest measures the pump head"] }],
+   svg: { high: "High point", low: "Low point · at rest", asp: "Suction", ref: "Discharge" },
+   ok: "Δp = 2.3 − 1.5 = 0.8 bar = 80 kPa, i.e. ≈ 8.15 mCE. At the high point: 1.8 − 12 × 0.0981 ≈ 0.62 bar(g). Pressurisation and the pump play two distinct roles.",
+   ko: "Pump: 0.8 bar = 80 kPa, i.e. ≈ 8.15 mCE. Static drop to the high point: 12 × 0.0981 ≈ 1.18 bar, so ≈ 0.62 bar(g) at the high point. The pump does not replace pressurisation.",
+   key: "The static pressurisation of the network and the pressure difference created by the pump fulfil two different functions.",
+   notion: "Diagnosis",
+   alt: "Building: circulator at the bottom with 1.5 bar(g) at suction and 2.3 bar(g) at discharge, low-point gauge at 1.8 bar(g) at rest, 12 m column up to the high point." }
+ ]},
+
+/* ---------------------------- ESPAÑOL ---------------------------- */
+es: { name: "Español", ui: {
+  lang: "Idioma", module: "HYD-02 | Presiones y altura manométrica", start: "Comenzar", prev: "Anterior", next: "Siguiente",
+  validate: "Validar", result: "Ver mi resultado", pause: "Pausa", resume: "Reanudar",
+  pauseAria: "Pausa: detener las animaciones", resumeAria: "Reanudar las animaciones",
+  stepOf: "Etapa {n} de {t}", progress: "Progreso del reto", stDone: "completada", stCur: "en curso", stTodo: "pendiente",
+  introTitle: "Acepte el reto de fin de módulo",
+  introLead: "Ha descubierto las nociones esenciales de este módulo. ¡Ahora le toca ponerlas en práctica!",
+  introCase: "Interviene en una red hidráulica de climatización cuyo rendimiento debe controlarse. Dispone de varias lecturas de presión. Su misión: analizar las mediciones, realizar los cálculos correctos y comprobar el funcionamiento de la instalación.",
+  introMeta: "8 etapas · 1 decisión o 1 cálculo por etapa · un caso práctico común",
+  introAlt: "Ilustración: manómetro conectado a una tubería de agua en circulación.",
+  situation: "Situación", ok: "Respuesta correcta", ko: "Respuesta incorrecta", remember: "Para recordar",
+  needAnswer: "Responda y valide para continuar.", selected: "Seleccionado", notSel: "Sin seleccionar",
+  hDrag: "Arrastre una tarjeta a una zona, o selecciónela y elija después la zona.", hMulti: "Varias respuestas posibles.",
+  choose: "Elegir…", zoneEmpty: "Coloque una tarjeta", data: "Datos",
+  labelSel: "Tarjeta «{l}» seleccionada. Elija ahora una zona.", placed: "«{l}» colocada en «{z}».", removed: "Zona «{z}» vaciada.",
+  finalTitle: "Su resultado", score: "Puntuación", rate: "Porcentaje de aciertos", passed: "Etapas superadas",
+  toReview: "Nociones que repasar", noneReview: "Ninguna: domina todas las nociones.",
+  lvl3t: "Dominio sólido", lvl3m: "Excelente trabajo: sabe interpretar presiones, convertir unidades y calcular una altura manométrica.",
+  lvl2t: "Conocimientos satisfactorios, algunas nociones que consolidar", lvl2m: "Buena base. Repase las nociones señaladas antes de continuar el itinerario.",
+  lvl1t: "Se recomienda repasar", lvl1m: "Retome las secuencias relacionadas con las nociones que repasar y vuelva a realizar el reto.",
+  review: "Revisar mis respuestas", restart: "Reiniciar el reto", back: "Volver al resultado", reviewTitle: "Resumen de sus respuestas",
+  success: "Superada", fail: "Por repasar", yours: "Su respuesta", expected: "Respuesta esperada", noAnswer: "Sin respuesta",
+  step: "Etapa", page: "Página {n} de {t}", prevPage: "Página anterior", nextPage: "Página siguiente",
+  scoreAria: "Puntuación: {s} de {t}", multiAns: "{c} acción(es) correcta(s) de 6 · {w} error(es)", allBut: "Todas, excepto:"
+ }, steps: [
+ { title: "¿Qué presión mide?",
+   sit: "Antes de revisar la red, repasa las presiones citadas en el expediente técnico.",
+   q: "Asocie cada presión con su referencia y su uso.",
+   items: ["Presión absoluta", "Presión relativa", "Presión atmosférica", "Presión diferencial", "Presión estática"],
+   choices: ["Vacío perfecto: cálculos físicos, cavitación", "Atmósfera local: manómetro de la red", "Aire ambiente: conversión absoluta ↔ relativa", "Diferencia p2 − p1: bomba, filtro, válvula", "Presión local del fluido: presurización"],
+   svg: { vac: "Vacío perfecto", atm: "Atmósfera", net: "Red", filter: "Filtro", pump: "Bomba" },
+   ok: "Cada presión tiene su referencia. Un manómetro de red suele indicar una presión relativa; la absoluta se obtiene con {F1}.",
+   ko: "La absoluta parte del vacío perfecto, la relativa de la atmósfera local y la diferencial compara dos puntos. Un manómetro de red suele indicar una presión relativa: {F1}.",
+   key: "Anote siempre la referencia: bar(a), bar(g) o Δp. Nunca sume valores de referencias distintas sin convertirlos.",
+   notion: "Referencias de presión",
+   alt: "Escala de presiones: vacío perfecto a 0 bar(a), presión atmosférica, presión de la red. A la derecha, una bomba y un filtro con manómetro diferencial." },
+ { title: "¿Una presión negativa?",
+   sit: "En la aspiración de una bomba, el manómetro indica −0,2 bar(g). Un compañero cree que el aparato está averiado.",
+   q: "¿Cómo interpreta este valor?",
+   opts: ["Una presión absoluta negativa de −0,2 bar", "Una presión 0,2 bar superior a la atmosférica", "Una presión 0,2 bar inferior a la atmosférica", "Una medida imposible: el aparato está mal"],
+   svg: { asp: "Aspiración", pump: "Bomba" },
+   ok: "La «g» indica una presión relativa. −0,2 bar(g) significa 0,2 bar por debajo de la atmósfera: con {patm} = 1,0 bar, la presión absoluta sigue siendo positiva, unos 0,8 bar(a).",
+   ko: "Una presión absoluta no puede ser negativa: su cero es el vacío perfecto. Aquí, el valor relativo indica 0,2 bar por debajo de la atmósfera, algo que puede ocurrir en la aspiración de una bomba.",
+   key: "Presión relativa negativa = presión inferior a la atmosférica, nunca una presión absoluta negativa.",
+   notion: "Referencias de presión",
+   alt: "Manómetro graduado de −1 a 3 bar(g), aguja en −0,2 bar(g), instalado en la aspiración de una bomba." },
+ { title: "Presión y altura",
+   sit: "En un edificio, el punto alto de la red está 20 m por encima del punto bajo. El circuito es cerrado y está lleno de agua.",
+   q: "En el esquema, seleccione la diferencia de presión hidrostática entre estos dos puntos.",
+   svg: { high: "Punto alto", low: "Punto bajo", pump: "Bomba" },
+   ok: "{F2} = 1 000 × 9,81 × 20 ≈ 196 200 Pa, es decir, unos 2 bar. Orden de magnitud útil: 10 m de agua ≈ 1 bar.",
+   ko: "Aplique {F2}: 1 000 × 9,81 × 20 ≈ 196 200 Pa, es decir, unos 2 bar. Recuerde: aproximadamente 0,1 bar por metro de agua.",
+   key: "En circuito cerrado, las columnas ascendente y descendente se compensan: la bomba no eleva todo el edificio, pero la presión debe seguir siendo suficiente en el punto alto.",
+   notion: "Hidrostática",
+   alt: "Edificio con un circuito cerrado: punto bajo y punto alto separados 20 m. Valores propuestos: 0,2 bar, 2 bar, 20 bar y 200 bar." },
+ { title: "De la presión a la altura",
+   sit: "Una lectura indica una diferencia de presión de 80 kPa en una red de agua. Debe expresarla en altura de agua.",
+   q: "Realice el cálculo guiado en dos pasos.",
+   groups: [{ label: "1. Convertir a pascales: 80 kPa =" }, { label: "2. Calcular {F3}:" }],
+   svg: { water: "Agua", result: "Resultado" },
+   ok: "80 kPa = 80 000 Pa, y H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Control: 1 bar ≈ 10,2 mCE, luego 0,8 bar ≈ 8,2 mCE.",
+   ko: "Convierta primero: 1 kPa = 1 000 Pa, así que 80 kPa = 80 000 Pa. Después H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Referencia: 100 kPa ≈ 10,2 mCE.",
+   key: "Método: presión en Pa, densidad real del fluido, {F3} y control del orden de magnitud.",
+   notion: "Conversiones",
+   alt: "Cadena de cálculo: 80 kPa, conversión a pascales, fórmula H = Δp / (ρ × g) con ρ ≈ 1 000 kg/m³ y g ≈ 9,81 m/s², y una columna de agua graduada en metros." },
+ { title: "Controle la bomba",
+   sit: "Dos manómetros rodean el circulador: 1,8 bar(g) y 2,8 bar(g). Las tomas están a la misma altura, en diámetros comparables.",
+   q: "Seleccione en el esquema el manómetro de impulsión y elija después la altura suministrada.",
+   groups: [{ label: "1. Manómetro de impulsión:", opts: ["Manómetro A", "Manómetro B"] }, { label: "2. Altura manométrica simplificada:" }],
+   svg: { flow: "Sentido de circulación" },
+   ok: "La impulsión está aguas abajo de la bomba: Δp = 2,8 − 1,8 = 1 bar = 100 kPa, es decir, H ≈ 10,2 mCE.",
+   ko: "La impulsión está aguas abajo de la bomba, en el lado de mayor presión. Δp = 2,8 − 1,8 = 1 bar = 100 kPa, y {F3} ≈ 10,2 mCE.",
+   key: "La altura manométrica simplificada se deduce de la diferencia impulsión − aspiración cuando las diferencias de velocidad y altura son despreciables.",
+   notion: "Altura manométrica",
+   alt: "Circulador entre dos manómetros: A a 1,8 bar(g) aguas arriba y B a 2,8 bar(g) aguas abajo, con una flecha que indica el sentido de circulación." },
+ { title: "¿Presión estática o altura manométrica?",
+   sit: "El expediente indica dos lecturas: 2 bar(g) en la red parada y una diferencia de 0,8 bar creada por la bomba en marcha.",
+   q: "Coloque cada lectura en la función correcta. Una tarjeta es una trampa.",
+   zones: ["Presurización estática de la red", "Altura producida por la bomba"],
+   labels: ["2 bar(g), red parada", "Δp de 0,8 bar, bomba en marcha", "20 mCE suministrados por la bomba"],
+   svg: { off: "Parada", on: "En marcha" },
+   ok: "La presión en parada refleja el llenado de la red; la Δp en marcha refleja la energía aportada por la bomba, unos 8,15 mCE. La tarjeta «20 mCE» confunde ambas.",
+   ko: "Una red presurizada a 2 bar en parada no significa que la bomba suministre 20 mCE. La altura manométrica se deduce del aumento de presión entre aspiración e impulsión en marcha: aquí 0,8 bar.",
+   key: "Presión estática ≠ altura manométrica: son dos funciones distintas.",
+   notion: "Presión estática / altura manométrica",
+   alt: "Red cerrada con un manómetro de presurización a 2 bar(g) en parada y dos manómetros alrededor de la bomba en marcha, con una Δp de 0,8 bar." },
+ { title: "Asegure su medición",
+   sit: "Prepara una medición de Δp en un intercambiador con un manómetro diferencial.",
+   q: "Seleccione todas las acciones que debe realizar antes y durante la medición.",
+   items: ["Identificar el fluido, su temperatura y su contenido de glicol", "Comprobar la unidad, el rango y el cero del instrumento", "Localizar las tomas aguas arriba y aguas abajo", "Estabilizar el funcionamiento antes de medir", "Purgar los latiguillos si el procedimiento lo permite", "Anotar el sentido de Δp, el caudal, la velocidad y las válvulas", "Medir durante el arranque para ganar tiempo", "Basar el diagnóstico solo en el valor de Δp"],
+   svg: { up: "Aguas arriba", down: "Aguas abajo", hx: "Intercambiador", flow: "Sentido de circulación" },
+   ok: "Estas precauciones hacen que la medición sea útil y comparable. Una Δp sola no basta: se contrasta con el caudal, las válvulas, la velocidad de la bomba y la temperatura.",
+   ko: "Una medición fiable exige un funcionamiento estabilizado, un instrumento verificado, tomas identificadas y condiciones anotadas. Una Δp sola no identifica la causa de una anomalía.",
+   key: "Un valor de Δp por sí solo no basta para establecer un diagnóstico: indique siempre los puntos, el signo y las condiciones.",
+   notion: "Medición",
+   alt: "Intercambiador en una tubería, tomas aguas arriba y aguas abajo unidas por dos latiguillos a un manómetro diferencial. Se ve una burbuja de aire en un latiguillo; un termómetro equipa la tubería." },
+ { title: "Diagnóstico final del circulador",
+   sit: "Circuito cerrado de agua. Aspiración 1,5 bar(g), impulsión 2,3 bar(g), tomas al mismo nivel. Punto alto 12 m por encima del manómetro; punto bajo en parada: 1,8 bar(g).",
+   q: "Realice el diagnóstico en tres decisiones.",
+   groups: [{ label: "1. Altura suministrada por la bomba" }, { label: "2. Presión teórica en el punto alto, en parada" },
+     { label: "3. Conclusión", opts: ["La bomba mantiene por sí sola la presión en el punto alto", "Presión estática y bomba cumplen dos funciones distintas", "La presión en parada mide la altura de la bomba"] }],
+   svg: { high: "Punto alto", low: "Punto bajo · parada", asp: "Aspiración", ref: "Impulsión" },
+   ok: "Δp = 2,3 − 1,5 = 0,8 bar = 80 kPa, es decir, ≈ 8,15 mCE. En el punto alto: 1,8 − 12 × 0,0981 ≈ 0,62 bar(g). Presurización y bomba cumplen papeles distintos.",
+   ko: "Bomba: 0,8 bar = 80 kPa, es decir, ≈ 8,15 mCE. Caída estática hasta el punto alto: 12 × 0,0981 ≈ 1,18 bar, luego ≈ 0,62 bar(g) en el punto alto. La bomba no sustituye a la presurización.",
+   key: "La presurización estática de la red y la diferencia de presión creada por la bomba cumplen dos funciones distintas.",
+   notion: "Diagnóstico",
+   alt: "Edificio: circulador en la parte baja con 1,5 bar(g) en aspiración y 2,3 bar(g) en impulsión, manómetro de punto bajo a 1,8 bar(g) en parada, columna de 12 m hasta el punto alto." }
+ ]},
+
+/* ---------------------------- PORTUGUÊS ---------------------------- */
+pt: { name: "Português", ui: {
+  lang: "Idioma", module: "HYD-02 | Pressões e altura manométrica", start: "Começar", prev: "Anterior", next: "Seguinte",
+  validate: "Validar", result: "Ver o meu resultado", pause: "Pausa", resume: "Retomar",
+  pauseAria: "Pausa: parar as animações", resumeAria: "Retomar as animações",
+  stepOf: "Etapa {n} de {t}", progress: "Progresso do desafio", stDone: "concluída", stCur: "em curso", stTodo: "por fazer",
+  introTitle: "Aceite o desafio de fim de módulo",
+  introLead: "Descobriu as noções essenciais deste módulo. Agora é a sua vez de as pôr em prática!",
+  introCase: "Intervém numa rede hidráulica AVAC cujo desempenho tem de ser controlado. Estão disponíveis várias leituras de pressão. A sua missão: analisar as medições, efetuar os cálculos corretos e verificar o funcionamento da instalação.",
+  introMeta: "8 etapas · 1 decisão ou 1 cálculo por etapa · um caso prático comum",
+  introAlt: "Ilustração: manómetro ligado a uma tubagem com água em circulação.",
+  situation: "Situação", ok: "Resposta correta", ko: "Resposta incorreta", remember: "A reter",
+  needAnswer: "Responda e valide para continuar.", selected: "Selecionado", notSel: "Não selecionado",
+  hDrag: "Arraste um cartão para uma zona, ou selecione-o e escolha depois a zona.", hMulti: "Várias respostas possíveis.",
+  choose: "Escolher…", zoneEmpty: "Coloque um cartão", data: "Dados",
+  labelSel: "Cartão «{l}» selecionado. Escolha agora uma zona.", placed: "«{l}» colocado em «{z}».", removed: "Zona «{z}» esvaziada.",
+  finalTitle: "O seu resultado", score: "Pontuação", rate: "Taxa de sucesso", passed: "Etapas concluídas com sucesso",
+  toReview: "Noções a rever", noneReview: "Nenhuma: domina todas as noções.",
+  lvl3t: "Domínio sólido", lvl3m: "Excelente trabalho: sabe interpretar pressões, converter unidades e calcular uma altura manométrica.",
+  lvl2t: "Conhecimentos satisfatórios, algumas noções a consolidar", lvl2m: "Boa base. Reveja as noções assinaladas antes de continuar o percurso.",
+  lvl1t: "Revisão recomendada", lvl1m: "Retome as sequências ligadas às noções a rever e volte a fazer o desafio.",
+  review: "Rever as minhas respostas", restart: "Recomeçar o desafio", back: "Voltar ao resultado", reviewTitle: "Síntese das suas respostas",
+  success: "Concluída", fail: "A rever", yours: "A sua resposta", expected: "Resposta esperada", noAnswer: "Sem resposta",
+  step: "Etapa", page: "Página {n} de {t}", prevPage: "Página anterior", nextPage: "Página seguinte",
+  scoreAria: "Pontuação: {s} em {t}", multiAns: "{c} ação(ões) correta(s) em 6 · {w} erro(s)", allBut: "Todas, exceto:"
+ }, steps: [
+ { title: "Que pressão está a medir?",
+   sit: "Antes de verificar a rede, faz o ponto da situação sobre as pressões referidas no dossiê técnico.",
+   q: "Associe cada pressão à sua referência e à sua utilização.",
+   items: ["Pressão absoluta", "Pressão relativa", "Pressão atmosférica", "Pressão diferencial", "Pressão estática"],
+   choices: ["Vácuo perfeito: cálculos físicos, cavitação", "Atmosfera local: manómetro da rede", "Ar ambiente: conversão absoluta ↔ relativa", "Diferença p2 − p1: bomba, filtro, válvula", "Pressão local do fluido: pressurização"],
+   svg: { vac: "Vácuo perfeito", atm: "Atmosfera", net: "Rede", filter: "Filtro", pump: "Bomba" },
+   ok: "Cada pressão tem a sua referência. Um manómetro de rede indica geralmente uma pressão relativa; a absoluta obtém-se com {F1}.",
+   ko: "A absoluta parte do vácuo perfeito, a relativa da atmosfera local e a diferencial compara dois pontos. Um manómetro de rede indica geralmente uma pressão relativa: {F1}.",
+   key: "Registe sempre a referência: bar(a), bar(g) ou Δp. Nunca some valores de referências diferentes sem conversão.",
+   notion: "Referências de pressão",
+   alt: "Escala de pressões: vácuo perfeito a 0 bar(a), pressão atmosférica, pressão da rede. À direita, uma bomba e um filtro com manómetro diferencial." },
+ { title: "Uma pressão negativa?",
+   sit: "Na aspiração de uma bomba, o manómetro indica −0,2 bar(g). Um colega pensa que o aparelho está avariado.",
+   q: "Como interpreta este valor?",
+   opts: ["Uma pressão absoluta negativa de −0,2 bar", "Uma pressão 0,2 bar acima da atmosférica", "Uma pressão 0,2 bar abaixo da atmosférica", "Uma medição impossível: o aparelho está errado"],
+   svg: { asp: "Aspiração", pump: "Bomba" },
+   ok: "O «g» indica uma pressão relativa. −0,2 bar(g) significa 0,2 bar abaixo da atmosfera: com {patm} = 1,0 bar, a pressão absoluta continua positiva, cerca de 0,8 bar(a).",
+   ko: "Uma pressão absoluta não pode ser negativa: o seu zero é o vácuo perfeito. Aqui, o valor relativo indica 0,2 bar abaixo da atmosfera, o que pode acontecer na aspiração de uma bomba.",
+   key: "Pressão relativa negativa = pressão inferior à atmosférica, nunca uma pressão absoluta negativa.",
+   notion: "Referências de pressão",
+   alt: "Manómetro graduado de −1 a 3 bar(g), ponteiro em −0,2 bar(g), instalado na aspiração de uma bomba." },
+ { title: "Pressão e altitude",
+   sit: "Num edifício, o ponto alto da rede situa-se 20 m acima do ponto baixo. O circuito é fechado e está cheio de água.",
+   q: "No esquema, selecione a diferença de pressão hidrostática entre estes dois pontos.",
+   svg: { high: "Ponto alto", low: "Ponto baixo", pump: "Bomba" },
+   ok: "{F2} = 1 000 × 9,81 × 20 ≈ 196 200 Pa, ou seja, cerca de 2 bar. Ordem de grandeza útil: 10 m de água ≈ 1 bar.",
+   ko: "Aplique {F2}: 1 000 × 9,81 × 20 ≈ 196 200 Pa, ou seja, cerca de 2 bar. Lembre-se: cerca de 0,1 bar por metro de água.",
+   key: "Em circuito fechado, as colunas ascendente e descendente compensam-se: a bomba não eleva todo o edifício, mas a pressão tem de se manter suficiente no ponto alto.",
+   notion: "Hidrostática",
+   alt: "Edifício com circuito fechado: ponto baixo e ponto alto separados por 20 m. Valores propostos: 0,2 bar, 2 bar, 20 bar e 200 bar." },
+ { title: "Da pressão à altura",
+   sit: "Uma leitura indica uma diferença de pressão de 80 kPa numa rede de água. Tem de a exprimir em altura de água.",
+   q: "Efetue o cálculo guiado em duas etapas.",
+   groups: [{ label: "1. Converter em pascais: 80 kPa =" }, { label: "2. Calcular {F3}:" }],
+   svg: { water: "Água", result: "Resultado" },
+   ok: "80 kPa = 80 000 Pa, depois H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Controlo: 1 bar ≈ 10,2 mCE, logo 0,8 bar ≈ 8,2 mCE.",
+   ko: "Converta primeiro: 1 kPa = 1 000 Pa, logo 80 kPa = 80 000 Pa. Depois H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Referência: 100 kPa ≈ 10,2 mCE.",
+   key: "Método: pressão em Pa, massa volúmica real do fluido, {F3} e controlo da ordem de grandeza.",
+   notion: "Conversões",
+   alt: "Cadeia de cálculo: 80 kPa, conversão em pascais, fórmula H = Δp / (ρ × g) com ρ ≈ 1 000 kg/m³ e g ≈ 9,81 m/s², e uma coluna de água graduada em metros." },
+ { title: "Controle a bomba",
+   sit: "Dois manómetros enquadram o circulador: 1,8 bar(g) e 2,8 bar(g). As tomadas estão à mesma altitude, em diâmetros comparáveis.",
+   q: "Selecione no esquema o manómetro de compressão e escolha depois a altura fornecida.",
+   groups: [{ label: "1. Manómetro de compressão:", opts: ["Manómetro A", "Manómetro B"] }, { label: "2. Altura manométrica simplificada:" }],
+   svg: { flow: "Sentido de circulação" },
+   ok: "A compressão está a jusante da bomba: Δp = 2,8 − 1,8 = 1 bar = 100 kPa, ou seja, H ≈ 10,2 mCE.",
+   ko: "A compressão situa-se a jusante da bomba, do lado de pressão mais elevada. Δp = 2,8 − 1,8 = 1 bar = 100 kPa, depois {F3} ≈ 10,2 mCE.",
+   key: "A altura manométrica simplificada deduz-se da diferença compressão − aspiração quando as diferenças de velocidade e altitude são desprezáveis.",
+   notion: "Altura manométrica",
+   alt: "Circulador entre dois manómetros: A a 1,8 bar(g) a montante e B a 2,8 bar(g) a jusante, com uma seta a indicar o sentido de circulação." },
+ { title: "Pressão estática ou altura manométrica?",
+   sit: "O dossiê indica duas leituras: 2 bar(g) na rede parada e uma diferença de 0,8 bar criada pela bomba em funcionamento.",
+   q: "Coloque cada leitura na função correta. Um dos cartões é uma armadilha.",
+   zones: ["Pressurização estática da rede", "Altura produzida pela bomba"],
+   labels: ["2 bar(g), rede parada", "Δp de 0,8 bar, bomba em funcionamento", "20 mCE fornecidos pela bomba"],
+   svg: { off: "Parada", on: "Em funcionamento" },
+   ok: "A pressão em paragem traduz o enchimento da rede; a Δp em funcionamento traduz a energia fornecida pela bomba, cerca de 8,15 mCE. O cartão «20 mCE» confunde as duas.",
+   ko: "Uma rede pressurizada a 2 bar em paragem não significa que a bomba forneça 20 mCE. A altura manométrica deduz-se do aumento de pressão entre aspiração e compressão, em funcionamento: aqui 0,8 bar.",
+   key: "Pressão estática ≠ altura manométrica: são duas funções diferentes.",
+   notion: "Pressão estática / altura manométrica",
+   alt: "Rede fechada com um manómetro de pressurização a 2 bar(g) em paragem e dois manómetros em torno da bomba em funcionamento, com uma Δp de 0,8 bar." },
+ { title: "Torne a medição fiável",
+   sit: "Prepara uma medição de Δp num permutador com um manómetro diferencial.",
+   q: "Selecione todas as ações a realizar antes e durante a medição.",
+   items: ["Identificar o fluido, a temperatura e o teor de glicol", "Verificar a unidade, a gama e o zero do instrumento", "Localizar as tomadas a montante e a jusante", "Estabilizar o funcionamento antes de registar", "Purgar os tubos flexíveis se o procedimento o permitir", "Registar o sentido de Δp, o caudal, a velocidade e as válvulas", "Registar durante o arranque para ganhar tempo", "Basear o diagnóstico apenas no valor de Δp"],
+   svg: { up: "Montante", down: "Jusante", hx: "Permutador", flow: "Sentido de circulação" },
+   ok: "Estas precauções tornam a medição útil e comparável. Uma Δp isolada não basta: cruza-se com o caudal, as válvulas, a velocidade da bomba e a temperatura.",
+   ko: "Uma medição fiável exige funcionamento estabilizado, instrumento verificado, tomadas identificadas e condições registadas. Uma Δp isolada não identifica a causa de uma anomalia.",
+   key: "Um valor de Δp isolado não basta para estabelecer um diagnóstico: indique sempre os pontos, o sinal e as condições.",
+   notion: "Medição",
+   alt: "Permutador numa tubagem, tomadas a montante e a jusante ligadas por dois tubos flexíveis a um manómetro diferencial. Vê-se uma bolha de ar num tubo; a conduta tem um termómetro." },
+ { title: "Diagnóstico final do circulador",
+   sit: "Circuito fechado de água. Aspiração 1,5 bar(g), compressão 2,3 bar(g), tomadas ao mesmo nível. Ponto alto 12 m acima do manómetro; ponto baixo em paragem: 1,8 bar(g).",
+   q: "Conduza o diagnóstico em três decisões.",
+   groups: [{ label: "1. Altura fornecida pela bomba" }, { label: "2. Pressão teórica no ponto alto, em paragem" },
+     { label: "3. Conclusão", opts: ["A bomba mantém sozinha a pressão no ponto alto", "Pressão estática e bomba têm duas funções diferentes", "A pressão em paragem mede a altura da bomba"] }],
+   svg: { high: "Ponto alto", low: "Ponto baixo · paragem", asp: "Aspiração", ref: "Compressão" },
+   ok: "Δp = 2,3 − 1,5 = 0,8 bar = 80 kPa, ou seja, ≈ 8,15 mCE. No ponto alto: 1,8 − 12 × 0,0981 ≈ 0,62 bar(g). Pressurização e bomba têm papéis distintos.",
+   ko: "Bomba: 0,8 bar = 80 kPa, ou seja, ≈ 8,15 mCE. Queda estática até ao ponto alto: 12 × 0,0981 ≈ 1,18 bar, logo ≈ 0,62 bar(g) no ponto alto. A bomba não substitui a pressurização.",
+   key: "A pressurização estática da rede e a diferença de pressão criada pela bomba cumprem duas funções diferentes.",
+   notion: "Diagnóstico",
+   alt: "Edifício: circulador em baixo com 1,5 bar(g) na aspiração e 2,3 bar(g) na compressão, manómetro de ponto baixo a 1,8 bar(g) em paragem, coluna de 12 m até ao ponto alto." }
+ ]},
+
+/* ---------------------------- ITALIANO ---------------------------- */
+it: { name: "Italiano", ui: {
+  lang: "Lingua", module: "HYD-02 | Pressioni e prevalenza", start: "Inizia", prev: "Indietro", next: "Avanti",
+  validate: "Conferma", result: "Vedi il mio risultato", pause: "Pausa", resume: "Riprendi",
+  pauseAria: "Pausa: ferma le animazioni", resumeAria: "Riprendi le animazioni",
+  stepOf: "Tappa {n} di {t}", progress: "Avanzamento della sfida", stDone: "completata", stCur: "in corso", stTodo: "da fare",
+  introTitle: "Accetta la sfida di fine modulo",
+  introLead: "Hai scoperto i concetti essenziali di questo modulo. Ora tocca a te metterli in pratica!",
+  introCase: "Intervieni su una rete idronica HVAC le cui prestazioni devono essere verificate. Sono disponibili diverse letture di pressione. La tua missione: analizzare le misure, eseguire i calcoli corretti e verificare il funzionamento dell'impianto.",
+  introMeta: "8 tappe · 1 decisione o 1 calcolo per tappa · un caso di studio comune",
+  introAlt: "Illustrazione: manometro collegato a una tubazione con acqua in circolazione.",
+  situation: "Situazione", ok: "Risposta corretta", ko: "Risposta errata", remember: "Da ricordare",
+  needAnswer: "Rispondi, poi conferma per continuare.", selected: "Selezionato", notSel: "Non selezionato",
+  hDrag: "Trascina una carta su una zona, oppure selezionala e scegli poi la zona.", hMulti: "Più risposte possibili.",
+  choose: "Scegli…", zoneEmpty: "Inserisci una carta", data: "Dati",
+  labelSel: "Carta «{l}» selezionata. Ora scegli una zona.", placed: "«{l}» inserita in «{z}».", removed: "Zona «{z}» svuotata.",
+  finalTitle: "Il tuo risultato", score: "Punteggio", rate: "Percentuale di successo", passed: "Tappe superate",
+  toReview: "Concetti da ripassare", noneReview: "Nessuno: padroneggi tutti i concetti.",
+  lvl3t: "Padronanza solida", lvl3m: "Ottimo lavoro: sai interpretare le pressioni, convertire le unità e calcolare una prevalenza.",
+  lvl2t: "Conoscenze soddisfacenti, alcuni concetti da consolidare", lvl2m: "Buona base. Ripassa i concetti segnalati prima di proseguire il percorso.",
+  lvl1t: "Ripasso consigliato", lvl1m: "Riprendi le sequenze legate ai concetti da ripassare, poi affronta di nuovo la sfida.",
+  review: "Rivedi le mie risposte", restart: "Ricomincia la sfida", back: "Torna al risultato", reviewTitle: "Sintesi delle tue risposte",
+  success: "Superata", fail: "Da ripassare", yours: "La tua risposta", expected: "Risposta attesa", noAnswer: "Nessuna risposta",
+  step: "Tappa", page: "Pagina {n} di {t}", prevPage: "Pagina precedente", nextPage: "Pagina successiva",
+  scoreAria: "Punteggio: {s} su {t}", multiAns: "{c} azione/i corretta/e su 6 · {w} errore/i", allBut: "Tutte, tranne:"
+ }, steps: [
+ { title: "Quale pressione stai misurando?",
+   sit: "Prima di controllare la rete, fai il punto sulle pressioni citate nella documentazione tecnica.",
+   q: "Associa ogni pressione al suo riferimento e al suo utilizzo.",
+   items: ["Pressione assoluta", "Pressione relativa", "Pressione atmosferica", "Pressione differenziale", "Pressione statica"],
+   choices: ["Vuoto assoluto: calcoli fisici, cavitazione", "Atmosfera locale: manometro di rete", "Aria ambiente: conversione assoluta ↔ relativa", "Differenza p2 − p1: pompa, filtro, valvola", "Pressione locale del fluido: pressurizzazione"],
+   svg: { vac: "Vuoto assoluto", atm: "Atmosfera", net: "Rete", filter: "Filtro", pump: "Pompa" },
+   ok: "Ogni pressione ha il suo riferimento. Un manometro di rete indica di solito una pressione relativa; la assoluta si ricava con {F1}.",
+   ko: "La assoluta parte dal vuoto assoluto, la relativa dall'atmosfera locale e la differenziale confronta due punti. Un manometro di rete indica di solito una pressione relativa: {F1}.",
+   key: "Annota sempre il riferimento: bar(a), bar(g) o Δp. Non sommare mai valori con riferimenti diversi senza convertirli.",
+   notion: "Riferimenti di pressione",
+   alt: "Scala delle pressioni: vuoto assoluto a 0 bar(a), pressione atmosferica, pressione della rete. A destra, una pompa e un filtro con manometro differenziale." },
+ { title: "Una pressione negativa?",
+   sit: "All'aspirazione di una pompa il manometro indica −0,2 bar(g). Un collega pensa che lo strumento sia guasto.",
+   q: "Come interpreti questo valore?",
+   opts: ["Una pressione assoluta negativa di −0,2 bar", "Una pressione di 0,2 bar superiore all'atmosfera", "Una pressione di 0,2 bar inferiore all'atmosfera", "Una misura impossibile: lo strumento è guasto"],
+   svg: { asp: "Aspirazione", pump: "Pompa" },
+   ok: "La «g» indica una pressione relativa. −0,2 bar(g) significa 0,2 bar sotto l'atmosfera: con {patm} = 1,0 bar, la pressione assoluta resta positiva, circa 0,8 bar(a).",
+   ko: "Una pressione assoluta non può essere negativa: il suo zero è il vuoto assoluto. Qui il valore relativo indica 0,2 bar sotto l'atmosfera, cosa che può accadere all'aspirazione di una pompa.",
+   key: "Pressione relativa negativa = pressione inferiore all'atmosfera, mai una pressione assoluta negativa.",
+   notion: "Riferimenti di pressione",
+   alt: "Manometro graduato da −1 a 3 bar(g), lancetta su −0,2 bar(g), installato all'aspirazione di una pompa." },
+ { title: "Pressione e quota",
+   sit: "In un edificio, il punto alto della rete si trova 20 m sopra il punto basso. Il circuito è chiuso e pieno d'acqua.",
+   q: "Nello schema, seleziona la differenza di pressione idrostatica tra questi due punti.",
+   svg: { high: "Punto alto", low: "Punto basso", pump: "Pompa" },
+   ok: "{F2} = 1 000 × 9,81 × 20 ≈ 196 200 Pa, cioè circa 2 bar. Ordine di grandezza utile: 10 m d'acqua ≈ 1 bar.",
+   ko: "Applica {F2}: 1 000 × 9,81 × 20 ≈ 196 200 Pa, cioè circa 2 bar. Ricorda: circa 0,1 bar per metro d'acqua.",
+   key: "In un circuito chiuso, le colonne ascendente e discendente si compensano: la pompa non solleva tutto l'edificio, ma la pressione deve restare sufficiente nel punto alto.",
+   notion: "Idrostatica",
+   alt: "Edificio con circuito chiuso: punto basso e punto alto distanti 20 m. Valori proposti: 0,2 bar, 2 bar, 20 bar e 200 bar." },
+ { title: "Dalla pressione all'altezza",
+   sit: "Una lettura indica una differenza di pressione di 80 kPa su una rete d'acqua. Devi esprimerla come altezza d'acqua.",
+   q: "Esegui il calcolo guidato in due passaggi.",
+   groups: [{ label: "1. Convertire in pascal: 80 kPa =" }, { label: "2. Calcolare {F3}:" }],
+   svg: { water: "Acqua", result: "Risultato" },
+   ok: "80 kPa = 80 000 Pa, poi H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Verifica: 1 bar ≈ 10,2 mCE, quindi 0,8 bar ≈ 8,2 mCE.",
+   ko: "Converti prima: 1 kPa = 1 000 Pa, quindi 80 kPa = 80 000 Pa. Poi H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Riferimento: 100 kPa ≈ 10,2 mCE.",
+   key: "Metodo: pressione in Pa, massa volumica reale del fluido, {F3}, poi verifica dell'ordine di grandezza.",
+   notion: "Conversioni",
+   alt: "Catena di calcolo: 80 kPa, conversione in pascal, formula H = Δp / (ρ × g) con ρ ≈ 1 000 kg/m³ e g ≈ 9,81 m/s², poi una colonna d'acqua graduata in metri." },
+ { title: "Controlla la pompa",
+   sit: "Due manometri si trovano a monte e a valle del circolatore: 1,8 bar(g) e 2,8 bar(g). Le prese sono alla stessa quota, su diametri comparabili.",
+   q: "Seleziona nello schema il manometro di mandata, poi scegli la prevalenza fornita.",
+   groups: [{ label: "1. Manometro di mandata:", opts: ["Manometro A", "Manometro B"] }, { label: "2. Prevalenza semplificata:" }],
+   svg: { flow: "Senso di circolazione" },
+   ok: "La mandata è a valle della pompa: Δp = 2,8 − 1,8 = 1 bar = 100 kPa, cioè H ≈ 10,2 mCE.",
+   ko: "La mandata si trova a valle della pompa, sul lato a pressione più alta. Δp = 2,8 − 1,8 = 1 bar = 100 kPa, poi {F3} ≈ 10,2 mCE.",
+   key: "La prevalenza semplificata si ricava dalla differenza mandata − aspirazione quando le differenze di velocità e di quota sono trascurabili.",
+   notion: "Prevalenza",
+   alt: "Circolatore tra due manometri: A a 1,8 bar(g) a monte e B a 2,8 bar(g) a valle, con una freccia che indica il senso di circolazione." },
+ { title: "Pressione statica o prevalenza?",
+   sit: "La documentazione riporta due letture: 2 bar(g) sulla rete ferma e una differenza di 0,8 bar creata dalla pompa in funzione.",
+   q: "Inserisci ogni lettura nella funzione corretta. Una carta è una trappola.",
+   zones: ["Pressurizzazione statica della rete", "Prevalenza prodotta dalla pompa"],
+   labels: ["2 bar(g), rete ferma", "Δp di 0,8 bar, pompa in funzione", "20 mCE forniti dalla pompa"],
+   svg: { off: "Ferma", on: "In funzione" },
+   ok: "La pressione a impianto fermo riflette il riempimento della rete; la Δp in funzione riflette l'energia fornita dalla pompa, circa 8,15 mCE. La carta «20 mCE» confonde le due.",
+   ko: "Una rete pressurizzata a 2 bar da ferma non significa che la pompa fornisca 20 mCE. La prevalenza si ricava dall'aumento di pressione tra aspirazione e mandata, in funzione: qui 0,8 bar.",
+   key: "Pressione statica ≠ prevalenza: sono due funzioni diverse.",
+   notion: "Pressione statica / prevalenza",
+   alt: "Rete chiusa con un manometro di pressurizzazione a 2 bar(g) da ferma e due manometri attorno alla pompa in funzione, con una Δp di 0,8 bar." },
+ { title: "Rendi affidabile la misura",
+   sit: "Prepari una misura di Δp ai capi di uno scambiatore con un manometro differenziale.",
+   q: "Seleziona tutte le azioni da eseguire prima e durante la misura.",
+   items: ["Identificare il fluido, la temperatura e il tenore di glicole", "Verificare unità, campo e zero dello strumento", "Individuare le prese a monte e a valle", "Stabilizzare il funzionamento prima della lettura", "Spurgare i flessibili se la procedura lo consente", "Annotare il segno di Δp, la portata, la velocità e le valvole", "Leggere durante l'avviamento per guadagnare tempo", "Basare la diagnosi sul solo valore di Δp"],
+   svg: { up: "Monte", down: "Valle", hx: "Scambiatore", flow: "Senso di circolazione" },
+   ok: "Queste precauzioni rendono la misura utilizzabile e confrontabile. Una Δp da sola non basta: va incrociata con portata, valvole, velocità della pompa e temperatura.",
+   ko: "Una misura affidabile richiede funzionamento stabilizzato, strumento verificato, prese identificate e condizioni annotate. Una Δp da sola non identifica la causa di un'anomalia.",
+   key: "Un valore di Δp da solo non basta per una diagnosi: indica sempre i punti, il segno e le condizioni.",
+   notion: "Misura",
+   alt: "Scambiatore su una tubazione, prese a monte e a valle collegate con due flessibili a un manometro differenziale. Una bolla d'aria è visibile in un flessibile; un termometro è montato sulla tubazione." },
+ { title: "Diagnosi finale del circolatore",
+   sit: "Circuito chiuso ad acqua. Aspirazione 1,5 bar(g), mandata 2,3 bar(g), prese allo stesso livello. Punto alto 12 m sopra il manometro; punto basso da fermo: 1,8 bar(g).",
+   q: "Conduci la diagnosi in tre decisioni.",
+   groups: [{ label: "1. Prevalenza fornita dalla pompa" }, { label: "2. Pressione teorica nel punto alto, da fermo" },
+     { label: "3. Conclusione", opts: ["La pompa mantiene da sola la pressione nel punto alto", "Pressione statica e pompa svolgono due funzioni diverse", "La pressione da fermo misura la prevalenza della pompa"] }],
+   svg: { high: "Punto alto", low: "Punto basso · fermo", asp: "Aspirazione", ref: "Mandata" },
+   ok: "Δp = 2,3 − 1,5 = 0,8 bar = 80 kPa, cioè ≈ 8,15 mCE. Nel punto alto: 1,8 − 12 × 0,0981 ≈ 0,62 bar(g). Pressurizzazione e pompa hanno ruoli distinti.",
+   ko: "Pompa: 0,8 bar = 80 kPa, cioè ≈ 8,15 mCE. Calo statico verso il punto alto: 12 × 0,0981 ≈ 1,18 bar, quindi ≈ 0,62 bar(g) nel punto alto. La pompa non sostituisce la pressurizzazione.",
+   key: "La pressurizzazione statica della rete e la differenza di pressione creata dalla pompa svolgono due funzioni diverse.",
+   notion: "Diagnosi",
+   alt: "Edificio: circolatore in basso con 1,5 bar(g) in aspirazione e 2,3 bar(g) in mandata, manometro del punto basso a 1,8 bar(g) da fermo, colonna di 12 m fino al punto alto." }
+ ]},
+
+/* ---------------------------- ROMÂNĂ ---------------------------- */
+ro: { name: "Română", ui: {
+  lang: "Limbă", module: "HYD-02 | Presiuni și înălțime de pompare", start: "Începe", prev: "Înapoi", next: "Următorul",
+  validate: "Validează", result: "Vezi rezultatul meu", pause: "Pauză", resume: "Reia",
+  pauseAria: "Pauză: oprește animațiile", resumeAria: "Reia animațiile",
+  stepOf: "Etapa {n} din {t}", progress: "Progresul provocării", stDone: "finalizată", stCur: "în curs", stTodo: "urmează",
+  introTitle: "Acceptă provocarea de final de modul",
+  introLead: "Ai descoperit noțiunile esențiale ale acestui modul. Acum este rândul tău să le pui în practică!",
+  introCase: "Intervii pe o rețea hidraulică HVAC ale cărei performanțe trebuie verificate. Sunt disponibile mai multe citiri de presiune. Misiunea ta: să analizezi măsurătorile, să faci calculele corecte și să verifici funcționarea instalației.",
+  introMeta: "8 etape · 1 decizie sau 1 calcul pe etapă · un studiu de caz comun",
+  introAlt: "Ilustrație: manometru racordat la o conductă cu apă în circulație.",
+  situation: "Situație", ok: "Răspuns corect", ko: "Răspuns incorect", remember: "De reținut",
+  needAnswer: "Răspunde, apoi validează pentru a continua.", selected: "Selectat", notSel: "Neselectat",
+  hDrag: "Trage un card pe o zonă sau selectează-l și alege apoi zona.", hMulti: "Sunt posibile mai multe răspunsuri.",
+  choose: "Alege…", zoneEmpty: "Plasează un card", data: "Date",
+  labelSel: "Cardul „{l}” a fost selectat. Alege acum o zonă.", placed: "„{l}” plasat în „{z}”.", removed: "Zona „{z}” a fost golită.",
+  finalTitle: "Rezultatul tău", score: "Scor", rate: "Rată de reușită", passed: "Etape reușite",
+  toReview: "Noțiuni de recapitulat", noneReview: "Niciuna: stăpânești toate noțiunile.",
+  lvl3t: "Stăpânire solidă", lvl3m: "Excelent: știi să interpretezi presiuni, să faci conversii și să calculezi o înălțime de pompare.",
+  lvl2t: "Cunoștințe satisfăcătoare, câteva noțiuni de consolidat", lvl2m: "Bază bună. Recapitulează noțiunile semnalate înainte de a continua parcursul.",
+  lvl1t: "Recapitulare recomandată", lvl1m: "Reia secvențele legate de noțiunile de recapitulat, apoi încearcă din nou provocarea.",
+  review: "Revezi răspunsurile", restart: "Reia provocarea", back: "Înapoi la rezultat", reviewTitle: "Sinteza răspunsurilor tale",
+  success: "Reușită", fail: "De recapitulat", yours: "Răspunsul tău", expected: "Răspuns așteptat", noAnswer: "Fără răspuns",
+  step: "Etapa", page: "Pagina {n} din {t}", prevPage: "Pagina anterioară", nextPage: "Pagina următoare",
+  scoreAria: "Scor: {s} din {t}", multiAns: "{c} acțiuni corecte din 6 · {w} erori", allBut: "Toate, cu excepția:"
+ }, steps: [
+ { title: "Ce presiune măsori?",
+   sit: "Înainte de a verifica rețeaua, faci o trecere în revistă a presiunilor menționate în dosarul tehnic.",
+   q: "Asociază fiecare presiune cu referința și utilizarea ei.",
+   items: ["Presiune absolută", "Presiune relativă", "Presiune atmosferică", "Presiune diferențială", "Presiune statică"],
+   choices: ["Vid perfect: calcule fizice, cavitație", "Atmosfera locală: manometrul rețelei", "Aerul ambiant: conversie absolută ↔ relativă", "Diferența p2 − p1: pompă, filtru, vană", "Presiunea locală a fluidului: presurizare"],
+   svg: { vac: "Vid perfect", atm: "Atmosferă", net: "Rețea", filter: "Filtru", pump: "Pompă" },
+   ok: "Fiecare presiune are referința ei. Un manometru de rețea indică de obicei o presiune relativă; presiunea absolută se obține cu {F1}.",
+   ko: "Presiunea absolută pornește de la vidul perfect, cea relativă de la atmosfera locală, iar cea diferențială compară două puncte. Un manometru de rețea indică de obicei o presiune relativă: {F1}.",
+   key: "Notează întotdeauna referința: bar(a), bar(g) sau Δp. Nu aduna niciodată valori cu referințe diferite fără conversie.",
+   notion: "Referințe de presiune",
+   alt: "Scara presiunilor: vid perfect la 0 bar(a), presiunea atmosferică, presiunea rețelei. În dreapta, o pompă și un filtru cu manometru diferențial." },
+ { title: "O presiune negativă?",
+   sit: "La aspirația unei pompe, manometrul indică −0,2 bar(g). Un coleg crede că aparatul este defect.",
+   q: "Cum interpretezi această valoare?",
+   opts: ["O presiune absolută negativă de −0,2 bar", "O presiune cu 0,2 bar peste cea atmosferică", "O presiune cu 0,2 bar sub cea atmosferică", "O măsurătoare imposibilă: aparatul e defect"],
+   svg: { asp: "Aspirație", pump: "Pompă" },
+   ok: "Litera „g” indică o presiune relativă. −0,2 bar(g) înseamnă 0,2 bar sub atmosferă: cu {patm} = 1,0 bar, presiunea absolută rămâne pozitivă, aproximativ 0,8 bar(a).",
+   ko: "O presiune absolută nu poate fi negativă: zeroul ei este vidul perfect. Aici, valoarea relativă indică 0,2 bar sub atmosferă, situație care poate apărea la aspirația unei pompe.",
+   key: "Presiune relativă negativă = presiune sub cea atmosferică, niciodată o presiune absolută negativă.",
+   notion: "Referințe de presiune",
+   alt: "Manometru gradat de la −1 la 3 bar(g), acul pe −0,2 bar(g), montat la aspirația unei pompe." },
+ { title: "Presiune și altitudine",
+   sit: "Într-o clădire, punctul cel mai înalt al rețelei se află la 20 m deasupra punctului cel mai jos. Circuitul este închis și plin cu apă.",
+   q: "Pe schemă, selectează diferența de presiune hidrostatică dintre cele două puncte.",
+   svg: { high: "Punct înalt", low: "Punct jos", pump: "Pompă" },
+   ok: "{F2} = 1 000 × 9,81 × 20 ≈ 196 200 Pa, adică aproximativ 2 bar. Ordin de mărime util: 10 m de apă ≈ 1 bar.",
+   ko: "Aplică {F2}: 1 000 × 9,81 × 20 ≈ 196 200 Pa, adică aproximativ 2 bar. Reține: circa 0,1 bar pe metru de apă.",
+   key: "Într-un circuit închis, coloanele ascendentă și descendentă se compensează: pompa nu ridică toată clădirea, dar presiunea trebuie să rămână suficientă în punctul înalt.",
+   notion: "Hidrostatică",
+   alt: "Clădire cu circuit închis: punctul jos și punctul înalt la 20 m distanță pe verticală. Valori propuse: 0,2 bar, 2 bar, 20 bar și 200 bar." },
+ { title: "De la presiune la înălțime",
+   sit: "O citire indică o diferență de presiune de 80 kPa într-o rețea de apă. Trebuie să o exprimi ca înălțime de apă.",
+   q: "Efectuează calculul ghidat în doi pași.",
+   groups: [{ label: "1. Conversie în pascali: 80 kPa =" }, { label: "2. Calculează {F3}:" }],
+   svg: { water: "Apă", result: "Rezultat" },
+   ok: "80 kPa = 80 000 Pa, apoi H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Verificare: 1 bar ≈ 10,2 mCE, deci 0,8 bar ≈ 8,2 mCE.",
+   ko: "Fă mai întâi conversia: 1 kPa = 1 000 Pa, deci 80 kPa = 80 000 Pa. Apoi H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Reper: 100 kPa ≈ 10,2 mCE.",
+   key: "Metodă: presiunea în Pa, densitatea reală a fluidului, {F3}, apoi verificarea ordinului de mărime.",
+   notion: "Conversii",
+   alt: "Lanț de calcul: 80 kPa, conversie în pascali, formula H = Δp / (ρ × g) cu ρ ≈ 1 000 kg/m³ și g ≈ 9,81 m/s², apoi o coloană de apă gradată în metri." },
+ { title: "Verifică pompa",
+   sit: "Două manometre încadrează pompa de circulație: 1,8 bar(g) și 2,8 bar(g). Prizele sunt la aceeași altitudine, pe diametre comparabile.",
+   q: "Selectează pe schemă manometrul de refulare, apoi alege înălțimea furnizată.",
+   groups: [{ label: "1. Manometrul de refulare:", opts: ["Manometrul A", "Manometrul B"] }, { label: "2. Înălțimea de pompare simplificată:" }],
+   svg: { flow: "Sensul de circulație" },
+   ok: "Refularea este în aval de pompă: Δp = 2,8 − 1,8 = 1 bar = 100 kPa, adică H ≈ 10,2 mCE.",
+   ko: "Refularea se află în aval de pompă, pe partea cu presiunea cea mai mare. Δp = 2,8 − 1,8 = 1 bar = 100 kPa, apoi {F3} ≈ 10,2 mCE.",
+   key: "Înălțimea de pompare simplificată se deduce din diferența refulare − aspirație când diferențele de viteză și de altitudine sunt neglijabile.",
+   notion: "Înălțime de pompare",
+   alt: "Pompă de circulație între două manometre: A la 1,8 bar(g) în amonte și B la 2,8 bar(g) în aval, cu o săgeată care indică sensul de circulație." },
+ { title: "Presiune statică sau înălțime de pompare?",
+   sit: "Dosarul indică două citiri: 2 bar(g) în rețeaua oprită și o diferență de 0,8 bar creată de pompă în funcțiune.",
+   q: "Plasează fiecare citire la funcția corectă. Un card este o capcană.",
+   zones: ["Presurizarea statică a rețelei", "Înălțimea produsă de pompă"],
+   labels: ["2 bar(g), rețea oprită", "Δp de 0,8 bar, pompă în funcțiune", "20 mCE furnizați de pompă"],
+   svg: { off: "Oprit", on: "În funcțiune" },
+   ok: "Presiunea la oprire reflectă umplerea rețelei; Δp în funcțiune reflectă energia adusă de pompă, aproximativ 8,15 mCE. Cardul „20 mCE” le confundă.",
+   ko: "O rețea presurizată la 2 bar la oprire nu înseamnă că pompa furnizează 20 mCE. Înălțimea de pompare se deduce din creșterea de presiune între aspirație și refulare, în funcțiune: aici 0,8 bar.",
+   key: "Presiune statică ≠ înălțime de pompare: sunt două funcții diferite.",
+   notion: "Presiune statică / înălțime de pompare",
+   alt: "Rețea închisă cu un manometru de presurizare la 2 bar(g) la oprire și două manometre în jurul pompei în funcțiune, cu o Δp de 0,8 bar." },
+ { title: "Fă măsurătoarea fiabilă",
+   sit: "Pregătești o măsurare de Δp la bornele unui schimbător cu un manometru diferențial.",
+   q: "Selectează toate acțiunile de efectuat înainte și în timpul măsurării.",
+   items: ["Identifică fluidul, temperatura și conținutul de glicol", "Verifică unitatea, domeniul și zeroul instrumentului", "Localizează prizele din amonte și din aval", "Stabilizează funcționarea înainte de citire", "Aerisește furtunurile dacă procedura permite", "Notează sensul Δp, debitul, turația și vanele", "Citește în timpul pornirii ca să câștigi timp", "Pune diagnosticul doar pe baza valorii Δp"],
+   svg: { up: "Amonte", down: "Aval", hx: "Schimbător", flow: "Sensul de circulație" },
+   ok: "Aceste precauții fac măsurarea utilizabilă și comparabilă. O Δp singură nu ajunge: se corelează cu debitul, vanele, turația pompei și temperatura.",
+   ko: "O măsurare fiabilă cere funcționare stabilizată, instrument verificat, prize identificate și condiții notate. O Δp singură nu identifică cauza unei anomalii.",
+   key: "O valoare Δp singură nu ajunge pentru un diagnostic: precizează întotdeauna punctele, semnul și condițiile.",
+   notion: "Măsurare",
+   alt: "Schimbător pe o conductă, prize amonte și aval legate prin două furtunuri la un manometru diferențial. Într-un furtun se vede o bulă de aer; conducta are un termometru." },
+ { title: "Diagnosticul final al pompei",
+   sit: "Circuit închis cu apă. Aspirație 1,5 bar(g), refulare 2,3 bar(g), prize la același nivel. Punct înalt la 12 m deasupra manometrului; punct jos la oprire: 1,8 bar(g).",
+   q: "Realizează diagnosticul în trei decizii.",
+   groups: [{ label: "1. Înălțimea furnizată de pompă" }, { label: "2. Presiunea teoretică în punctul înalt, la oprire" },
+     { label: "3. Concluzie", opts: ["Pompa menține singură presiunea în punctul înalt", "Presiunea statică și pompa au două funcții diferite", "Presiunea la oprire măsoară înălțimea pompei"] }],
+   svg: { high: "Punct înalt", low: "Punct jos · oprit", asp: "Aspirație", ref: "Refulare" },
+   ok: "Δp = 2,3 − 1,5 = 0,8 bar = 80 kPa, adică ≈ 8,15 mCE. În punctul înalt: 1,8 − 12 × 0,0981 ≈ 0,62 bar(g). Presurizarea și pompa au roluri distincte.",
+   ko: "Pompă: 0,8 bar = 80 kPa, adică ≈ 8,15 mCE. Scăderea statică până la punctul înalt: 12 × 0,0981 ≈ 1,18 bar, deci ≈ 0,62 bar(g) în punctul înalt. Pompa nu înlocuiește presurizarea.",
+   key: "Presurizarea statică a rețelei și diferența de presiune creată de pompă îndeplinesc două funcții diferite.",
+   notion: "Diagnostic",
+   alt: "Clădire: pompă de circulație jos, cu 1,5 bar(g) la aspirație și 2,3 bar(g) la refulare, manometru în punctul jos la 1,8 bar(g) la oprire, coloană de 12 m până la punctul înalt." }
+ ]},
+
+/* ---------------------------- POLSKI ---------------------------- */
+pl: { name: "Polski", ui: {
+  lang: "Język", module: "HYD-02 | Ciśnienia i wysokość podnoszenia", start: "Rozpocznij", prev: "Wstecz", next: "Dalej",
+  validate: "Zatwierdź", result: "Zobacz mój wynik", pause: "Pauza", resume: "Wznów",
+  pauseAria: "Pauza: wstrzymaj animacje", resumeAria: "Wznów animacje",
+  stepOf: "Etap {n} z {t}", progress: "Postęp wyzwania", stDone: "ukończony", stCur: "bieżący", stTodo: "następny",
+  introTitle: "Podejmij wyzwanie na zakończenie modułu",
+  introLead: "Znasz już najważniejsze zagadnienia tego modułu. Teraz czas zastosować je w praktyce!",
+  introCase: "Pracujesz przy sieci hydraulicznej HVAC, której działanie trzeba sprawdzić. Dostępnych jest kilka odczytów ciśnienia. Twoje zadanie: przeanalizować pomiary, wykonać właściwe obliczenia i sprawdzić działanie instalacji.",
+  introMeta: "8 etapów · 1 decyzja lub 1 obliczenie na etap · jedno wspólne studium przypadku",
+  introAlt: "Ilustracja: manometr podłączony do rury, w której płynie woda.",
+  situation: "Sytuacja", ok: "Dobra odpowiedź", ko: "Błędna odpowiedź", remember: "Do zapamiętania",
+  needAnswer: "Odpowiedz, a następnie zatwierdź, aby przejść dalej.", selected: "Wybrano", notSel: "Nie wybrano",
+  hDrag: "Przeciągnij kartę na strefę albo wybierz ją, a potem wskaż strefę.", hMulti: "Możliwych jest kilka odpowiedzi.",
+  choose: "Wybierz…", zoneEmpty: "Umieść kartę", data: "Dane",
+  labelSel: "Wybrano kartę „{l}”. Teraz wskaż strefę.", placed: "„{l}” umieszczono w strefie „{z}”.", removed: "Strefa „{z}” została opróżniona.",
+  finalTitle: "Twój wynik", score: "Wynik", rate: "Odsetek poprawnych odpowiedzi", passed: "Zaliczone etapy",
+  toReview: "Zagadnienia do powtórzenia", noneReview: "Brak: wszystkie zagadnienia zostały opanowane.",
+  lvl3t: "Solidne opanowanie", lvl3m: "Świetna praca: potrafisz interpretować ciśnienia, przeliczać jednostki i obliczać wysokość podnoszenia.",
+  lvl2t: "Zadowalająca wiedza, kilka zagadnień do utrwalenia", lvl2m: "Dobra podstawa. Powtórz wskazane zagadnienia przed kontynuowaniem ścieżki.",
+  lvl1t: "Zalecane powtórzenie", lvl1m: "Wróć do sekwencji związanych z zagadnieniami do powtórzenia, a potem podejmij wyzwanie ponownie.",
+  review: "Przejrzyj moje odpowiedzi", restart: "Rozpocznij wyzwanie od nowa", back: "Powrót do wyniku", reviewTitle: "Podsumowanie odpowiedzi",
+  success: "Zaliczony", fail: "Do powtórki", yours: "Twoja odpowiedź", expected: "Oczekiwana odpowiedź", noAnswer: "Brak odpowiedzi",
+  step: "Etap", page: "Strona {n} z {t}", prevPage: "Poprzednia strona", nextPage: "Następna strona",
+  scoreAria: "Wynik: {s} z {t}", multiAns: "Poprawne działania: {c} z 6 · błędy: {w}", allBut: "Wszystkie oprócz:"
+ }, steps: [
+ { title: "Jakie ciśnienie mierzysz?",
+   sit: "Przed sprawdzeniem sieci porządkujesz ciśnienia wymienione w dokumentacji technicznej.",
+   q: "Przypisz każdemu ciśnieniu jego odniesienie i zastosowanie.",
+   items: ["Ciśnienie absolutne", "Ciśnienie względne", "Ciśnienie atmosferyczne", "Ciśnienie różnicowe", "Ciśnienie statyczne"],
+   choices: ["Próżnia doskonała: obliczenia fizyczne, kawitacja", "Lokalna atmosfera: manometr instalacji", "Powietrze otoczenia: przeliczenie abs. ↔ wzgl.", "Różnica p2 − p1: pompa, filtr, zawór", "Lokalne ciśnienie czynnika: ciśnienie wstępne"],
+   svg: { vac: "Próżnia doskonała", atm: "Atmosfera", net: "Sieć", filter: "Filtr", pump: "Pompa" },
+   ok: "Każde ciśnienie ma swoje odniesienie. Manometr instalacji zwykle wskazuje ciśnienie względne; ciśnienie absolutne obliczasz ze wzoru {F1}.",
+   ko: "Ciśnienie absolutne liczy się od próżni doskonałej, względne od lokalnej atmosfery, a różnicowe porównuje dwa punkty. Manometr instalacji zwykle wskazuje ciśnienie względne: {F1}.",
+   key: "Zawsze zapisuj odniesienie: bar(a), bar(g) lub Δp. Nigdy nie dodawaj wartości o różnych odniesieniach bez przeliczenia.",
+   notion: "Odniesienia ciśnienia",
+   alt: "Skala ciśnień: próżnia doskonała 0 bar(a), ciśnienie atmosferyczne, ciśnienie w sieci. Po prawej pompa i filtr z manometrem różnicowym." },
+ { title: "Ujemne ciśnienie?",
+   sit: "Na ssaniu pompy manometr wskazuje −0,2 bar(g). Kolega uważa, że przyrząd jest uszkodzony.",
+   q: "Jak interpretujesz tę wartość?",
+   opts: ["Ujemne ciśnienie absolutne równe −0,2 bar", "Ciśnienie o 0,2 bar wyższe od atmosferycznego", "Ciśnienie o 0,2 bar niższe od atmosferycznego", "Niemożliwy odczyt: przyrząd jest wadliwy"],
+   svg: { asp: "Ssanie", pump: "Pompa" },
+   ok: "Litera „g” oznacza ciśnienie względne. −0,2 bar(g) to 0,2 bar poniżej atmosfery: przy {patm} = 1,0 bar ciśnienie absolutne pozostaje dodatnie, około 0,8 bar(a).",
+   ko: "Ciśnienie absolutne nie może być ujemne: jego zerem jest próżnia doskonała. Tutaj wartość względna oznacza 0,2 bar poniżej atmosfery, co może wystąpić na ssaniu pompy.",
+   key: "Ujemne ciśnienie względne = ciśnienie niższe od atmosferycznego, nigdy ujemne ciśnienie absolutne.",
+   notion: "Odniesienia ciśnienia",
+   alt: "Manometr ze skalą od −1 do 3 bar(g), wskazówka na −0,2 bar(g), zamontowany na ssaniu pompy." },
+ { title: "Ciśnienie a wysokość",
+   sit: "W budynku najwyższy punkt sieci znajduje się 20 m nad najniższym. Obieg jest zamknięty i wypełniony wodą.",
+   q: "Na schemacie wybierz różnicę ciśnienia hydrostatycznego między tymi punktami.",
+   svg: { high: "Punkt najwyższy", low: "Punkt najniższy", pump: "Pompa" },
+   ok: "{F2} = 1 000 × 9,81 × 20 ≈ 196 200 Pa, czyli około 2 bar. Przydatny rząd wielkości: 10 m słupa wody ≈ 1 bar.",
+   ko: "Zastosuj {F2}: 1 000 × 9,81 × 20 ≈ 196 200 Pa, czyli około 2 bar. Zapamiętaj: około 0,1 bar na metr słupa wody.",
+   key: "W obiegu zamkniętym słupy wznoszący i opadający się równoważą: pompa nie podnosi wody na wysokość całego budynku, ale w najwyższym punkcie ciśnienie musi pozostać wystarczające.",
+   notion: "Hydrostatyka",
+   alt: "Budynek z obiegiem zamkniętym: punkt najniższy i najwyższy oddalone o 20 m. Proponowane wartości: 0,2 bar, 2 bar, 20 bar i 200 bar." },
+ { title: "Od ciśnienia do wysokości",
+   sit: "Odczyt wskazuje różnicę ciśnienia 80 kPa w instalacji wodnej. Musisz wyrazić ją jako wysokość słupa wody.",
+   q: "Wykonaj obliczenie krok po kroku w dwóch etapach.",
+   groups: [{ label: "1. Przelicz na paskale: 80 kPa =" }, { label: "2. Oblicz {F3}:" }],
+   svg: { water: "Woda", result: "Wynik" },
+   ok: "80 kPa = 80 000 Pa, następnie H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Kontrola: 1 bar ≈ 10,2 mCE, więc 0,8 bar ≈ 8,2 mCE.",
+   ko: "Najpierw przelicz: 1 kPa = 1 000 Pa, więc 80 kPa = 80 000 Pa. Następnie H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Punkt odniesienia: 100 kPa ≈ 10,2 mCE.",
+   key: "Metoda: ciśnienie w Pa, rzeczywista gęstość czynnika, {F3}, a następnie kontrola rzędu wielkości.",
+   notion: "Przeliczenia",
+   alt: "Łańcuch obliczeń: 80 kPa, przeliczenie na paskale, wzór H = Δp / (ρ × g) dla ρ ≈ 1 000 kg/m³ i g ≈ 9,81 m/s², a następnie słup wody z podziałką w metrach." },
+ { title: "Sprawdź pompę",
+   sit: "Po obu stronach pompy obiegowej są dwa manometry: 1,8 bar(g) i 2,8 bar(g). Króćce są na tej samej wysokości, na porównywalnych średnicach.",
+   q: "Wskaż na schemacie manometr tłoczenia, a następnie wybierz wysokość podnoszenia.",
+   groups: [{ label: "1. Manometr tłoczenia:", opts: ["Manometr A", "Manometr B"] }, { label: "2. Uproszczona wysokość podnoszenia:" }],
+   svg: { flow: "Kierunek przepływu" },
+   ok: "Tłoczenie znajduje się za pompą: Δp = 2,8 − 1,8 = 1 bar = 100 kPa, czyli H ≈ 10,2 mCE.",
+   ko: "Tłoczenie znajduje się za pompą, po stronie wyższego ciśnienia. Δp = 2,8 − 1,8 = 1 bar = 100 kPa, następnie {F3} ≈ 10,2 mCE.",
+   key: "Uproszczoną wysokość podnoszenia wyznacza się z różnicy tłoczenie − ssanie, gdy różnice prędkości i wysokości są pomijalne.",
+   notion: "Wysokość podnoszenia",
+   alt: "Pompa obiegowa między dwoma manometrami: A 1,8 bar(g) przed pompą i B 2,8 bar(g) za pompą, ze strzałką wskazującą kierunek przepływu." },
+ { title: "Ciśnienie statyczne czy wysokość podnoszenia?",
+   sit: "Dokumentacja podaje dwa odczyty: 2 bar(g) w sieci w stanie spoczynku oraz różnicę 0,8 bar wytwarzaną przez pracującą pompę.",
+   q: "Przypisz każdy odczyt do właściwej funkcji. Jedna karta jest pułapką.",
+   zones: ["Ciśnienie statyczne sieci", "Wysokość podnoszenia pompy"],
+   labels: ["2 bar(g), sieć w spoczynku", "Δp 0,8 bar, pompa pracuje", "20 mCE dostarczone przez pompę"],
+   svg: { off: "Spoczynek", on: "Praca" },
+   ok: "Ciśnienie w spoczynku odzwierciedla napełnienie sieci; Δp podczas pracy odzwierciedla energię dostarczoną przez pompę, około 8,15 mCE. Karta „20 mCE” myli te pojęcia.",
+   ko: "Sieć pod ciśnieniem 2 bar w spoczynku nie oznacza, że pompa dostarcza 20 mCE. Wysokość podnoszenia wynika z przyrostu ciśnienia między ssaniem a tłoczeniem podczas pracy: tutaj 0,8 bar.",
+   key: "Ciśnienie statyczne ≠ wysokość podnoszenia: to dwie różne funkcje.",
+   notion: "Ciśnienie statyczne / wysokość podnoszenia",
+   alt: "Sieć zamknięta z manometrem ciśnienia statycznego 2 bar(g) w spoczynku i dwoma manometrami wokół pracującej pompy, z Δp równym 0,8 bar." },
+ { title: "Zadbaj o wiarygodny pomiar",
+   sit: "Przygotowujesz pomiar Δp na wymienniku ciepła za pomocą manometru różnicowego.",
+   q: "Wybierz wszystkie działania do wykonania przed pomiarem i w jego trakcie.",
+   items: ["Określić czynnik, jego temperaturę i zawartość glikolu", "Sprawdzić jednostkę, zakres i zero przyrządu", "Zlokalizować króćce przed i za urządzeniem", "Ustabilizować pracę przed odczytem", "Odpowietrzyć węże, jeśli procedura na to pozwala", "Zapisać znak Δp, przepływ, prędkość i zawory", "Odczytać podczas rozruchu, aby zyskać czas", "Oprzeć diagnozę wyłącznie na wartości Δp"],
+   svg: { up: "Przed", down: "Za", hx: "Wymiennik", flow: "Kierunek przepływu" },
+   ok: "Te środki ostrożności czynią pomiar użytecznym i porównywalnym. Sama Δp nie wystarcza: zestawia się ją z przepływem, zaworami, prędkością pompy i temperaturą.",
+   ko: "Wiarygodny pomiar wymaga ustabilizowanej pracy, sprawdzonego przyrządu, zidentyfikowanych króćców i zapisanych warunków. Sama Δp nie wskazuje przyczyny nieprawidłowości.",
+   key: "Sama wartość Δp nie wystarcza do postawienia diagnozy: zawsze podawaj punkty, znak i warunki.",
+   notion: "Pomiar",
+   alt: "Wymiennik na rurociągu, króćce przed i za nim połączone dwoma wężami z manometrem różnicowym. W jednym wężu widać pęcherzyk powietrza; na rurze jest termometr." },
+ { title: "Końcowa diagnoza pompy obiegowej",
+   sit: "Zamknięty obieg wodny. Ssanie 1,5 bar(g), tłoczenie 2,3 bar(g), króćce na tym samym poziomie. Punkt najwyższy 12 m nad manometrem; punkt najniższy w spoczynku: 1,8 bar(g).",
+   q: "Przeprowadź diagnozę w trzech decyzjach.",
+   groups: [{ label: "1. Wysokość podnoszenia pompy" }, { label: "2. Teoretyczne ciśnienie w najwyższym punkcie w spoczynku" },
+     { label: "3. Wniosek", opts: ["Pompa sama utrzymuje ciśnienie w najwyższym punkcie", "Ciśnienie statyczne i pompa pełnią dwie różne funkcje", "Ciśnienie w spoczynku mierzy wysokość podnoszenia"] }],
+   svg: { high: "Punkt najwyższy", low: "Punkt najniższy · spoczynek", asp: "Ssanie", ref: "Tłoczenie" },
+   ok: "Δp = 2,3 − 1,5 = 0,8 bar = 80 kPa, czyli ≈ 8,15 mCE. W najwyższym punkcie: 1,8 − 12 × 0,0981 ≈ 0,62 bar(g). Ciśnienie statyczne i pompa pełnią odrębne role.",
+   ko: "Pompa: 0,8 bar = 80 kPa, czyli ≈ 8,15 mCE. Spadek statyczny do najwyższego punktu: 12 × 0,0981 ≈ 1,18 bar, więc ≈ 0,62 bar(g) w najwyższym punkcie. Pompa nie zastępuje ciśnienia statycznego.",
+   key: "Ciśnienie statyczne sieci i różnica ciśnień wytwarzana przez pompę pełnią dwie różne funkcje.",
+   notion: "Diagnoza",
+   alt: "Budynek: pompa obiegowa na dole, 1,5 bar(g) na ssaniu i 2,3 bar(g) na tłoczeniu, manometr w najniższym punkcie 1,8 bar(g) w spoczynku, słup 12 m do najwyższego punktu." }
+ ]},
+
+/* ---------------------------- NEDERLANDS ---------------------------- */
+nl: { name: "Nederlands", ui: {
+  lang: "Taal", module: "HYD-02 | Drukken en opvoerhoogte", start: "Beginnen", prev: "Vorige", next: "Volgende",
+  validate: "Bevestigen", result: "Bekijk mijn resultaat", pause: "Pauzeren", resume: "Hervatten",
+  pauseAria: "Pauzeren: animaties stoppen", resumeAria: "Hervatten: animaties opnieuw starten",
+  stepOf: "Stap {n} van {t}", progress: "Voortgang van de uitdaging", stDone: "voltooid", stCur: "bezig", stTodo: "nog te doen",
+  introTitle: "Ga de eindopdracht van de module aan",
+  introLead: "Je hebt de belangrijkste begrippen van deze module ontdekt. Nu is het jouw beurt om ze in de praktijk te brengen!",
+  introCase: "Je werkt aan een hydraulisch HVAC-net waarvan de werking gecontroleerd moet worden. Er zijn verschillende drukmetingen beschikbaar. Jouw opdracht: de metingen analyseren, de juiste berekeningen maken en de werking van de installatie controleren.",
+  introMeta: "8 stappen · 1 beslissing of 1 berekening per stap · één doorlopende casus",
+  introAlt: "Illustratie: manometer aangesloten op een leiding met circulerend water.",
+  situation: "Situatie", ok: "Juist antwoord", ko: "Onjuist antwoord", remember: "Om te onthouden",
+  needAnswer: "Beantwoord de vraag en bevestig om verder te gaan.", selected: "Geselecteerd", notSel: "Niet geselecteerd",
+  hDrag: "Sleep een kaart naar een zone, of selecteer ze en kies daarna de zone.", hMulti: "Meerdere antwoorden mogelijk.",
+  choose: "Kiezen…", zoneEmpty: "Plaats een kaart", data: "Gegevens",
+  labelSel: "Kaart ‘{l}’ geselecteerd. Kies nu een zone.", placed: "‘{l}’ geplaatst in ‘{z}’.", removed: "Zone ‘{z}’ leeggemaakt.",
+  finalTitle: "Jouw resultaat", score: "Score", rate: "Slagingspercentage", passed: "Geslaagde stappen",
+  toReview: "Te herhalen begrippen", noneReview: "Geen: je beheerst alle begrippen.",
+  lvl3t: "Grondige beheersing", lvl3m: "Uitstekend werk: je kunt drukken interpreteren, eenheden omrekenen en een opvoerhoogte berekenen.",
+  lvl2t: "Voldoende kennis, enkele begrippen om te versterken", lvl2m: "Goede basis. Herhaal de aangegeven begrippen voordat je verdergaat met het traject.",
+  lvl1t: "Herhaling aanbevolen", lvl1m: "Neem de sequenties over de te herhalen begrippen opnieuw door en ga daarna de uitdaging opnieuw aan.",
+  review: "Mijn antwoorden bekijken", restart: "Uitdaging opnieuw starten", back: "Terug naar resultaat", reviewTitle: "Overzicht van je antwoorden",
+  success: "Geslaagd", fail: "Te herhalen", yours: "Jouw antwoord", expected: "Verwacht antwoord", noAnswer: "Geen antwoord",
+  step: "Stap", page: "Pagina {n} van {t}", prevPage: "Vorige pagina", nextPage: "Volgende pagina",
+  scoreAria: "Score: {s} van {t}", multiAns: "{c} juiste actie(s) van 6 · {w} fout(en)", allBut: "Alle, behalve:"
+ }, steps: [
+ { title: "Welke druk meet je?",
+   sit: "Voordat je het net controleert, zet je de drukken uit het technisch dossier op een rij.",
+   q: "Koppel elke druk aan zijn referentie en zijn gebruik.",
+   items: ["Absolute druk", "Relatieve druk", "Atmosferische druk", "Drukverschil", "Statische druk"],
+   choices: ["Absoluut vacuüm: fysische berekeningen, cavitatie", "Plaatselijke atmosfeer: manometer van het net", "Omgevingslucht: omrekening absoluut ↔ relatief", "Verschil p2 − p1: pomp, filter, klep", "Plaatselijke vloeistofdruk: voordruk van het net"],
+   svg: { vac: "Absoluut vacuüm", atm: "Atmosfeer", net: "Net", filter: "Filter", pump: "Pomp" },
+   ok: "Elke druk heeft zijn eigen referentie. Een manometer op het net toont meestal een relatieve druk; de absolute druk vind je met {F1}.",
+   ko: "Absolute druk vertrekt vanaf absoluut vacuüm, relatieve druk vanaf de plaatselijke atmosfeer, en het drukverschil vergelijkt twee punten. Een manometer op het net toont meestal een relatieve druk: {F1}.",
+   key: "Noteer altijd de referentie: bar(a), bar(g) of Δp. Tel nooit waarden met verschillende referenties op zonder omrekening.",
+   notion: "Drukreferenties",
+   alt: "Drukschaal: absoluut vacuüm bij 0 bar(a), atmosferische druk, druk in het net. Rechts een pomp en een filter met een verschildrukmeter." },
+ { title: "Een negatieve druk?",
+   sit: "Aan de zuigzijde van een pomp toont de manometer −0,2 bar(g). Een collega denkt dat het toestel defect is.",
+   q: "Hoe interpreteer je deze waarde?",
+   opts: ["Een negatieve absolute druk van −0,2 bar", "Een druk die 0,2 bar boven de atmosfeer ligt", "Een druk die 0,2 bar onder de atmosfeer ligt", "Een onmogelijke meting: het toestel is fout"],
+   svg: { asp: "Zuigzijde", pump: "Pomp" },
+   ok: "De ‘g’ wijst op een relatieve druk. −0,2 bar(g) betekent 0,2 bar onder de atmosfeer: met {patm} = 1,0 bar blijft de absolute druk positief, ongeveer 0,8 bar(a).",
+   ko: "Een absolute druk kan niet negatief zijn: het nulpunt is absoluut vacuüm. Hier geeft de relatieve waarde 0,2 bar onder de atmosfeer aan, wat aan de zuigzijde van een pomp kan voorkomen.",
+   key: "Negatieve relatieve druk = druk lager dan de atmosfeer, nooit een negatieve absolute druk.",
+   notion: "Drukreferenties",
+   alt: "Manometer met schaal van −1 tot 3 bar(g), naald op −0,2 bar(g), geplaatst aan de zuigzijde van een pomp." },
+ { title: "Druk en hoogte",
+   sit: "In een gebouw ligt het hoogste punt van het net 20 m boven het laagste punt. Het circuit is gesloten en met water gevuld.",
+   q: "Selecteer op het schema het hydrostatisch drukverschil tussen deze twee punten.",
+   svg: { high: "Hoogste punt", low: "Laagste punt", pump: "Pomp" },
+   ok: "{F2} = 1 000 × 9,81 × 20 ≈ 196 200 Pa, dus ongeveer 2 bar. Handige grootteorde: 10 m water ≈ 1 bar.",
+   ko: "Pas {F2} toe: 1 000 × 9,81 × 20 ≈ 196 200 Pa, dus ongeveer 2 bar. Onthoud: ongeveer 0,1 bar per meter water.",
+   key: "In een gesloten circuit compenseren de stijgende en dalende kolom elkaar: de pomp tilt niet het hele gebouw op, maar de druk op het hoogste punt moet voldoende blijven.",
+   notion: "Hydrostatica",
+   alt: "Gebouw met een gesloten circuit: laagste en hoogste punt 20 m uit elkaar. Voorgestelde waarden: 0,2 bar, 2 bar, 20 bar en 200 bar." },
+ { title: "Van druk naar hoogte",
+   sit: "Een meting toont een drukverschil van 80 kPa op een waternet. Je moet dit uitdrukken als waterhoogte.",
+   q: "Maak de begeleide berekening in twee stappen.",
+   groups: [{ label: "1. Omrekenen naar pascal: 80 kPa =" }, { label: "2. Bereken {F3}:" }],
+   svg: { water: "Water", result: "Resultaat" },
+   ok: "80 kPa = 80 000 Pa, daarna H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Controle: 1 bar ≈ 10,2 mCE, dus 0,8 bar ≈ 8,2 mCE.",
+   ko: "Reken eerst om: 1 kPa = 1 000 Pa, dus 80 kPa = 80 000 Pa. Daarna H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Ijkpunt: 100 kPa ≈ 10,2 mCE.",
+   key: "Methode: druk in Pa, werkelijke dichtheid van de vloeistof, {F3}, en dan de grootteorde controleren.",
+   notion: "Omrekeningen",
+   alt: "Rekenketen: 80 kPa, omrekening naar pascal, formule H = Δp / (ρ × g) met ρ ≈ 1 000 kg/m³ en g ≈ 9,81 m/s², daarna een waterkolom met een schaal in meter." },
+ { title: "Controleer de pomp",
+   sit: "Twee manometers staan aan weerszijden van de circulatiepomp: 1,8 bar(g) en 2,8 bar(g). De meetpunten liggen op dezelfde hoogte, op vergelijkbare diameters.",
+   q: "Selecteer op het schema de manometer aan de perszijde en kies daarna de geleverde opvoerhoogte.",
+   groups: [{ label: "1. Manometer aan de perszijde:", opts: ["Manometer A", "Manometer B"] }, { label: "2. Vereenvoudigde opvoerhoogte:" }],
+   svg: { flow: "Stromingsrichting" },
+   ok: "De perszijde ligt stroomafwaarts van de pomp: Δp = 2,8 − 1,8 = 1 bar = 100 kPa, dus H ≈ 10,2 mCE.",
+   ko: "De perszijde ligt stroomafwaarts van de pomp, aan de kant met de hoogste druk. Δp = 2,8 − 1,8 = 1 bar = 100 kPa, daarna {F3} ≈ 10,2 mCE.",
+   key: "De vereenvoudigde opvoerhoogte volgt uit het verschil perszijde − zuigzijde wanneer de verschillen in snelheid en hoogte verwaarloosbaar zijn.",
+   notion: "Opvoerhoogte",
+   alt: "Circulatiepomp tussen twee manometers: A op 1,8 bar(g) stroomopwaarts en B op 2,8 bar(g) stroomafwaarts, met een pijl die de stromingsrichting toont." },
+ { title: "Statische druk of opvoerhoogte?",
+   sit: "Het dossier vermeldt twee metingen: 2 bar(g) op het net in rust, en een verschil van 0,8 bar dat de draaiende pomp opwekt.",
+   q: "Plaats elke meting bij de juiste functie. Eén kaart is een valstrik.",
+   zones: ["Statische voordruk van het net", "Opvoerhoogte van de pomp"],
+   labels: ["2 bar(g), net in rust", "Δp van 0,8 bar, pomp in bedrijf", "20 mCE geleverd door de pomp"],
+   svg: { off: "Rust", on: "In bedrijf" },
+   ok: "De druk in rust geeft de vulling van het net weer; de Δp in bedrijf geeft de energie die de pomp toevoegt, ongeveer 8,15 mCE. De kaart ‘20 mCE’ haalt beide door elkaar.",
+   ko: "Een net dat in rust op 2 bar staat, betekent niet dat de pomp 20 mCE levert. De opvoerhoogte volgt uit de drukstijging tussen zuig- en perszijde, in bedrijf: hier 0,8 bar.",
+   key: "Statische druk ≠ opvoerhoogte: het zijn twee verschillende functies.",
+   notion: "Statische druk / opvoerhoogte",
+   alt: "Gesloten net met een voordrukmanometer op 2 bar(g) in rust en twee manometers rond de draaiende pomp, met een Δp van 0,8 bar." },
+ { title: "Maak je meting betrouwbaar",
+   sit: "Je bereidt een Δp-meting over een warmtewisselaar voor met een verschildrukmeter.",
+   q: "Selecteer alle acties die je vóór en tijdens de meting uitvoert.",
+   items: ["De vloeistof, haar temperatuur en glycolgehalte bepalen", "Eenheid, meetbereik en nulpunt van het instrument controleren", "De meetpunten stroomop- en stroomafwaarts lokaliseren", "De werking stabiliseren vóór de aflezing", "De slangen ontluchten als de procedure dat toelaat", "Teken van Δp, debiet, pomptoerental en kleppen noteren", "Tijdens het opstarten aflezen om tijd te winnen", "De diagnose alleen op de Δp-waarde baseren"],
+   svg: { up: "Stroomop", down: "Stroomaf", hx: "Warmtewisselaar", flow: "Stromingsrichting" },
+   ok: "Deze voorzorgen maken de meting bruikbaar en vergelijkbaar. Een Δp alleen volstaat niet: je legt ze naast debiet, kleppen, pomptoerental en temperatuur.",
+   ko: "Een betrouwbare meting vraagt een gestabiliseerde werking, een gecontroleerd instrument, gekende meetpunten en genoteerde omstandigheden. Een Δp alleen wijst de oorzaak van een storing niet aan.",
+   key: "Een Δp-waarde alleen volstaat niet voor een diagnose: vermeld altijd de meetpunten, het teken en de omstandigheden.",
+   notion: "Meting",
+   alt: "Warmtewisselaar op een leiding, meetpunten stroomop- en stroomafwaarts met twee slangen verbonden met een verschildrukmeter. In één slang is een luchtbel zichtbaar; op de leiding staat een thermometer." },
+ { title: "Einddiagnose van de circulatiepomp",
+   sit: "Gesloten watercircuit. Zuigzijde 1,5 bar(g), perszijde 2,3 bar(g), meetpunten op dezelfde hoogte. Hoogste punt 12 m boven de manometer; laagste punt in rust: 1,8 bar(g).",
+   q: "Stel de diagnose in drie beslissingen.",
+   groups: [{ label: "1. Opvoerhoogte geleverd door de pomp" }, { label: "2. Theoretische druk op het hoogste punt, in rust" },
+     { label: "3. Conclusie", opts: ["De pomp houdt alleen de druk op het hoogste punt in stand", "Statische druk en pomp vervullen twee verschillende functies", "De druk in rust meet de opvoerhoogte van de pomp"] }],
+   svg: { high: "Hoogste punt", low: "Laagste punt · rust", asp: "Zuigzijde", ref: "Perszijde" },
+   ok: "Δp = 2,3 − 1,5 = 0,8 bar = 80 kPa, dus ≈ 8,15 mCE. Op het hoogste punt: 1,8 − 12 × 0,0981 ≈ 0,62 bar(g). Voordruk en pomp hebben elk een eigen rol.",
+   ko: "Pomp: 0,8 bar = 80 kPa, dus ≈ 8,15 mCE. Statisch drukverlies tot het hoogste punt: 12 × 0,0981 ≈ 1,18 bar, dus ≈ 0,62 bar(g) op het hoogste punt. De pomp vervangt de voordruk niet.",
+   key: "De statische voordruk van het net en het drukverschil dat de pomp opwekt, vervullen twee verschillende functies.",
+   notion: "Diagnose",
+   alt: "Gebouw: circulatiepomp onderaan met 1,5 bar(g) aan de zuigzijde en 2,3 bar(g) aan de perszijde, manometer op het laagste punt met 1,8 bar(g) in rust, kolom van 12 m tot het hoogste punt." }
+ ]},
+
+/* ---------------------------- DEUTSCH ---------------------------- */
+de: { name: "Deutsch", ui: {
+  lang: "Sprache", module: "HYD-02 | Drücke und Förderhöhe", start: "Starten", prev: "Zurück", next: "Weiter",
+  validate: "Bestätigen", result: "Mein Ergebnis anzeigen", pause: "Pause", resume: "Fortsetzen",
+  pauseAria: "Pause: Animationen anhalten", resumeAria: "Fortsetzen: Animationen wieder starten",
+  stepOf: "Schritt {n} von {t}", progress: "Fortschritt der Aufgabe", stDone: "abgeschlossen", stCur: "aktuell", stTodo: "ausstehend",
+  introTitle: "Stellen Sie sich der Abschlussaufgabe des Moduls",
+  introLead: "Sie haben die wesentlichen Inhalte dieses Moduls kennengelernt. Jetzt sind Sie an der Reihe, sie in die Praxis umzusetzen!",
+  introCase: "Sie arbeiten an einem hydraulischen HLK-Netz, dessen Betrieb überprüft werden muss. Mehrere Druckmessungen liegen vor. Ihre Aufgabe: die Messwerte analysieren, die richtigen Berechnungen durchführen und den Betrieb der Anlage überprüfen.",
+  introMeta: "8 Schritte · 1 Entscheidung oder 1 Berechnung pro Schritt · eine durchgehende Fallstudie",
+  introAlt: "Illustration: Manometer an einer Rohrleitung mit zirkulierendem Wasser.",
+  situation: "Situation", ok: "Richtige Antwort", ko: "Falsche Antwort", remember: "Merke",
+  needAnswer: "Antworten Sie und bestätigen Sie, um fortzufahren.", selected: "Ausgewählt", notSel: "Nicht ausgewählt",
+  hDrag: "Ziehen Sie eine Karte auf eine Zone, oder wählen Sie sie aus und wählen Sie dann die Zone.", hMulti: "Mehrere Antworten möglich.",
+  choose: "Auswählen…", zoneEmpty: "Karte hier ablegen", data: "Daten",
+  labelSel: "Karte „{l}“ ausgewählt. Wählen Sie jetzt eine Zone.", placed: "„{l}“ in „{z}“ abgelegt.", removed: "Zone „{z}“ geleert.",
+  finalTitle: "Ihr Ergebnis", score: "Punktzahl", rate: "Erfolgsquote", passed: "Bestandene Schritte",
+  toReview: "Zu wiederholende Inhalte", noneReview: "Keine: Sie beherrschen alle Inhalte.",
+  lvl3t: "Sichere Beherrschung", lvl3m: "Hervorragende Arbeit: Sie können Drücke deuten, Einheiten umrechnen und eine Förderhöhe berechnen.",
+  lvl2t: "Zufriedenstellende Kenntnisse, einige Inhalte zu festigen", lvl2m: "Gute Grundlage. Wiederholen Sie die markierten Inhalte, bevor Sie den Lernpfad fortsetzen.",
+  lvl1t: "Wiederholung empfohlen", lvl1m: "Bearbeiten Sie die Sequenzen zu den markierten Inhalten erneut und stellen Sie sich dann noch einmal der Aufgabe.",
+  review: "Meine Antworten ansehen", restart: "Aufgabe neu starten", back: "Zurück zum Ergebnis", reviewTitle: "Übersicht Ihrer Antworten",
+  success: "Bestanden", fail: "Wiederholen", yours: "Ihre Antwort", expected: "Erwartete Antwort", noAnswer: "Keine Antwort",
+  step: "Schritt", page: "Seite {n} von {t}", prevPage: "Vorherige Seite", nextPage: "Nächste Seite",
+  scoreAria: "Punktzahl: {s} von {t}", multiAns: "{c} richtige Maßnahme(n) von 6 · {w} Fehler", allBut: "Alle außer:"
+ }, steps: [
+ { title: "Welchen Druck messen Sie?",
+   sit: "Bevor Sie das Netz prüfen, ordnen Sie die in der technischen Dokumentation genannten Drücke.",
+   q: "Ordnen Sie jedem Druck seinen Bezug und seine Verwendung zu.",
+   items: ["Absolutdruck", "Relativdruck (Überdruck)", "Atmosphärendruck", "Differenzdruck", "Statischer Druck"],
+   choices: ["Absolutes Vakuum: physikalische Berechnungen, Kavitation", "Örtliche Atmosphäre: Manometer im Netz", "Umgebungsluft: Umrechnung absolut ↔ relativ", "Differenz p2 − p1: Pumpe, Filter, Ventil", "Örtlicher Mediendruck: Druckhaltung des Netzes"],
+   svg: { vac: "Absolutes Vakuum", atm: "Atmosphäre", net: "Netz", filter: "Filter", pump: "Pumpe" },
+   ok: "Jeder Druck hat seinen eigenen Bezug. Ein Manometer im Netz zeigt meist einen Relativdruck an; den Absolutdruck erhalten Sie mit {F1}.",
+   ko: "Der Absolutdruck bezieht sich auf das absolute Vakuum, der Relativdruck auf die örtliche Atmosphäre, der Differenzdruck vergleicht zwei Punkte. Ein Manometer im Netz zeigt meist einen Relativdruck an: {F1}.",
+   key: "Notieren Sie immer den Bezug: bar(a), bar(g) oder Δp. Addieren Sie nie Werte mit unterschiedlichem Bezug ohne Umrechnung.",
+   notion: "Druckbezüge",
+   alt: "Druckskala: absolutes Vakuum bei 0 bar(a), Atmosphärendruck, Netzdruck. Rechts eine Pumpe und ein Filter mit Differenzdruckmanometer." },
+ { title: "Ein negativer Druck?",
+   sit: "Auf der Saugseite einer Pumpe zeigt das Manometer −0,2 bar(g). Ein Kollege hält das Gerät für defekt.",
+   q: "Wie deuten Sie diesen Wert?",
+   opts: ["Ein negativer Absolutdruck von −0,2 bar", "Ein Druck 0,2 bar über dem Atmosphärendruck", "Ein Druck 0,2 bar unter dem Atmosphärendruck", "Ein unmöglicher Messwert: das Gerät ist defekt"],
+   svg: { asp: "Saugseite", pump: "Pumpe" },
+   ok: "Das „g“ kennzeichnet einen Relativdruck. −0,2 bar(g) bedeutet 0,2 bar unter dem Atmosphärendruck: Mit {patm} = 1,0 bar bleibt der Absolutdruck positiv, etwa 0,8 bar(a).",
+   ko: "Ein Absolutdruck kann nicht negativ sein: Sein Nullpunkt ist das absolute Vakuum. Hier zeigt der Relativwert 0,2 bar unter dem Atmosphärendruck an, was auf der Saugseite einer Pumpe vorkommen kann.",
+   key: "Negativer Relativdruck = Druck unter dem Atmosphärendruck, niemals ein negativer Absolutdruck.",
+   notion: "Druckbezüge",
+   alt: "Manometer mit Skala von −1 bis 3 bar(g), Zeiger auf −0,2 bar(g), auf der Saugseite einer Pumpe montiert." },
+ { title: "Druck und Höhe",
+   sit: "In einem Gebäude liegt der Hochpunkt des Netzes 20 m über dem Tiefpunkt. Der Kreislauf ist geschlossen und mit Wasser gefüllt.",
+   q: "Wählen Sie im Schema die hydrostatische Druckdifferenz zwischen diesen beiden Punkten.",
+   svg: { high: "Hochpunkt", low: "Tiefpunkt", pump: "Pumpe" },
+   ok: "{F2} = 1 000 × 9,81 × 20 ≈ 196 200 Pa, also etwa 2 bar. Nützliche Größenordnung: 10 m Wassersäule ≈ 1 bar.",
+   ko: "Wenden Sie {F2} an: 1 000 × 9,81 × 20 ≈ 196 200 Pa, also etwa 2 bar. Merken Sie sich: etwa 0,1 bar pro Meter Wassersäule.",
+   key: "Im geschlossenen Kreislauf gleichen sich steigende und fallende Säule aus: Die Pumpe hebt nicht das ganze Gebäude, aber am Hochpunkt muss der Druck ausreichend bleiben.",
+   notion: "Hydrostatik",
+   alt: "Gebäude mit geschlossenem Kreislauf: Tief- und Hochpunkt 20 m auseinander. Angebotene Werte: 0,2 bar, 2 bar, 20 bar und 200 bar." },
+ { title: "Vom Druck zur Höhe",
+   sit: "Eine Messung zeigt eine Druckdifferenz von 80 kPa in einem Wassernetz. Sie sollen sie als Wassersäule angeben.",
+   q: "Führen Sie die geführte Berechnung in zwei Schritten durch.",
+   groups: [{ label: "1. In Pascal umrechnen: 80 kPa =" }, { label: "2. {F3} berechnen:" }],
+   svg: { water: "Wasser", result: "Ergebnis" },
+   ok: "80 kPa = 80 000 Pa, dann H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Kontrolle: 1 bar ≈ 10,2 mCE, also 0,8 bar ≈ 8,2 mCE.",
+   ko: "Rechnen Sie zuerst um: 1 kPa = 1 000 Pa, also 80 kPa = 80 000 Pa. Dann H = 80 000 / (1 000 × 9,81) ≈ 8,15 mCE. Anhaltspunkt: 100 kPa ≈ 10,2 mCE.",
+   key: "Methode: Druck in Pa, tatsächliche Dichte des Mediums, {F3}, dann Größenordnung prüfen.",
+   notion: "Umrechnungen",
+   alt: "Rechenkette: 80 kPa, Umrechnung in Pascal, Formel H = Δp / (ρ × g) mit ρ ≈ 1 000 kg/m³ und g ≈ 9,81 m/s², dann eine in Metern skalierte Wassersäule." },
+ { title: "Prüfen Sie die Pumpe",
+   sit: "Zwei Manometer befinden sich vor und hinter der Umwälzpumpe: 1,8 bar(g) und 2,8 bar(g). Die Messstellen liegen auf gleicher Höhe, an vergleichbaren Durchmessern.",
+   q: "Wählen Sie im Schema das Manometer auf der Druckseite und dann die gelieferte Förderhöhe.",
+   groups: [{ label: "1. Manometer auf der Druckseite:", opts: ["Manometer A", "Manometer B"] }, { label: "2. Vereinfachte Förderhöhe:" }],
+   svg: { flow: "Strömungsrichtung" },
+   ok: "Die Druckseite liegt hinter der Pumpe: Δp = 2,8 − 1,8 = 1 bar = 100 kPa, also H ≈ 10,2 mCE.",
+   ko: "Die Druckseite liegt in Strömungsrichtung hinter der Pumpe, auf der Seite mit dem höheren Druck. Δp = 2,8 − 1,8 = 1 bar = 100 kPa, dann {F3} ≈ 10,2 mCE.",
+   key: "Die vereinfachte Förderhöhe ergibt sich aus der Differenz Druckseite − Saugseite, wenn Geschwindigkeits- und Höhenunterschiede vernachlässigbar sind.",
+   notion: "Förderhöhe",
+   alt: "Umwälzpumpe zwischen zwei Manometern: A mit 1,8 bar(g) davor und B mit 2,8 bar(g) dahinter, mit einem Pfeil für die Strömungsrichtung." },
+ { title: "Statischer Druck oder Förderhöhe?",
+   sit: "Die Unterlagen nennen zwei Messwerte: 2 bar(g) im ruhenden Netz und eine Differenz von 0,8 bar, die die laufende Pumpe erzeugt.",
+   q: "Ordnen Sie jeden Messwert der richtigen Funktion zu. Eine Karte ist eine Falle.",
+   zones: ["Statische Druckhaltung des Netzes", "Förderhöhe der Pumpe"],
+   labels: ["2 bar(g), Netz in Ruhe", "Δp von 0,8 bar, Pumpe läuft", "20 mCE von der Pumpe geliefert"],
+   svg: { off: "Ruhe", on: "Betrieb" },
+   ok: "Der Druck im Ruhezustand spiegelt die Befüllung des Netzes wider; die Δp im Betrieb die von der Pumpe zugeführte Energie, etwa 8,15 mCE. Die Karte „20 mCE“ verwechselt beides.",
+   ko: "Ein Netz mit 2 bar im Ruhezustand bedeutet nicht, dass die Pumpe 20 mCE liefert. Die Förderhöhe ergibt sich aus dem Druckanstieg zwischen Saug- und Druckseite im Betrieb: hier 0,8 bar.",
+   key: "Statischer Druck ≠ Förderhöhe: Es sind zwei verschiedene Funktionen.",
+   notion: "Statischer Druck / Förderhöhe",
+   alt: "Geschlossenes Netz mit einem Druckhaltungsmanometer bei 2 bar(g) in Ruhe und zwei Manometern an der laufenden Pumpe mit einer Δp von 0,8 bar." },
+ { title: "Machen Sie Ihre Messung zuverlässig",
+   sit: "Sie bereiten eine Δp-Messung über einem Wärmeübertrager mit einem Differenzdruckmanometer vor.",
+   q: "Wählen Sie alle Maßnahmen, die vor und während der Messung durchzuführen sind.",
+   items: ["Medium, Temperatur und Glykolanteil feststellen", "Einheit, Messbereich und Nullpunkt des Geräts prüfen", "Messstellen vor und hinter dem Bauteil lokalisieren", "Betrieb vor dem Ablesen stabilisieren", "Schläuche entlüften, wenn das Verfahren es erlaubt", "Vorzeichen von Δp, Volumenstrom, Drehzahl und Ventile notieren", "Während des Anlaufs ablesen, um Zeit zu sparen", "Die Diagnose allein auf den Δp-Wert stützen"],
+   svg: { up: "Vorlaufseite", down: "Nachlaufseite", hx: "Wärmeübertrager", flow: "Strömungsrichtung" },
+   ok: "Diese Vorkehrungen machen die Messung verwertbar und vergleichbar. Eine Δp allein genügt nicht: Sie wird mit Volumenstrom, Ventilen, Pumpendrehzahl und Temperatur abgeglichen.",
+   ko: "Eine zuverlässige Messung erfordert einen stabilen Betrieb, ein geprüftes Gerät, bekannte Messstellen und notierte Bedingungen. Eine Δp allein zeigt die Ursache einer Störung nicht an.",
+   key: "Ein Δp-Wert allein genügt nicht für eine Diagnose: Geben Sie immer Messstellen, Vorzeichen und Bedingungen an.",
+   notion: "Messung",
+   alt: "Wärmeübertrager in einer Rohrleitung, Messstellen davor und dahinter mit zwei Schläuchen an ein Differenzdruckmanometer angeschlossen. In einem Schlauch ist eine Luftblase sichtbar; an der Leitung sitzt ein Thermometer." },
+ { title: "Abschlussdiagnose der Umwälzpumpe",
+   sit: "Geschlossener Wasserkreislauf. Saugseite 1,5 bar(g), Druckseite 2,3 bar(g), Messstellen auf gleicher Höhe. Hochpunkt 12 m über dem Manometer; Tiefpunkt in Ruhe: 1,8 bar(g).",
+   q: "Führen Sie die Diagnose in drei Entscheidungen durch.",
+   groups: [{ label: "1. Von der Pumpe gelieferte Förderhöhe" }, { label: "2. Theoretischer Druck am Hochpunkt in Ruhe" },
+     { label: "3. Schlussfolgerung", opts: ["Die Pumpe allein hält den Druck am Hochpunkt", "Druckhaltung und Pumpe erfüllen zwei verschiedene Aufgaben", "Der Ruhedruck misst die Förderhöhe der Pumpe"] }],
+   svg: { high: "Hochpunkt", low: "Tiefpunkt · Ruhe", asp: "Saugseite", ref: "Druckseite" },
+   ok: "Δp = 2,3 − 1,5 = 0,8 bar = 80 kPa, also ≈ 8,15 mCE. Am Hochpunkt: 1,8 − 12 × 0,0981 ≈ 0,62 bar(g). Druckhaltung und Pumpe haben getrennte Aufgaben.",
+   ko: "Pumpe: 0,8 bar = 80 kPa, also ≈ 8,15 mCE. Statischer Druckabfall bis zum Hochpunkt: 12 × 0,0981 ≈ 1,18 bar, also ≈ 0,62 bar(g) am Hochpunkt. Die Pumpe ersetzt die Druckhaltung nicht.",
+   key: "Die statische Druckhaltung des Netzes und die von der Pumpe erzeugte Druckdifferenz erfüllen zwei verschiedene Funktionen.",
+   notion: "Diagnose",
+   alt: "Gebäude: Umwälzpumpe unten mit 1,5 bar(g) auf der Saugseite und 2,3 bar(g) auf der Druckseite, Manometer am Tiefpunkt mit 1,8 bar(g) in Ruhe, 12 m Säule bis zum Hochpunkt." }
+ ]}
+};
+
+/* ==========================================================
+   LOGIQUE DE L'ACTIVITÉ HYD-02
+   ========================================================== */
+const LANGS = ["fr", "en", "es", "pt", "it", "ro", "pl", "nl", "de"];
+const N = 8;
+const NB = "\u00a0";
+/* Bonnes réponses et valeurs numériques (indépendantes de la langue) */
+const CFG = [
+  { type: "assoc", correct: [0, 1, 2, 3, 4], order: [3, 0, 4, 1, 2] },
+  { type: "single", correct: 2 },
+  { type: "valpick", correct: 1, vals: ["0,2 bar", "2 bar", "20 bar", "200 bar"] },
+  { type: "groups", groups: [{ vals: ["800 Pa", "8" + NB + "000 Pa", "80" + NB + "000 Pa"], correct: 2 }, { vals: ["0,815 mCE", "8,15 mCE", "81,5 mCE"], correct: 1 }] },
+  { type: "groups", groups: [{ visual: true, correct: 1 }, { vals: ["1 mCE", "10,2 mCE", "18 mCE", "28 mCE"], correct: 1 }] },
+  { type: "drag", correct: [0, 1] },
+  { type: "multi", correct: [0, 1, 2, 3, 4, 5], order: [0, 6, 1, 2, 7, 3, 4, 5] },
+  { type: "groups", progressive: true, groups: [{ vals: ["0,8 mCE", "8,15 mCE", "23,4 mCE"], correct: 1 }, { vals: ["0,62 bar(g)", "1,18 bar(g)", "3,0 bar(g)"], correct: 0 }, { correct: 1 }] }
+];
+const S = { lang: "fr", view: "intro", i: 0, resp: [], done: [], ok: [], paused: false, sel: null, page: 0 };
+
+function initResp() {
+  S.resp = CFG.map(c => c.type === "drag" ? [null, null] : c.type === "assoc" ? ["", "", "", "", ""] :
+    c.type === "groups" ? c.groups.map(() => null) : c.type === "multi" ? [] : null);
+  S.done = Array(N).fill(false); S.ok = Array(N).fill(false); S.sel = null; S.page = 0;
+}
+initResp();
+
+const U = k => L[S.lang].ui[k];
+const ST = i => L[S.lang].steps[i];
+const fmtT = (s, o) => s.replace(/\{(\w)\}/g, (m, k) => (o[k] !== undefined ? o[k] : m));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const nv = s => (S.lang === "en" ? s.replace(/,/g, ".") : s);
+const pctTxt = p => (["fr", "es", "de", "pt"].indexOf(S.lang) >= 0 ? p + NB + "%" : p + "%");
+/* Formules : indices conservés et jamais traduits */
+const FX = {
+  F1: '<span class="fx">p<sub>abs</sub> = p<sub>rel</sub> + p<sub>atm</sub></span>',
+  F2: '<span class="fx">Δp = ρ × g × Δz</span>',
+  F3: '<span class="fx">H = Δp / (ρ × g)</span>',
+  patm: '<span class="fx">p<sub>atm</sub></span>'
+};
+const FXT = { F1: "pabs = prel + patm", F2: "Δp = ρ × g × Δz", F3: "H = Δp / (ρ × g)", patm: "patm" };
+const tx = s => esc(s).replace(/\{(F1|F2|F3|patm)\}/g, (m, k) => FX[k]);
+const plain = s => String(s).replace(/\{(F1|F2|F3|patm)\}/g, (m, k) => FXT[k]);
+
+function complete(i) {
+  const c = CFG[i], r = S.resp[i];
+  switch (c.type) {
+    case "drag": return r.every(v => v !== null);
+    case "assoc": return r.every(v => v !== "");
+    case "groups": return r.every(v => v !== null);
+    case "multi": return r.length > 0;
+    default: return r !== null;
+  }
+}
+function check(i) {
+  const c = CFG[i], r = S.resp[i];
+  switch (c.type) {
+    case "drag": return r[0] === c.correct[0] && r[1] === c.correct[1];
+    case "assoc": return r.every((v, k) => Number(v) === c.correct[k]);
+    case "groups": return r.every((v, k) => v === c.groups[k].correct);
+    case "multi": return r.length === c.correct.length && c.correct.every(x => r.indexOf(x) >= 0);
+    default: return r === c.correct;
+  }
+}
+function groupOpts(i, g) {
+  const c = CFG[i], st = ST(i);
+  if (st.groups[g].opts) return st.groups[g].opts;
+  return c.groups[g].vals.map(nv);
+}
+function ansText(i, r, isCorrect) {
+  const c = CFG[i], st = ST(i);
+  switch (c.type) {
+    case "single": return r == null ? null : st.opts[r];
+    case "valpick": return r == null ? null : nv(c.vals[r]);
+    case "assoc": return r.every(v => v === "") ? null : r.map((v, k) => st.items[k] + " → " + (v === "" ? "—" : st.choices[+v].split(":")[0].trim())).join(" · ");
+    case "groups": return r.every(v => v == null) ? null : r.map((v, g) => (v == null ? "—" : groupOpts(i, g)[v])).join(" · ");
+    case "drag": return r.every(v => v == null) ? null : r.map((l, z) => st.zones[z] + " = " + (l == null ? "—" : st.labels[l])).join(" · ");
+    case "multi": {
+      if (isCorrect) return U("allBut") + " " + st.items.filter((t, k) => c.correct.indexOf(k) < 0).join(" ; ");
+      if (!r.length) return null;
+      const good = r.filter(x => c.correct.indexOf(x) >= 0).length, bad = r.length - good + (c.correct.length - good);
+      return fmtT(U("multiAns"), { c: good, w: bad });
+    }
+  }
+  return null;
+}
+function corrText(i) {
+  const c = CFG[i];
+  if (c.type === "drag" || c.type === "assoc") return ansText(i, c.correct.map(x => c.type === "assoc" ? String(x) : x));
+  if (c.type === "groups") return ansText(i, c.groups.map(g => g.correct));
+  if (c.type === "multi") return ansText(i, c.correct, true);
+  return ansText(i, c.correct);
+}
+
+/* ---------- Icônes ---------- */
+const IC_OK = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="#5EE0A0"/><path d="M6.5 12.5l3.5 3.5 7.5-8" fill="none" stroke="#06331F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const IC_KO = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="#FF9A8C"/><path d="M8 8l8 8M16 8l-8 8" fill="none" stroke="#4A0E08" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const AR_L = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const AR_R = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const IC_PAUSE = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>';
+const IC_PLAY = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>';
+
+/* ---------- Dessins SVG ---------- */
+const G = (x, y, inner) => `<g transform="translate(${x} ${y})">${inner}</g>`;
+const P = (d, c = "") => `<path class="pipe" d="${d}"/><path class="pipe-in" d="${d}"/><path class="flow ${c}" d="${d}"/>`;
+const T = (x, y, t, a = "middle", cls = "lbl") => `<text class="${cls}" x="${x}" y="${y}" text-anchor="${a}">${esc(t)}</text>`;
+const pump = (x, y, r = 21) => G(x, y, `<circle r="${r}" fill="url(#gBlue)" stroke="#BFE3FF" stroke-width="2"/><circle r="${r * 0.7}" fill="none" stroke="#9FD2FF" stroke-opacity=".45"/><path d="M${-r * 0.38} ${-r * 0.52}L${r * 0.62} 0L${-r * 0.38} ${r * 0.52}Z" fill="#EAF6FF"/>`);
+const filterY = (x, y) => G(x, y, '<path d="M-3 4L12 24L21 17L6 -3Z" fill="url(#gBrass)" stroke="#7A5512" stroke-linejoin="round"/><rect x="-15" y="-8" width="30" height="16" rx="3" fill="url(#gBrass)" stroke="#7A5512"/>');
+function tag(x, y, t, cls = "") { const w = Math.max(70, t.length * 9.2 + 28); return G(x, y, `<rect class="tagr ${cls}" x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/><text class="tagt" y="6" text-anchor="middle">${esc(t)}</text>`); }
+/* manomètre : valeur v sur l'échelle [min, max] */
+function gauge(x, y, r, min, max, v, opt = {}) {
+  const f = p => (p - min) / (max - min);
+  const A = t => (135 + 270 * t) * Math.PI / 180;
+  const pt = (t, rr) => [(rr * Math.cos(A(t))).toFixed(1), (rr * Math.sin(A(t))).toFixed(1)];
+  let s = `<circle r="${r + 4}" fill="#C9D6E6"/><circle r="${r}" fill="url(#gWhite)" stroke="#8FA3BD" stroke-width="2"/>`;
+  const steps = opt.ticks || [];
+  const nmin = opt.minor || 10;
+  for (let k = 0; k <= nmin; k++) { const a = pt(k / nmin, r - 3), b = pt(k / nmin, r - 9); s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#36506F" stroke-width="1.3"/>`; }
+  steps.forEach(p => { const t = f(p), a = pt(t, r - 3), b = pt(t, r - 14), c = pt(t, r - 28); s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${p === 0 && opt.zero ? "#1E7FD0" : "#1B2A41"}" stroke-width="${p === 0 && opt.zero ? 4 : 2.4}"/><text class="gnum" x="${c[0]}" y="${(+c[1] + 6).toFixed(1)}" text-anchor="middle">${esc(nv(String(p)))}</text>`; });
+  const n = pt(f(v), r - 12);
+  s += `<line x1="0" y1="0" x2="${n[0]}" y2="${n[1]}" stroke="#C21B22" stroke-width="${Math.max(3, r / 22)}" stroke-linecap="round"/><circle r="${Math.max(4, r / 12)}" fill="#0B2350"/>`;
+  if (opt.unit) s += `<text class="gunit" y="${(r * 0.55).toFixed(1)}" text-anchor="middle">${esc(opt.unit)}</text>`;
+  return G(x, y, s);
+}
+const sub = (b, s) => `${b}<tspan class="sbs" dy="5">${s}</tspan><tspan dy="-5">\u200b</tspan>`;
+const fxF1 = () => `${sub("p", "abs")} = ${sub("p", "rel")} + ${sub("p", "atm")}`;
+
+const VIS = [
+  /* 1 — échelle des pressions + réseau */
+  s => `<line x1="150" y1="40" x2="150" y2="330" stroke="#D7E7F7" stroke-width="3"/>
+    <line x1="140" y1="320" x2="160" y2="320" stroke="#D7E7F7" stroke-width="3"/><line x1="60" y1="230" x2="285" y2="230" stroke="#8FE3FF" stroke-width="2" stroke-dasharray="6 6"/>
+    <circle cx="150" cy="80" r="7" fill="#FA9035"/>
+    <path d="M128 318V234M122 318h12M122 234h12" stroke="#FFD27A" stroke-width="3" fill="none"/>
+    <path d="M128 226V84M122 226h12M122 84h12" stroke="#8FE3FF" stroke-width="3" fill="none"/>
+    <path d="M98 318V84M92 318h12M92 84h12" stroke="#F4F8FF" stroke-width="3" fill="none"/>
+    <text class="lbl sym" x="120" y="282" text-anchor="end">${sub("p", "atm")}</text>
+    <text class="lbl sym" x="120" y="160" text-anchor="end">${sub("p", "rel")}</text>
+    <text class="lbl sym" x="90" y="214" text-anchor="end">${sub("p", "abs")}</text>
+    ${T(164, 326, s.vac, "start")}${T(164, 222, s.atm, "start")}${T(164, 86, s.net, "start")}
+    <text class="lbl small" x="164" y="252" text-anchor="start">0 bar(g)</text><text class="lbl small" x="164" y="306" text-anchor="start">0 bar(a)</text>
+    <rect x="318" y="26" width="262" height="48" rx="12" class="fxbox"/><text class="fxs" x="449" y="58" text-anchor="middle">${fxF1()}</text>
+    ${P("M310 255H580")}${pump(372, 255)}${filterY(486, 251)}
+    <path d="M462 241V166M510 241V166" stroke="#DCE6F2" stroke-width="3" fill="none"/>${gauge(486, 150, 30, 0, 1, 0.45, { minor: 8 })}
+    <text class="lbl" x="486" y="112" text-anchor="middle">Δp</text>
+    ${T(372, 302, s.pump)}${T(486, 302, s.filter)}`,
+  /* 2 — manomètre négatif à l'aspiration */
+  s => `${P("M40 312H560", "slow2")}<line x1="250" y1="262" x2="250" y2="300" stroke="#DCE6F2" stroke-width="5"/>
+    ${gauge(250, 160, 104, -1, 3, -0.2, { ticks: [-1, 0, 1, 2, 3], minor: 20, zero: true, unit: "bar(g)" })}
+    ${pump(470, 312, 28)}${T(470, 270, s.pump)}${T(120, 346, s.asp)}
+    <path d="M150 336H190" stroke="#8FE3FF" stroke-width="3"/><path d="M190 336l-9 -6v12z" fill="#8FE3FF"/>
+    ${tag(470, 150, nv("−0,2 bar(g)"), "big")}
+    <text class="lbl small" x="470" y="200" text-anchor="middle">0 bar(g) = ${sub("p", "atm")}</text>`,
+  /* 3 — bâtiment, Δz = 20 m */
+  s => `<rect x="110" y="40" width="220" height="290" rx="8" fill="rgba(255,255,255,.05)" stroke="rgba(207,221,242,.35)"/>
+    ${[90, 140, 190, 240, 290].map(y => `<line x1="110" y1="${y}" x2="330" y2="${y}" stroke="rgba(207,221,242,.18)"/>`).join("")}
+    ${P("M220 310H145V70H295V310H220", "up")}${pump(220, 310)}
+    <circle cx="295" cy="70" r="8" fill="#FA9035" stroke="#fff" stroke-width="2"/><circle cx="295" cy="310" r="8" fill="#FA9035" stroke="#fff" stroke-width="2"/>
+    ${T(220, 32, s.high)}${T(220, 352, s.low)}
+    <path d="M360 70V310M352 70h16M352 310h16" stroke="#FFD27A" stroke-width="3" fill="none"/><path d="M360 70l-6 12h12zM360 310l-6 -12h12z" fill="#FFD27A"/>
+    <text class="lbl" x="374" y="186" text-anchor="start">Δz</text><text class="lbl" x="374" y="210" text-anchor="start">= 20 m</text>`,
+  /* 4 — chaîne de calcul + colonne d'eau */
+  (s, r) => {
+    const g0 = CFG[3].groups[0].vals, g1 = CFG[3].groups[1].vals;
+    const pa = r[0] == null ? "? Pa" : nv(g0[r[0]]);
+    const h = r[1] == null ? null : [0.815, 8.15, 81.5][r[1]];
+    const hh = h == null ? 0 : Math.min(h, 10.6) / 10 * 260;
+    let ruler = ""; for (let m = 0; m <= 10; m += 2) { const y = 320 - m * 26; ruler += `<line x1="482" y1="${y}" x2="496" y2="${y}" stroke="#D7E7F7" stroke-width="2"/><text class="lbl small" x="502" y="${y + 6}" text-anchor="start">${m} m</text>`; }
+    return `<rect x="24" y="30" width="170" height="56" rx="12" class="sbox"/><text class="big1" x="109" y="68" text-anchor="middle">80 kPa</text>
+    <path d="M109 92V114" stroke="#8FE3FF" stroke-width="3"/><path d="M109 122l-7 -10h14z" fill="#8FE3FF"/>
+    <rect x="24" y="126" width="170" height="56" rx="12" class="sbox ${r[0] == null ? "empty" : ""}"/><text class="big1" x="109" y="164" text-anchor="middle">${esc(pa)}</text>
+    <path d="M109 188V210" stroke="#8FE3FF" stroke-width="3"/><path d="M109 218l-7 -10h14z" fill="#8FE3FF"/>
+    <rect x="24" y="222" width="384" height="52" rx="12" class="fxbox"/><text class="fxs" x="216" y="256" text-anchor="middle">H = Δp / (ρ × g)</text>
+    <rect x="214" y="30" width="194" height="152" rx="12" class="sbox"/>${T(311, 60, s.water)}
+    <text class="lbl" x="232" y="104" text-anchor="start">ρ ≈ 1${NB}000 kg/m³</text><text class="lbl" x="232" y="146" text-anchor="start">g ≈ ${esc(nv("9,81"))} m/s²</text>
+    <path d="M216 280V298" stroke="#8FE3FF" stroke-width="3"/><path d="M216 306l-7 -10h14z" fill="#8FE3FF"/>
+    <rect x="120" y="306" width="192" height="46" rx="12" class="sbox ${r[1] == null ? "empty" : ""}"/><text class="big1" x="216" y="338" text-anchor="middle">H ≈ ${esc(h == null ? "? mCE" : nv(g1[r[1]]))}</text>
+    <rect x="430" y="40" width="48" height="282" rx="10" fill="rgba(215,235,255,.12)" stroke="#D7E7F7" stroke-width="2"/>
+    <rect class="fill" x="434" y="${(318 - hh).toFixed(1)}" width="40" height="${hh.toFixed(1)}" rx="6" fill="url(#gWater)"/>
+    ${h != null && h > 10.6 ? `<path d="M454 22l-10 14h20z" fill="#FA9035"/>` : ""}${ruler}${T(454, 352, s.result)}`;
+  },
+  /* 5 — pompe, aspiration / refoulement */
+  (s, r) => {
+    let dp = "";
+    if (r[0] != null) { const ref = r[0] === 1 ? 2.8 : 1.8, asp = r[0] === 1 ? 1.8 : 2.8; dp = `Δp = ${nv(String(ref).replace(".", ","))} − ${nv(String(asp).replace(".", ","))} = ${nv(String(Math.round((ref - asp) * 10) / 10).replace(".", ","))} bar`; }
+    return `${P("M30 236H570")}${pump(300, 236, 32)}
+    <line x1="150" y1="182" x2="150" y2="224" stroke="#DCE6F2" stroke-width="5"/><line x1="450" y1="182" x2="450" y2="224" stroke="#DCE6F2" stroke-width="5"/>
+    ${gauge(150, 140, 42, 0, 4, 1.8, { ticks: [0, 2, 4], minor: 8 })}${gauge(450, 140, 42, 0, 4, 2.8, { ticks: [0, 2, 4], minor: 8 })}
+    <path d="M232 276H368" stroke="#8FE3FF" stroke-width="4"/><path d="M380 276l-14 -9v18z" fill="#8FE3FF"/>${T(300, 304, s.flow)}
+    ${dp ? tag(300, 336, dp) : ""}`;
+  },
+  /* 6 — réseau : arrêt / marche */
+  s => `${P("M300 330H70V150H530V330H300", "")}${pump(300, 330)}
+    <rect x="250" y="126" width="100" height="48" rx="5" fill="url(#gWhite)" stroke="#9FB4CC"/>${[262, 274, 286, 298, 310, 322, 334].map(x => `<line x1="${x}" y1="132" x2="${x}" y2="168" stroke="#AFC0D4" stroke-width="2.5"/>`).join("")}
+    <line x1="70" y1="240" x2="104" y2="240" stroke="#DCE6F2" stroke-width="4"/>${gauge(130, 240, 28, 0, 4, 2, { ticks: [0, 2, 4], minor: 8 })}${T(130, 296, s.off)}
+    <line x1="246" y1="330" x2="246" y2="300" stroke="#DCE6F2" stroke-width="4"/><line x1="354" y1="330" x2="354" y2="300" stroke="#DCE6F2" stroke-width="4"/>
+    ${gauge(246, 280, 20, 0, 4, 2.2, { minor: 8 })}${gauge(354, 280, 20, 0, 4, 3.0, { minor: 8 })}${T(440, 286, s.on, "start")}`,
+  /* 7 — mesure Δp aux bornes d'un échangeur */
+  s => `${P("M30 250H570")}<rect x="250" y="204" width="100" height="92" rx="8" fill="#B9C8DA" stroke="#7F93AD"/>${[262, 274, 286, 298, 310, 322, 334].map(x => `<line x1="${x}" y1="208" x2="${x}" y2="292" stroke="#7F93AD" stroke-width="2.5"/>`).join("")}
+    <rect x="194" y="226" width="12" height="12" fill="url(#gBrass)"/><rect x="394" y="226" width="12" height="12" fill="url(#gBrass)"/>
+    <path d="M200 226C200 160 250 150 280 126" fill="none" stroke="#2A3B52" stroke-width="7" stroke-linecap="round"/><path d="M400 226C400 160 350 150 320 126" fill="none" stroke="#2A3B52" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="374" cy="162" r="4" fill="#fff" class="bub"/><circle cx="366" cy="152" r="2.6" fill="#fff" class="bub"/>
+    <rect x="238" y="54" width="124" height="74" rx="10" fill="#1C2633" stroke="#55C2FB" stroke-width="2"/><rect x="250" y="66" width="100" height="36" rx="5" fill="#0E3B5C"/><text class="lcd" x="300" y="92" text-anchor="middle">Δp ? kPa</text>
+    <line x1="110" y1="236" x2="110" y2="190" stroke="#DCE6F2" stroke-width="5"/><rect x="104" y="150" width="12" height="44" rx="6" fill="#EAF2FB"/><circle cx="110" cy="196" r="9" fill="#FA9035"/>
+    ${T(200, 290, s.up)}${T(400, 290, s.down)}${T(300, 322, s.hx)}
+    <path d="M40 342H120" stroke="#8FE3FF" stroke-width="3"/><path d="M128 342l-10 -7v14z" fill="#8FE3FF"/>${T(138, 349, s.flow, "start")}`,
+  /* 8 — diagnostic : bâtiment, pompe, points haut / bas */
+  (s, r) => {
+    const hv = r[1] == null ? "? bar(g)" : nv(CFG[7].groups[1].vals[r[1]]);
+    return `<rect x="50" y="34" width="270" height="276" rx="8" fill="rgba(255,255,255,.05)" stroke="rgba(207,221,242,.35)"/>
+    ${P("M180 286H90V62H290V286H180", "up")}${pump(180, 286, 22)}
+    <line x1="132" y1="286" x2="132" y2="262" stroke="#DCE6F2" stroke-width="4"/><line x1="232" y1="286" x2="232" y2="262" stroke="#DCE6F2" stroke-width="4"/>
+    ${gauge(132, 246, 16, 0, 4, 1.5, { minor: 8 })}${gauge(232, 246, 16, 0, 4, 2.3, { minor: 8 })}
+    <text class="lbl small" x="132" y="318" text-anchor="middle">${esc(s.asp)}</text><text class="lbl small" x="132" y="340" text-anchor="middle">${esc(nv("1,5 bar(g)"))}</text>
+    <text class="lbl small" x="232" y="318" text-anchor="middle">${esc(s.ref)}</text><text class="lbl small" x="232" y="340" text-anchor="middle">${esc(nv("2,3 bar(g)"))}</text>
+    <line x1="290" y1="250" x2="270" y2="250" stroke="#DCE6F2" stroke-width="4"/>
+    ${gauge(290, 62, 16, 0, 4, r[1] == null ? 0 : [0.62, 1.18, 3.0][r[1]], { minor: 8 })}
+    <path d="M346 70V240M338 70h16M338 240h16" stroke="#FFD27A" stroke-width="3" fill="none"/><text class="lbl" x="358" y="162" text-anchor="start">12 m</text>
+    ${T(480, 40, s.high)}${tag(480, 72, hv, r[1] == null ? "q" : "")}<path d="M306 70H420" stroke="#FFD27A" stroke-width="2" stroke-dasharray="5 5"/>
+    ${T(480, 206, s.low)}${tag(480, 238, nv("1,8 bar(g)"))}<path d="M300 250L420 240" stroke="#FFD27A" stroke-width="2" stroke-dasharray="5 5"/>
+    <circle cx="290" cy="250" r="7" fill="#FA9035" stroke="#fff" stroke-width="2"/>`;
+  }
+];
+
+/* ---------- Éléments de la page ---------- */
+const $ = s => document.querySelector(s);
+let main, nav, prog, live;
+let suppressClick = false, drag = null;
+function announce(msg) { live.textContent = ""; setTimeout(() => { live.textContent = msg; }, 60); }
+
+function render(focusSel) {
+  const u = L[S.lang].ui;
+  document.documentElement.lang = S.lang;
+  document.title = u.module + " – " + u.introTitle;
+  $("#mod").textContent = u.module;
+  $("#langLbl").textContent = u.lang;
+  $("#langSel").value = S.lang;
+  renderPause(); renderProg();
+  if (S.view === "intro") renderIntro();
+  else if (S.view === "step") renderStep();
+  else if (S.view === "result") renderResult();
+  else renderReview();
+  renderNav();
+  requestAnimationFrame(() => {
+    fit();
+    if (focusSel) { const el = document.querySelector(focusSel); if (el) el.focus({ preventScroll: true }); }
+  });
+}
+function renderPause() {
+  const b = $("#pauseBtn");
+  document.body.classList.toggle("paused", S.paused);
+  b.innerHTML = (S.paused ? IC_PLAY : IC_PAUSE) + '<span class="btxt">' + esc(S.paused ? U("resume") : U("pause")) + "</span>";
+  b.setAttribute("aria-label", S.paused ? U("resumeAria") : U("pauseAria"));
+}
+function renderProg() {
+  if (S.view === "intro") { prog.hidden = true; prog.innerHTML = ""; return; }
+  prog.hidden = false;
+  const cur = S.view === "step" ? S.i : -1, n = S.view === "step" ? S.i + 1 : N;
+  prog.setAttribute("aria-label", U("progress"));
+  let h = `<p class="ptxt">${esc(fmtT(U("stepOf"), { n: n, t: N }))}</p><ol class="dots">`;
+  for (let k = 0; k < N; k++) {
+    const st = k === cur ? "cur" : (S.done[k] ? "done" : "todo");
+    const t = k === cur ? U("stCur") : (S.done[k] ? U("stDone") : U("stTodo"));
+    h += `<li><span class="dot ${st}" aria-hidden="true">${S.done[k] && k !== cur ? CHK : (k + 1)}</span><span class="sr">${esc(U("step"))} ${k + 1}, ${esc(t)}</span>${k < N - 1 ? `<span class="seg${S.done[k] ? " done" : ""}" aria-hidden="true"></span>` : ""}</li>`;
+  }
+  prog.innerHTML = h + "</ol>";
+}
+function renderIntro() {
+  const hero = `<svg class="hero" viewBox="0 0 980 230" role="img" aria-label="${esc(U("introAlt"))}"><defs><linearGradient id="hb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B6CB8"/><stop offset="1" stop-color="#123F7C"/></linearGradient></defs>
+    <rect width="980" height="230" rx="14" fill="url(#hb)"/>${P("M60 170H920")}${pump(250, 170, 34)}
+    <line x1="560" y1="118" x2="560" y2="158" stroke="#DCE6F2" stroke-width="6"/>${gauge(560, 72, 52, 0, 4, 2.3, { ticks: [0, 1, 2, 3, 4], minor: 16, unit: "bar(g)" })}
+    <line x1="760" y1="130" x2="760" y2="158" stroke="#DCE6F2" stroke-width="5"/>${gauge(760, 102, 30, 0, 4, 1.5, { minor: 8 })}
+    <circle cx="120" cy="60" r="3" fill="#FA9035"/><circle cx="870" cy="50" r="3" fill="#7EE8A8"/><circle cx="400" cy="40" r="2.5" fill="#FA9035"/></svg>`;
+  main.innerHTML = `<section class="intro" aria-labelledby="introTitle"><div class="icard card fit">${hero}
+    <h1 id="introTitle" tabindex="-1">${esc(U("introTitle"))}</h1>
+    <p class="lead">${esc(U("introLead"))}</p>
+    <p class="case">${esc(U("introCase"))}</p>
+    <p class="meta">${esc(U("introMeta"))}</p>
+    <button type="button" class="btn pri big" id="startBtn" data-act="start" data-key="start">${esc(U("start"))}${AR_R}</button>
+  </div></section>`;
+}
+function mark(isC, chosen) { return isC ? IC_OK : (chosen ? IC_KO : ""); }
+function stage(inner, ov) { return `<div class="stagewrap"><div class="stage"><svg viewBox="0 0 600 360" aria-hidden="true" focusable="false">${inner}</svg>${ov || ""}</div></div>`; }
+function box(x, y, w, h) { return `left:${(x / 6).toFixed(2)}%;top:${(y / 3.6).toFixed(2)}%;width:${(w / 6).toFixed(2)}%;height:${(h / 3.6).toFixed(2)}%`; }
+
+function renderStep() {
+  const i = S.i, c = CFG[i], st = ST(i), done = S.done[i], r = S.resp[i];
+  let vis = "", inter = "", hint = "", role = "img";
+  const cls = (isC, sel) => done ? (isC ? " is-ok" : (sel ? " is-ko" : "")) : "";
+  const seg = (g, opts, cur, corr, key) => opts.map((o, v) => { const sel = cur === v; return `<button type="button" class="opt sm${cls(v === corr, sel)}" data-act="gpick" data-g="${g}" data-v="${v}" data-key="${key}-${g}-${v}" aria-pressed="${sel}" ${done ? "disabled" : ""}><span class="rad" aria-hidden="true"></span><span class="otx">${esc(o)}</span>${done ? `<span class="mk">${mark(v === corr, sel)}</span>` : ""}</button>`; }).join("");
+  switch (c.type) {
+    case "assoc": {
+      vis = stage(VIS[i](st.svg));
+      inter = st.items.map((it, k) => { const v = r[k]; return `<div class="arow"><label for="as${k}">${done ? (Number(v) === c.correct[k] ? IC_OK : IC_KO) : ""}${esc(it)}</label><select id="as${k}" data-row="${k}" ${done ? "disabled" : ""}><option value="">${esc(U("choose"))}</option>${c.order.map(o => `<option value="${o}"${String(o) === v ? " selected" : ""}>${esc(st.choices[o])}</option>`).join("")}</select></div>`; }).join("");
+      break;
+    }
+    case "single": {
+      vis = stage(VIS[i](st.svg));
+      inter = `<div class="opts" role="group" aria-labelledby="qText">` + st.opts.map((o, v) => { const sel = r === v; return `<button type="button" class="opt${cls(v === c.correct, sel)}" data-act="pick" data-v="${v}" data-key="o-${v}" aria-pressed="${sel}" ${done ? "disabled" : ""}><span class="rad" aria-hidden="true"></span><span class="otx">${esc(o)}</span>${done ? `<span class="mk">${mark(v === c.correct, sel)}</span>` : ""}</button>`; }).join("") + `</div>`;
+      break;
+    }
+    case "valpick": {
+      role = "group";
+      const ov = c.vals.map((v, k) => { const sel = r === k; return `<button type="button" class="vbtn${cls(k === c.correct, sel)}" style="${box(452, 44 + k * 72, 136, 56)}" data-act="pick" data-v="${k}" data-key="v-${k}" aria-pressed="${sel}" ${done ? "disabled" : ""}>${done ? mark(k === c.correct, sel) : ""}<span>Δp ≈ ${esc(nv(v))}</span></button>`; }).join("");
+      vis = stage(VIS[i](st.svg), ov);
+      inter = `<div class="fxcard"><p class="fxl">${esc(U("data"))}</p><p class="fxm">${FX.F2}</p><p class="fxd">ρ ≈ 1${NB}000 kg/m³ · g ≈ ${esc(nv("9,81"))} m/s² · Δz = 20 m</p></div>`;
+      break;
+    }
+    case "groups": {
+      const show = g => !c.progressive || done || g === 0 || r[g - 1] != null;
+      let ov = "";
+      inter = c.groups.map((gr, g) => {
+        if (!show(g)) return "";
+        const lab = st.groups[g].label;
+        if (gr.visual) {
+          role = "group";
+          const names = st.groups[g].opts;
+          ov = names.map((nm, v) => { const sel = r[g] === v; const val = v === 0 ? "1,8" : "2,8"; return `<button type="button" class="hs gauge${cls(v === gr.correct, sel)}" style="${box(v === 0 ? 70 : 370, 44, 160, 148)}" data-act="gpick" data-g="${g}" data-v="${v}" data-key="vg-${v}" aria-pressed="${sel}" ${done ? "disabled" : ""}><span class="ztag">${done ? mark(v === gr.correct, sel) : ""}${esc(nm)} · ${esc(nv(val))} bar(g)</span></button>`; }).join("");
+          return `<div class="grp"><p class="glab">${tx(lab)}</p><p class="gsel">${r[g] == null ? esc(U("notSel")) : esc(names[r[g]])}</p></div>`;
+        }
+        return `<div class="grp" role="group" aria-label="${esc(plain(lab))}"><p class="glab">${tx(lab)}</p><div class="segs">${seg(g, groupOpts(i, g), r[g], gr.correct, "g")}</div></div>`;
+      }).join("");
+      vis = stage(VIS[i](st.svg, r), ov);
+      break;
+    }
+    case "drag": {
+      role = "group"; hint = U("hDrag");
+      const ov = [0, 1].map(z => { const l = r[z]; const okz = done && l === c.correct[z]; return `<button type="button" class="dz${l != null ? " filled" : ""}${done ? (okz ? " is-ok" : " is-ko") : ""}" style="${z ? "left:51.3%" : "left:1.7%"};top:2%;width:47%;height:28%" data-act="dz" data-z="${z}" data-key="dz-${z}" ${done ? "disabled" : ""}><span class="zn">${done ? (okz ? IC_OK : IC_KO) : ""}${esc(st.zones[z])}</span><span class="zv">${l != null ? esc(st.labels[l]) : esc(U("zoneEmpty"))}</span></button>`; }).join("");
+      vis = stage(VIS[i](st.svg), ov);
+      inter = `<div class="chips" role="group" aria-labelledby="qText">` + st.labels.map((lab, l) => { const z = r.indexOf(l); return `<button type="button" class="chip" data-act="chip" data-l="${l}" data-key="chip-${l}" aria-pressed="${S.sel === l}" ${done ? "disabled" : ""}>${esc(lab)}${z >= 0 ? `<span class="where"> → ${z + 1}</span>` : ""}</button>`; }).join("") + `</div>`;
+      break;
+    }
+    case "multi": {
+      vis = stage(VIS[i](st.svg)); hint = U("hMulti");
+      inter = `<div class="checks" role="group" aria-labelledby="qText">` + c.order.map(k => { const on = r.indexOf(k) >= 0, good = c.correct.indexOf(k) >= 0;
+        const st2 = done ? (good ? (on ? " is-ok" : " is-miss") : (on ? " is-ko" : "")) : "";
+        return `<button type="button" class="chk${st2}" role="checkbox" aria-checked="${on}" data-act="toggle" data-v="${k}" data-key="c-${k}" ${done ? "aria-disabled=\"true\"" : ""}><span class="box" aria-hidden="true"></span><span class="otx">${esc(st.items[k])}</span>${done ? `<span class="mk">${good ? IC_OK : (on ? IC_KO : "")}</span>` : ""}</button>`; }).join("") + `</div>`;
+      break;
+    }
+  }
+  const fb = done ? `<div class="fb ${S.ok[i] ? "ok" : "ko"}" id="fb"><p class="fb-t">${S.ok[i] ? IC_OK : IC_KO}${esc(S.ok[i] ? U("ok") : U("ko"))}</p><p class="fb-x">${tx(S.ok[i] ? st.ok : st.ko)}</p><p class="fb-k"><span class="tag">${esc(U("remember"))}</span>${tx(st.key)}</p></div>` : "";
+  main.innerHTML = `<section class="step t-${c.type}${done ? " answered" : ""}" aria-labelledby="stTitle">
+    <div class="qpanel card fit">
+      <div class="qhead"><span class="badge">${esc(U("step"))} ${i + 1}/${N}</span><h2 id="stTitle" tabindex="-1">${esc(st.title)}</h2></div>
+      <p class="sit"><span class="lab">${esc(U("situation"))}</span>${esc(st.sit)}</p>
+      <p class="q" id="qText">${esc(st.q)}</p>
+      ${hint && !done ? `<p class="hint">${esc(hint)}</p>` : ""}
+      <div class="inter">${inter}</div>
+      ${fb}
+    </div>
+    <div class="visual card fit" role="${role}" aria-label="${esc(st.alt)}">${vis}</div>
+  </section>`;
+}
+
+function notionsToReview() { const out = []; S.ok.forEach((o, k) => { if (!o) { const n = ST(k).notion; if (out.indexOf(n) < 0) out.push(n); } }); return out; }
+function renderResult() {
+  const s = S.ok.filter(Boolean).length, p = Math.round(s / N * 100);
+  const lvl = s >= 7 ? 3 : s >= 5 ? 2 : 1;
+  const C = 2 * Math.PI * 52, d = (C * s / N).toFixed(1);
+  const fails = notionsToReview();
+  main.innerHTML = `<section class="result" aria-labelledby="resTitle">
+    <div class="card rcard rsum fit">
+      <h2 id="resTitle" tabindex="-1">${esc(U("finalTitle"))}</h2>
+      <div class="rs-top">
+        <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="${esc(fmtT(U("scoreAria"), { s: s, t: N }))}"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="10"/><circle cx="60" cy="60" r="52" fill="none" stroke="url(#gRing)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${d} 400" transform="rotate(-90 60 60)"/><text x="60" y="66" text-anchor="middle" class="rnum">${s}/${N}</text></svg>
+        <div class="kpis"><p class="kpi"><span>${esc(U("score"))}</span><strong>${s} / ${N}</strong></p><p class="kpi"><span>${esc(U("rate"))}</span><strong>${pctTxt(p)}</strong></p></div>
+      </div>
+      <p class="lvl lvl${lvl}"><span class="lvlb" aria-hidden="true">${lvl > 1 ? IC_OK : IC_KO}</span>${esc(U("lvl" + lvl + "t"))}</p>
+      <p class="lmsg">${esc(U("lvl" + lvl + "m"))}</p>
+    </div>
+    <div class="card rcard rdet fit">
+      <h3>${esc(U("passed"))} (${s})</h3>
+      <ul class="rsteps n8">${S.ok.map((o, k) => `<li class="${o ? "ok" : "ko"}">${o ? IC_OK : IC_KO}<span>${k + 1}</span><span class="sr">${esc(U("step"))} ${k + 1}, ${esc(o ? U("success") : U("fail"))}</span></li>`).join("")}</ul>
+      <h3>${esc(U("toReview"))}</h3>
+      ${fails.length ? `<ul class="notions">${fails.map(n => `<li><span class="nn" aria-hidden="true">!</span><span>${esc(n)}</span></li>`).join("")}</ul>` : `<p class="none">${esc(U("noneReview"))}</p>`}
+      <div class="rbtns"><button type="button" class="btn pri" data-act="review" data-key="review">${esc(U("review"))}</button><button type="button" class="btn" data-act="restart" data-key="restart">${esc(U("restart"))}</button></div>
+    </div>
+  </section>`;
+}
+function perPage() {
+  if (window.matchMedia("(min-width: 900px) and (min-aspect-ratio: 1/1) and (min-height: 520px)").matches) return 8;
+  if (window.matchMedia("(min-width: 600px) and (min-height: 520px)").matches) return 4;
+  return 2;
+}
+function pageCount() { return Math.ceil(N / perPage()); }
+function renderReview() {
+  const pp = perPage(), pages = Math.ceil(N / pp);
+  if (S.page > pages - 1) S.page = pages - 1;
+  const ks = []; for (let k = S.page * pp; k < Math.min(N, (S.page + 1) * pp); k++) ks.push(k);
+  main.innerHTML = `<section class="review pp${pp}" aria-labelledby="rvTitle">
+    <h2 id="rvTitle" tabindex="-1">${esc(U("reviewTitle"))}</h2>
+    <div class="rgrid fit">${ks.map(k => { const o = S.ok[k], a = S.done[k] ? ansText(k, S.resp[k]) : null;
+      return `<article class="card rv fit ${o ? "ok" : "ko"}"><p class="rvh"><span class="badge">${esc(U("step"))} ${k + 1}</span><span class="st">${o ? IC_OK : IC_KO}${esc(o ? U("success") : U("fail"))}</span></p><h3>${esc(ST(k).title)}</h3><p><span class="lab2">${esc(U("yours"))}</span> ${esc(a == null ? U("noAnswer") : a)}</p>${o ? "" : `<p><span class="lab2">${esc(U("expected"))}</span> ${esc(corrText(k))}</p>`}</article>`; }).join("")}</div>
+  </section>`;
+}
+function renderNav() {
+  if (S.view === "intro" || S.view === "result") { nav.hidden = true; nav.innerHTML = ""; return; }
+  nav.hidden = false;
+  if (S.view === "review") {
+    const pages = pageCount();
+    nav.innerHTML = `<button type="button" class="btn" data-act="back" data-key="back">${AR_L}<span class="btxt">${esc(U("back"))}</span></button>
+      <p class="sp">${pages > 1 ? esc(fmtT(U("page"), { n: S.page + 1, t: pages })) : ""}</p>
+      ${pages > 1 ? `<button type="button" class="btn" data-act="pgprev" data-key="pgprev" ${S.page === 0 ? "disabled" : ""} aria-label="${esc(U("prevPage"))}">${AR_L}</button><button type="button" class="btn" data-act="pgnext" data-key="pgnext" ${S.page >= pages - 1 ? "disabled" : ""} aria-label="${esc(U("nextPage"))}">${AR_R}</button>` : ""}
+      <button type="button" class="btn pri" data-act="restart" data-key="restart2">${esc(U("restart"))}</button>`;
+    return;
+  }
+  const i = S.i, done = S.done[i], last = i === N - 1;
+  nav.innerHTML = `<button type="button" class="btn" data-act="prev" data-key="prev" aria-label="${esc(U("prev"))}">${AR_L}<span class="btxt" aria-hidden="true">${esc(U("prev"))}</span></button>
+    <p class="sp" id="navHint">${done ? "" : esc(U("needAnswer"))}</p>
+    ${done ? "" : `<button type="button" class="btn pri" data-act="validate" data-key="validate" ${complete(i) ? "" : "disabled"} aria-describedby="navHint">${esc(U("validate"))}</button>`}
+    <button type="button" class="btn${done ? " pri" : ""}" data-act="next" data-key="next" ${done ? "" : "disabled"}>${esc(last ? U("result") : U("next"))}${AR_R}</button>`;
+}
+
+/* ---------- Ajustement automatique : aucun défilement ---------- */
+function setK(k) { document.documentElement.style.setProperty("--k", k.toFixed(2)); }
+function overflowing() {
+  const els = [main].concat(Array.prototype.slice.call(main.querySelectorAll(".fit")));
+  return els.some(el => el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1);
+}
+function fit() {
+  const root = main.firstElementChild; if (!root) return;
+  root.classList.remove("c1", "c2", "c3");
+  let k = 1; setK(k);
+  while (overflowing() && k > 0.8) { k -= 0.04; setK(k); }
+  if (!overflowing()) return;
+  root.classList.add("c1"); k = 1; setK(k);
+  while (overflowing() && k > 0.76) { k -= 0.04; setK(k); }
+  if (!overflowing()) return;
+  root.classList.add("c2"); k = 1; setK(k);
+  while (overflowing() && k > 0.72) { k -= 0.04; setK(k); }
+  if (!overflowing()) return;
+  root.classList.add("c3"); k = 1; setK(k);
+  while (overflowing() && k > 0.62) { k -= 0.04; setK(k); }
+}
+
+/* ---------- Actions ---------- */
+function validate() {
+  const i = S.i; if (S.done[i] || !complete(i)) return;
+  S.done[i] = true; S.ok[i] = check(i); S.sel = null;
+  render('[data-key="next"]');
+  const st = ST(i);
+  announce((S.ok[i] ? U("ok") : U("ko")) + ". " + plain(S.ok[i] ? st.ok : st.ko) + " " + U("remember") + " : " + plain(st.key));
+}
+function place(l, z) {
+  const arr = S.resp[S.i];
+  for (let k = 0; k < arr.length; k++) if (arr[k] === l) arr[k] = null;
+  arr[z] = l; S.sel = null;
+  render(`[data-key="dz-${z}"]`);
+  announce(fmtT(U("placed"), { l: ST(S.i).labels[l], z: ST(S.i).zones[z] }));
+}
+function act(a, b) {
+  const i = S.i;
+  switch (a) {
+    case "start": S.view = "step"; S.i = 0; render("#stTitle"); break;
+    case "prev": if (S.i > 0) { S.i--; render("#stTitle"); } else { S.view = "intro"; render("#startBtn"); } break;
+    case "next": if (!S.done[i]) return; if (i < N - 1) { S.i++; render("#stTitle"); } else { S.view = "result"; render("#resTitle"); } break;
+    case "validate": validate(); break;
+    case "pick": if (S.done[i]) return; S.resp[i] = parseInt(b.dataset.v, 10); render(`[data-key="${b.dataset.key}"]`); break;
+    case "gpick": {
+      if (S.done[i]) return;
+      const g = parseInt(b.dataset.g, 10); S.resp[i][g] = parseInt(b.dataset.v, 10);
+      render(`[data-key="${b.dataset.key}"]`); break;
+    }
+    case "toggle": {
+      if (S.done[i]) return;
+      const v = parseInt(b.dataset.v, 10), arr = S.resp[i], p = arr.indexOf(v);
+      if (p >= 0) arr.splice(p, 1); else arr.push(v);
+      render(`[data-key="${b.dataset.key}"]`); break;
+    }
+    case "chip": {
+      if (S.done[i]) return;
+      if (suppressClick) { suppressClick = false; return; }
+      const l = parseInt(b.dataset.l, 10); S.sel = S.sel === l ? null : l;
+      if (S.sel != null) { const arr = S.resp[i]; const z = arr[0] == null ? 0 : (arr[1] == null ? 1 : 0); render(`[data-key="dz-${z}"]`); announce(fmtT(U("labelSel"), { l: ST(i).labels[l] })); }
+      else render(`[data-key="chip-${l}"]`);
+      break;
+    }
+    case "dz": {
+      if (S.done[i]) return;
+      const z = parseInt(b.dataset.z, 10);
+      if (S.sel != null) place(S.sel, z);
+      else if (S.resp[i][z] != null) { S.resp[i][z] = null; render(`[data-key="dz-${z}"]`); announce(fmtT(U("removed"), { z: ST(i).zones[z] })); }
+      else announce(U("hDrag"));
+      break;
+    }
+    case "review": S.view = "review"; S.page = 0; render("#rvTitle"); break;
+    case "restart": initResp(); S.view = "step"; S.i = 0; render("#stTitle"); break;
+    case "back": S.view = "result"; render("#resTitle"); break;
+    case "pgprev": if (S.page > 0) { S.page--; render(S.page === 0 ? '[data-key="pgnext"]' : '[data-key="pgprev"]'); } break;
+    case "pgnext": if (S.page < pageCount() - 1) { S.page++; render(S.page >= pageCount() - 1 ? '[data-key="pgprev"]' : '[data-key="pgnext"]'); } break;
+    case "pause": S.paused = !S.paused; renderPause(); break;
+  }
+}
+
+/* ---------- Glisser-déposer (souris, stylet, tactile) ---------- */
+function onDown(e) { const c = e.target.closest(".chip"); if (!c || c.disabled || S.done[S.i]) return; drag = { l: parseInt(c.dataset.l, 10), x: e.clientX, y: e.clientY, el: c, moved: false, ghost: null }; }
+function onMove(e) {
+  if (!drag) return;
+  if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 8) {
+    drag.moved = true; const g = document.createElement("div"); g.className = "ghost"; g.textContent = drag.el.firstChild.textContent;
+    document.body.appendChild(g); drag.ghost = g; drag.el.classList.add("dragging");
+  }
+  if (drag.moved) {
+    e.preventDefault(); drag.ghost.style.left = e.clientX + "px"; drag.ghost.style.top = e.clientY + "px";
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    document.querySelectorAll(".dz").forEach(z => z.classList.toggle("hover", !!under && z.contains(under)));
+  }
+}
+function onUp(e) {
+  if (!drag) return; const d = drag; drag = null; if (!d.moved) return;
+  suppressClick = true; setTimeout(() => { suppressClick = false; }, 400);
+  if (d.ghost) d.ghost.remove(); d.el.classList.remove("dragging");
+  const under = document.elementFromPoint(e.clientX, e.clientY); const z = under ? under.closest(".dz") : null;
+  document.querySelectorAll(".dz").forEach(x => x.classList.remove("hover"));
+  if (z && !z.disabled) place(d.l, parseInt(z.dataset.z, 10));
+}
+function onCancel() { if (drag) { if (drag.ghost) drag.ghost.remove(); drag.el.classList.remove("dragging"); drag = null; } }
+
+/* ---------- Démarrage ---------- */
+function init() {
+  main = $("#main"); nav = $("#nav"); prog = $("#prog"); live = $("#live");
+  $("#langSel").innerHTML = LANGS.map(l => `<option value="${l}" lang="${l}">${esc(L[l].name)}</option>`).join("");
+  const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  S.paused = rm.matches;
+  if (rm.addEventListener) rm.addEventListener("change", e => { S.paused = e.matches; renderPause(); });
+  document.addEventListener("click", e => { const b = e.target.closest("[data-act]"); if (!b || b.disabled || b.getAttribute("aria-disabled") === "true") return; act(b.dataset.act, b); });
+  $("#pauseBtn").addEventListener("click", () => act("pause"));
+  document.addEventListener("change", e => {
+    const t = e.target;
+    if (t.id === "langSel") { S.lang = t.value; render("#langSel"); announce(L[S.lang].name); }
+    else if (t.matches("select[data-row]")) { S.resp[S.i][parseInt(t.dataset.row, 10)] = t.value; render("#" + t.id); }
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && S.sel != null) { const l = S.sel; S.sel = null; render(`[data-key="chip-${l}"]`); } });
+  document.addEventListener("pointerdown", onDown);
+  document.addEventListener("pointermove", onMove, { passive: false });
+  document.addEventListener("pointerup", onUp);
+  document.addEventListener("pointercancel", onCancel);
+  let to = null;
+  window.addEventListener("resize", () => { clearTimeout(to); to = setTimeout(() => { if (S.view === "review") render(); else fit(); }, 120); });
+  render();
+}
+if (typeof document !== "undefined" && document.getElementById("app")) init();
+
+})();
+</script>
+</body>
+</html>
