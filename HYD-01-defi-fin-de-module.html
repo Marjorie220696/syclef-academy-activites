@@ -69,7 +69,7 @@ h1{font-size:2.15em}
 .meta{margin:0;font-size:.85em;border:1px solid var(--line);border-radius:999px;padding:.25em .9em;color:#E6F0FF}
 
 /* Étape */
-.step{display:grid;gap:clamp(8px,1.4vw,18px);grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);grid-template-rows:minmax(0,1fr);padding-bottom:2px}
+.step{display:grid;gap:clamp(8px,1.4vw,18px);grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);padding-bottom:2px}
 .visual{order:-1;display:flex;flex-direction:column;padding:clamp(6px,1vw,14px);min-height:0;min-width:0}
 .qpanel{display:flex;flex-direction:column;gap:.5em;padding:clamp(10px,1.4vw,22px);min-height:0;min-width:0}
 .stagewrap{flex:1;min-height:0;min-width:0;container-type:size;display:grid;place-items:center}
@@ -82,7 +82,12 @@ h2{font-size:1.3em}
 .sit .lab{display:inline-block;font-weight:700;color:#fff;font-size:.74em;text-transform:uppercase;letter-spacing:.06em;margin-inline-end:.5em;border:1px solid var(--line);border-radius:6px;padding:0 .4em;vertical-align:1px}
 .q{margin:0;font-weight:700;font-size:1.08em;color:#fff}
 .hint{margin:0;font-size:.86em;color:var(--muted)}
-.inter{display:flex;flex-direction:column;gap:.42em;min-height:0}
+.inter{display:flex;flex-direction:column;gap:.42em}
+.qpanel>*{flex-shrink:0}
+.qpanel{container-type:inline-size}
+@container (min-width:440px){.arow{flex-direction:row;align-items:center;gap:.6em}.arow label{flex:0 0 36%}.arow select{flex:1;min-width:0}}
+.step.c1 .hint{display:none}
+.step.c3.answered .sit{display:none}
 .opts{display:flex;flex-direction:column;gap:.42em}
 .opt{display:flex;align-items:center;gap:.7em;text-align:start;width:100%;min-height:44px;padding:.42em .8em;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);line-height:1.2}
 .opt:hover:not(:disabled){background:rgba(255,255,255,.13)}
@@ -143,11 +148,11 @@ h2{font-size:1.3em}
 .zbtn:hover:not(:disabled),.hs:hover:not(:disabled){background:rgba(85,194,251,.1)}
 .zbtn[aria-pressed="true"],.hs[aria-pressed="true"]{border:3px solid var(--cyan);background:rgba(85,194,251,.13)}
 .hs{border:2px dashed rgba(207,221,242,.6);background:transparent;justify-content:flex-end;padding:.15em}
-.ztag{background:rgba(8,26,56,.9);border:1px solid var(--line);border-radius:999px;padding:.12em .7em;font-weight:700;font-size:.82em;display:inline-flex;gap:.35em;align-items:center;line-height:1.15;text-align:center}
-.hs .ztag{font-size:.72em;padding:.1em .5em}
+.ztag{background:rgba(8,26,56,.9);border:1px solid var(--line);border-radius:999px;padding:.15em .75em;font-weight:700;font-size:.92em;display:inline-flex;gap:.35em;align-items:center;line-height:1.15;text-align:center}
+.hs .ztag{font-size:.86em;padding:.12em .55em}
 .selm{font-weight:400;color:var(--cyan)}
 .zbtn:disabled,.hs:disabled,.dz:disabled{cursor:default}
-.dz{border:2px dashed rgba(250,144,53,.8);background:rgba(8,26,56,.78);justify-content:center;text-align:center;padding:.15em .3em;font-size:.82em;line-height:1.1}
+.dz{border:2px dashed rgba(250,144,53,.8);background:rgba(8,26,56,.78);justify-content:center;text-align:center;padding:.15em .3em;font-size:.92em;line-height:1.1}
 .dz .zn{font-size:.78em;color:var(--muted);font-weight:700;text-transform:uppercase;display:inline-flex;gap:.3em;align-items:center}
 .dz .zv{font-weight:700}
 .dz.filled{border-style:solid;border-color:var(--cyan)}
@@ -222,16 +227,17 @@ h3{font-size:.95em;color:var(--cyan);text-transform:uppercase;letter-spacing:.05
 .drop.d2{animation-delay:-.8s}.drop.d3{animation-delay:-1.6s}
 @keyframes drop{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(46px);opacity:0}}
 .paused *,.paused *::before,.paused *::after{animation-play-state:paused!important}
-.lbl{fill:#EEF5FF;font:700 14px Calibri,Arial,sans-serif;paint-order:stroke;stroke:#0a2148;stroke-width:4px;stroke-linejoin:round}
-.tagt{fill:#fff;font:700 14px Calibri,Arial,sans-serif}
-.lett{fill:#0b1f3f;font:700 16px Calibri,Arial,sans-serif}
+.lbl{fill:#EEF5FF;font:700 19px Calibri,Arial,sans-serif;paint-order:stroke;stroke:#0a2148;stroke-width:5px;stroke-linejoin:round}
+.tagt{fill:#fff;font:700 18px Calibri,Arial,sans-serif}
+.lett{fill:#0b1f3f;font:700 21px Calibri,Arial,sans-serif}
 
+@media (min-aspect-ratio:1/1) and (min-width:561px){.step.c2.answered .sit{display:none}}
 /* Écrans portrait / étroits : visuel au-dessus de la question */
 @media (max-aspect-ratio:1/1),(max-width:560px){
   .step{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,34%) minmax(0,1fr)}
   .step.c1{grid-template-rows:minmax(0,25%) minmax(0,1fr)}
-  .step.c2.answered{grid-template-rows:minmax(0,1fr)}
-  .step.c2.answered .visual{display:none}
+  .step.c2.answered,.step.c3.answered{grid-template-rows:minmax(0,1fr)}
+  .step.c2.answered .visual,.step.c3.answered .visual{display:none}
   .result{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
   .ring{width:clamp(80px,14vh,130px)}
   .rsteps{grid-template-columns:repeat(9,minmax(0,1fr))}
@@ -1488,8 +1494,8 @@ function gauge(x, y, r, val, red, mark) {
   return G(x, y, s);
 }
 const sep = (x, y, h) => G(x, y, `<rect x="-17" y="${-h / 2}" width="34" height="${h}" rx="17" fill="url(#gBlue)" stroke="#BFE3FF" stroke-opacity=".6"/><rect x="-6" y="${-h / 2 - 10}" width="12" height="12" rx="2" fill="url(#gBrass)"/>`);
-function tag(x, y, t) { const w = Math.max(64, t.length * 7.6 + 24); return G(x, y, `<rect x="${-w / 2}" y="-14" width="${w}" height="28" rx="14" fill="rgba(8,26,56,.9)" stroke="#55C2FB" stroke-width="1.5"/><text class="tagt" y="5" text-anchor="middle">${esc(t)}</text>`); }
-const letter = (x, y, l) => G(x, y, `<circle r="15" fill="#FA9035" stroke="#fff" stroke-width="2"/><text class="lett" y="5.5" text-anchor="middle">${l}</text>`);
+function tag(x, y, t) { const w = Math.max(70, t.length * 9.2 + 28); return G(x, y, `<rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17" fill="rgba(8,26,56,.9)" stroke="#55C2FB" stroke-width="1.5"/><text class="tagt" y="6" text-anchor="middle">${esc(t)}</text>`); }
+const letter = (x, y, l) => G(x, y, `<circle r="18" fill="#FA9035" stroke="#fff" stroke-width="2.5"/><text class="lett" y="7" text-anchor="middle">${l}</text>`);
 function snow(x, y) { let s = ""; for (const a of [0, 60, 120]) s += `<g transform="rotate(${a})"><line y1="-18" y2="18"/><path d="M-5 -13L0 -8L5 -13M-5 13L0 8L5 13" fill="none"/></g>`; return G(x, y, `<g stroke="#EAF6FF" stroke-width="2.5" stroke-linecap="round">${s}</g>`); }
 const tube = (d, w) => `<path d="${d}" fill="none" stroke="rgba(215,235,255,.45)" stroke-width="${w + 4}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#0E2B5A" stroke-opacity=".8" stroke-width="${w}" stroke-linecap="round"/>`;
 
@@ -1505,8 +1511,8 @@ const VIS = [
     ${T(150, 115, s.boiler)}${T(170, 340, s.chiller)}${T(300, 318, s.sep)}${T(470, 132, s.rad)}${T(470, 322, s.floor)}`,
   s => `${P("M122 172H170V90H520V160", "still")}${P("M420 90V160", "still")}${P("M420 228V300", "still")}${P("M520 228V300H170V208H122", "still")}
     ${chiller(80, 190)}${coil(420, 194)}${coil(520, 194)}${pump(250, 90)}${valve(420, 135, "act")}${valve(520, 135, "act")}
-    ${tag(330, 56, s.p1 + " · 7 °C")}${tag(330, 332, s.p2 + " · 12 °C")}
-    ${T(80, 142, s.chiller)}${T(250, 132, s.pump)}${T(470, 256, s.coil)}${T(470, 116, s.v2)}`,
+    ${tag(330, 54, s.p1 + " · 7 °C")}${tag(330, 332, s.p2 + " · 12 °C")}
+    ${T(80, 140, s.chiller)}${T(250, 136, s.pump)}${T(470, 260, s.coil)}`,
   null,
   s => `${tube("M50 112H430", 32)}<path class="flow fast" d="M58 105H424"/><path class="flow fast" d="M58 119H424" style="animation-delay:-1.4s"/>
     ${tube("M50 242H486", 32)}<path class="flow slow" d="M58 242H482"/>
@@ -1516,8 +1522,8 @@ const VIS = [
   s => `${P("M40 232H560", "weak")}${pump(100, 232)}${valve(220, 232, "bal")}${filterY(330, 228)}
     <line x1="460" y1="220" x2="460" y2="186" stroke="#DCE6F2" stroke-width="4"/><rect x="440" y="220" width="40" height="24" rx="4" fill="url(#gBrass)" stroke="#7A5512"/>
     ${gauge(460, 138, 48, 0.22, false, 0.78)}
-    ${T(526, 112, s.expected, "start")}${T(394, 116, s.measured, "end")}
-    ${T(100, 282, s.pump)}${T(220, 282, s.valve)}${T(330, 282, s.filter)}${T(460, 282, s.meter)}`,
+    ${T(524, 110, s.expected, "start")}${T(398, 114, s.measured, "end")}
+    ${T(100, 284, s.pump)}${T(220, 312, s.valve)}${T(330, 284, s.filter)}${T(460, 312, s.meter)}`,
   s => `${P("M80 130V100H520V240H80V214")}${P("M170 240V262", "still")}
     ${boiler(80, 172)}${radiator(520, 170, 46, 84)}${valve(220, 100, "iso")}${relief(380, 100)}
     <line x1="470" y1="100" x2="470" y2="84" stroke="#DCE6F2" stroke-width="4"/>${gauge(470, 62, 20, 0.92, true)}
@@ -1525,7 +1531,7 @@ const VIS = [
     ${T(122, 176, s.boiler, "start")}${T(488, 176, s.rad, "end")}${T(380, 34, s.relief)}`,
   s => `${P("M30 180H190", "big")}<rect x="190" y="72" width="26" height="216" rx="8" fill="url(#gBrass)" stroke="#7A5512"/>
     ${P("M216 100H560")}${P("M216 180H560")}${P("M216 260H560")}
-    ${tag(105, 146, num(9) + " m³/h")}${tag(400, 74, s.branch + " A · " + num(4) + " m³/h")}${tag(400, 154, s.branch + " B · " + num(2.5) + " m³/h")}${tag(400, 234, s.branch + " C · ? m³/h")}
+    ${tag(105, 144, num(9) + " m³/h")}${tag(390, 72, s.branch + " A · " + num(4) + " m³/h")}${tag(390, 152, s.branch + " B · " + num(2.5) + " m³/h")}${tag(390, 232, s.branch + " C · ? m³/h")}
     ${T(203, 314, s.coll)}`,
   () => `${P("M122 172H300V90H520V160")}${P("M420 90V160")}${P("M420 228V300")}${P("M520 228V300H80V226")}
     ${chiller(80, 190)}${pump(200, 172)}${coil(420, 194)}${coil(520, 194)}
@@ -1609,7 +1615,7 @@ function renderStep() {
     }
     case "hotspot": {
       visRole = "group";
-      const ov = c.pos.map((p, v) => { const sel = r === v; return `<button type="button" class="hs${vstate(v, sel)}" style="${pos(p[0], p[1], 92, 104, 42)}" data-act="pick" data-v="${v}" data-key="h-${v}" aria-pressed="${sel}" ${done ? "disabled" : ""}><span class="ztag">${done ? mark(v === c.correct, sel) : ""}${esc(st.comps[v])}</span></button>`; }).join("");
+      const ov = c.pos.map((p, v) => { const sel = r === v; return `<button type="button" class="hs${vstate(v, sel)}" style="${pos(p[0], p[1], 100, 108, 42)}" data-act="pick" data-v="${v}" data-key="h-${v}" aria-pressed="${sel}" ${done ? "disabled" : ""}><span class="ztag">${done ? mark(v === c.correct, sel) : ""}${esc(st.comps[v])}</span></button>`; }).join("");
       vis = stage(VIS[i](st.svg), ov); break;
     }
     case "drag": {
@@ -1726,7 +1732,7 @@ function overflowing() {
 }
 function fit() {
   const root = main.firstElementChild; if (!root) return;
-  root.classList.remove("c1", "c2");
+  root.classList.remove("c1", "c2", "c3");
   let k = 1; setK(k);
   while (overflowing() && k > 0.8) { k -= 0.04; setK(k); }
   if (!overflowing()) return;
@@ -1734,7 +1740,10 @@ function fit() {
   while (overflowing() && k > 0.76) { k -= 0.04; setK(k); }
   if (!overflowing()) return;
   root.classList.add("c2"); k = 1; setK(k);
-  while (overflowing() && k > 0.66) { k -= 0.04; setK(k); }
+  while (overflowing() && k > 0.72) { k -= 0.04; setK(k); }
+  if (!overflowing()) return;
+  root.classList.add("c3"); k = 1; setK(k);
+  while (overflowing() && k > 0.62) { k -= 0.04; setK(k); }
 }
 
 /* ---------- Actions ---------- */
