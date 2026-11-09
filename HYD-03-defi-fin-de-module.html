@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>HYD-03 | Débit, vitesse et puissance thermique – Relevez le défi de fin de module</title>
+<style>
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden}
+:root{--k:1;--fs:calc(var(--k) * clamp(14px, 0.55vw + 0.85vh + 3px, 19px));--cyan:#55C2FB;--orange:#FA9035;--ok:#5EE0A0;--ko:#FF9A8C;--line:rgba(170,210,255,.30);--muted:#CFDDF2}
+body{font-family:Calibri,Arial,sans-serif;color:#F4F8FF;background:#0b2350;font-size:var(--fs);line-height:1.3;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse 80% 55% at 50% -8%,rgba(103,164,225,.55),transparent 60%),radial-gradient(ellipse 60% 50% at 88% 110%,rgba(85,194,251,.16),transparent 60%),linear-gradient(180deg,#1d5296 0%,#164382 35%,#0f3268 70%,#0a234c 100%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:32px 32px}
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+#app{height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:3px solid #FFD27A;outline-offset:2px}
+.ic{width:1.15em;height:1.15em;flex:none;display:inline-block;vertical-align:middle}
+
+/* En-tête */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:clamp(6px,1.2vh,14px) clamp(10px,2vw,28px)}
+.mod{margin:0;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.8em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tools{display:flex;align-items:center;gap:10px;flex:none}
+.tbtn{min-height:44px;min-width:44px;display:inline-flex;align-items:center;gap:.45em;padding:0 .9em;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.08);font-weight:700;font-size:.9em}
+.tbtn:hover{background:rgba(255,255,255,.15)}
+.langbox{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:12px;padding:0 4px 0 12px;min-height:44px}
+.langbox label{font-weight:700;font-size:.9em}
+select{font:inherit;color:#fff;background:#12396f;border:1px solid var(--line);border-radius:9px;min-height:40px;padding:0 6px;max-width:100%}
+
+/* Progression */
+.prog{display:flex;align-items:center;gap:clamp(8px,2vw,22px);padding:0 clamp(10px,2vw,28px) clamp(6px,1.1vh,12px)}
+.prog[hidden],.nav[hidden]{display:none}
+.ptxt{margin:0;font-weight:700;white-space:nowrap;font-size:.95em}
+.dots{display:flex;list-style:none;margin:0;padding:0;flex:1;align-items:center;min-width:0}
+.dots li{flex:1;display:flex;align-items:center;min-width:0}
+.dots li:last-child{flex:0 0 auto}
+.dot{width:clamp(20px,2.3vw,28px);height:clamp(20px,2.3vw,28px);border-radius:50%;display:grid;place-items:center;font-size:.72em;font-weight:700;border:2px solid rgba(207,221,242,.45);color:rgba(235,243,255,.75);background:rgba(255,255,255,.05);flex:none;transition:transform .25s}
+.dot svg{width:70%;height:70%}
+.dot.done{background:var(--cyan);border-color:var(--cyan);color:#0b2350}
+.dot.cur{border-color:var(--orange);color:#fff;background:rgba(250,144,53,.28);transform:scale(1.2);box-shadow:0 0 0 4px rgba(250,144,53,.22)}
+.seg{flex:1;height:3px;margin:0 4px;border-radius:2px;background:rgba(207,221,242,.22)}
+.seg.done{background:var(--cyan)}
+
+/* Zone principale */
+main{min-height:0;overflow:hidden;padding:0 clamp(10px,2vw,28px);display:grid;grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr)}
+main>*{min-height:0;min-width:0}
+.card{background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 34px rgba(0,12,45,.35),inset 0 1px 0 rgba(255,255,255,.14);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.fit{overflow:hidden}
+.btn{min-height:44px;min-width:44px;padding:.45em 1.1em;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.09);font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.45em;line-height:1.1}
+.btn:hover:not(:disabled){background:rgba(255,255,255,.17)}
+.btn.pri{background:linear-gradient(180deg,#FFB06A,#FA9035);color:#0b1f3f;border-color:#FFC896;box-shadow:0 6px 18px rgba(250,144,53,.35)}
+.btn.pri:hover:not(:disabled){background:linear-gradient(180deg,#FFC08A,#FF9C45)}
+.btn:disabled{opacity:.45;box-shadow:none}
+.btn.big{font-size:1.2em;padding:.6em 2.1em}
+h1,h2,h3{margin:0;line-height:1.15}
+
+/* Introduction */
+.intro{display:grid;place-items:center;min-height:0;padding-bottom:clamp(6px,1.4vh,16px)}
+.icard{width:min(980px,100%);max-height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(6px,1.5vh,16px);padding:clamp(12px,2.2vw,30px)}
+.icard img{width:100%;height:auto;max-height:30vh;object-fit:cover;border-radius:14px;min-height:0;flex:0 1 auto;box-shadow:0 10px 30px rgba(0,10,40,.4)}
+.intro.c1 .icard img{max-height:16vh}
+.intro.c2 .icard img{display:none}
+h1{font-size:2.15em}
+.lead{margin:0;font-size:1.15em;font-weight:700}
+.case{margin:0;color:var(--muted);max-width:52em}
+.meta{margin:0;font-size:.85em;border:1px solid var(--line);border-radius:999px;padding:.25em .9em;color:#E6F0FF}
+
+/* Étape */
+.step{display:grid;gap:clamp(8px,1.4vw,18px);grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);padding-bottom:2px}
+.visual{order:-1;display:flex;flex-direction:column;padding:clamp(6px,1vw,14px);min-height:0;min-width:0}
+.qpanel{display:flex;flex-direction:column;gap:.5em;padding:clamp(10px,1.4vw,22px);min-height:0;min-width:0}
+.stagewrap{flex:1;min-height:0;min-width:0;container-type:size;display:grid;place-items:center}
+.stage{position:relative;width:min(100cqw,calc(100cqh * 5 / 3));height:min(100cqh,calc(100cqw * 3 / 5))}
+.stage>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.qhead{display:flex;align-items:center;gap:.6em;flex-wrap:wrap}
+.badge{background:var(--orange);color:#0b1f3f;font-weight:700;border-radius:999px;padding:.12em .7em;font-size:.8em;white-space:nowrap}
+h2{font-size:1.3em}
+.sit{margin:0;color:var(--muted)}
+.sit .lab{display:inline-block;font-weight:700;color:#fff;font-size:.74em;text-transform:uppercase;letter-spacing:.06em;margin-inline-end:.5em;border:1px solid var(--line);border-radius:6px;padding:0 .4em;vertical-align:1px}
+.q{margin:0;font-weight:700;font-size:1.08em;color:#fff}
+.hint{margin:0;font-size:.86em;color:var(--muted)}
+.inter{display:flex;flex-direction:column;gap:.42em}
+.qpanel>*{flex-shrink:0}
+.qpanel{container-type:inline-size}
+@container (min-width:440px){.arow{flex-direction:row;align-items:center;gap:.6em}.arow label{flex:0 0 36%}.arow select{flex:1;min-width:0}}
+.step.c1 .hint{display:none}
+.step.c3.answered .sit{display:none}
+.opts{display:flex;flex-direction:column;gap:.42em}
+.opt{display:flex;align-items:center;gap:.7em;text-align:start;width:100%;min-height:44px;padding:.42em .8em;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);line-height:1.2}
+.opt:hover:not(:disabled){background:rgba(255,255,255,.13)}
+.opt .rad{flex:none;width:1.15em;height:1.15em;border-radius:50%;border:2px solid #D7E8F8;display:grid;place-items:center}
+.opt[aria-pressed="true"]{border:2px solid var(--cyan);background:rgba(85,194,251,.17)}
+.opt[aria-pressed="true"] .rad::after{content:"";width:.55em;height:.55em;border-radius:50%;background:var(--cyan)}
+.opt .otx{flex:1}
+.opt .mk{flex:none;display:flex}
+.opt:disabled{cursor:default}
+.tf{display:grid;grid-template-columns:1fr 1fr}
+.tf .opt{justify-content:center;font-size:1.15em;font-weight:700;min-height:54px}
+.tf .opt .otx{flex:0 1 auto}
+.is-ok{border-color:var(--ok)!important;border-width:2px!important;background:rgba(94,224,160,.15)!important}
+.is-ko{border-color:var(--ko)!important;border-width:2px!important;background:rgba(255,154,140,.14)!important}
+
+/* Association */
+.arow{display:flex;flex-direction:column;gap:.2em}
+.arow label{font-weight:700;display:flex;align-items:center;gap:.4em}
+.arow select{width:100%;min-height:44px;font-size:.92em}
+.sheet{height:100%;display:flex;flex-direction:column;gap:.6em;justify-content:center;padding:.4em .6em}
+.sh-t{margin:0;font-weight:700;text-transform:uppercase;letter-spacing:.07em;font-size:.85em;color:var(--cyan);border-bottom:1px solid var(--line);padding-bottom:.35em}
+.srow{display:grid;grid-template-columns:auto minmax(0,.8fr) minmax(0,1.4fr);align-items:center;gap:.7em;padding:.5em .6em;border:1px dashed rgba(207,221,242,.4);border-radius:12px;background:rgba(6,24,56,.35)}
+.srow.filled{border-style:solid;border-color:rgba(85,194,251,.65)}
+.sic svg{width:clamp(28px,3.4vw,46px);height:auto;display:block}
+.sn{font-weight:700}
+.sv{color:var(--muted);font-size:.9em}
+.srow.filled .sv{color:#fff}
+
+/* Saisie numérique */
+.numl{font-weight:700}
+.numrow{display:flex;align-items:center;gap:.6em}
+.numrow input{font:inherit;font-size:1.25em;width:7em;min-height:48px;border-radius:10px;border:2px solid var(--line);background:rgba(4,20,48,.6);color:#fff;padding:0 .5em}
+.numrow input::placeholder{color:#9FB4D3}
+.unit{font-weight:700;font-size:1.1em}
+
+/* Classement */
+.ord{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.32em}
+.ord li{display:flex;align-items:center;gap:.5em;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.06);padding:.12em .25em .12em .6em;min-height:44px}
+.pos{font-weight:700;color:var(--muted);width:1.2em;flex:none}
+.let{flex:none;width:1.7em;height:1.7em;border-radius:50%;background:var(--orange);color:#0b1f3f;font-weight:700;display:grid;place-items:center;font-size:.85em}
+.ord .otx{flex:1;line-height:1.15}
+.mv{flex:none;width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.09);display:grid;place-items:center}
+.mv:hover:not(:disabled){background:rgba(255,255,255,.18)}
+.mv:disabled{opacity:.3}
+.ord .mk{display:flex;padding:0 .4em}
+
+/* Étiquettes et zones */
+.chips{display:flex;flex-wrap:wrap;gap:.5em}
+.chip{min-height:44px;padding:.3em .95em;border-radius:999px;border:2px dashed rgba(207,221,242,.65);background:rgba(10,35,76,.65);font-weight:700;touch-action:none;-webkit-user-select:none;user-select:none}
+.chip:hover:not(:disabled){background:rgba(30,70,130,.8)}
+.chip[aria-pressed="true"]{border-style:solid;border-color:var(--orange);background:rgba(250,144,53,.25)}
+.chip .where{font-weight:400;color:var(--muted);font-size:.85em}
+.chip.dragging{opacity:.4}
+.chip:disabled{cursor:default;opacity:.75}
+.ghost{position:fixed;z-index:50;pointer-events:none;transform:translate(-50%,-50%);padding:.3em .9em;border-radius:999px;border:2px solid var(--orange);background:#16437f;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.zbtn,.hs,.dz{position:absolute;border-radius:14px;display:flex;flex-direction:column;align-items:center;min-width:44px;min-height:44px}
+.zbtn{border:2px dashed rgba(207,221,242,.5);background:transparent;justify-content:flex-start;padding-top:.4em}
+.zbtn:hover:not(:disabled),.hs:hover:not(:disabled){background:rgba(85,194,251,.1)}
+.zbtn[aria-pressed="true"],.hs[aria-pressed="true"]{border:3px solid var(--cyan);background:rgba(85,194,251,.13)}
+.hs{border:2px dashed rgba(207,221,242,.6);background:transparent;justify-content:flex-end;padding:.15em}
+.ztag{background:rgba(8,26,56,.9);border:1px solid var(--line);border-radius:999px;padding:.15em .75em;font-weight:700;font-size:.92em;display:inline-flex;gap:.35em;align-items:center;line-height:1.15;text-align:center}
+.hs .ztag{font-size:.86em;padding:.12em .55em}
+.selm{font-weight:400;color:var(--cyan)}
+.zbtn:disabled,.hs:disabled,.dz:disabled{cursor:default}
+.dz{border:2px dashed rgba(250,144,53,.8);background:rgba(8,26,56,.78);justify-content:center;text-align:center;padding:.15em .3em;font-size:.92em;line-height:1.1}
+.dz .zn{font-size:.78em;color:var(--muted);font-weight:700;text-transform:uppercase;display:inline-flex;gap:.3em;align-items:center}
+.dz .zv{font-weight:700}
+.dz.filled{border-style:solid;border-color:var(--cyan)}
+.dz.hover{background:rgba(250,144,53,.3)}
+
+/* Retour pédagogique */
+.fb{border-radius:14px;padding:.55em .85em;border:1px solid;display:flex;flex-direction:column;gap:.28em}
+.fb.ok{border-color:rgba(94,224,160,.65);background:rgba(16,80,58,.5)}
+.fb.ko{border-color:rgba(255,154,140,.65);background:rgba(96,30,42,.5)}
+.fb-t{margin:0;font-weight:700;display:flex;align-items:center;gap:.4em;font-size:1.05em}
+.fb-x,.fb-k{margin:0;font-size:.95em}
+.fb-k .tag{display:inline-block;font-size:.74em;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:rgba(85,194,251,.22);border:1px solid rgba(85,194,251,.55);border-radius:6px;padding:0 .4em;margin-inline-end:.45em;vertical-align:1px}
+
+/* Résultat */
+.result{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(8px,1.4vw,18px);padding-bottom:2px}
+.rcard{padding:clamp(12px,1.6vw,24px);display:flex;flex-direction:column;gap:.6em;min-height:0}
+.rs-top{display:flex;align-items:center;gap:1.2em;flex-wrap:wrap}
+.ring{width:clamp(90px,20vh,170px);height:auto;flex:none}
+.rnum{fill:#fff;font:700 28px Calibri,Arial,sans-serif}
+.kpis{display:flex;flex-direction:column;gap:.5em}
+.kpi{margin:0;display:flex;flex-direction:column}
+.kpi span{color:var(--muted);font-size:.85em}
+.kpi strong{font-size:1.6em;line-height:1.1}
+.lvl{margin:0;font-weight:700;font-size:1.25em;display:flex;align-items:center;gap:.45em}
+.lvl3{color:#A8F5CF}.lvl2{color:#FFD9A8}.lvl1{color:#FFC2B8}
+.lmsg{margin:0;color:var(--muted)}
+h3{font-size:.95em;color:var(--cyan);text-transform:uppercase;letter-spacing:.05em}
+.rsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:.35em}
+.rsteps li{display:flex;flex-direction:column;align-items:center;gap:.15em;padding:.3em .1em;border-radius:10px;border:1px solid var(--line);font-size:.85em;font-weight:700}
+.rsteps li.ok{border-color:rgba(94,224,160,.55)}
+.rsteps li.ko{border-color:rgba(255,154,140,.55)}
+.notions{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.3em}
+.notions li{display:flex;gap:.55em;align-items:center}
+.nn{flex:none;width:1.6em;height:1.6em;border-radius:50%;border:1px solid var(--ko);display:grid;place-items:center;font-size:.8em;font-weight:700}
+.none{margin:0;color:var(--muted)}
+.rbtns{margin-top:auto;display:flex;flex-wrap:wrap;gap:.6em;padding-top:.3em}
+
+/* Revoir mes réponses */
+.review{display:flex;flex-direction:column;gap:.55em;padding-bottom:2px}
+.rgrid{display:grid;gap:.55em;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
+.pp9 .rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pp6 .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pp3 .rgrid{grid-template-columns:minmax(0,1fr)}
+.rv{padding:.5em .75em;display:flex;flex-direction:column;gap:.22em;min-height:0;overflow:hidden;font-size:.86em}
+.rv p{margin:0}
+.rv.ok{border-color:rgba(94,224,160,.5)}
+.rv.ko{border-color:rgba(255,154,140,.5)}
+.rvh{display:flex;align-items:center;justify-content:space-between;gap:.4em}
+.rv .st{display:inline-flex;align-items:center;gap:.3em;font-weight:700}
+.rv h3{font-size:1em;text-transform:none;letter-spacing:0;color:#fff}
+.lab2{font-weight:700;color:var(--cyan)}
+
+/* Navigation */
+.nav{display:flex;align-items:center;gap:10px;padding:clamp(6px,1.2vh,14px) clamp(10px,2vw,28px);padding-bottom:max(clamp(6px,1.2vh,14px),env(safe-area-inset-bottom))}
+.nav .sp{flex:1;margin:0;font-size:.82em;color:var(--muted);text-align:center}
+
+/* SVG */
+.zonebg{fill:rgba(255,255,255,.035);stroke:rgba(207,221,242,.25);stroke-dasharray:5 6}
+.pipe{fill:none;stroke:#4A3020;stroke-width:13;stroke-linecap:round;stroke-linejoin:round}
+.pipe-in{fill:none;stroke:#C0835A;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.flow{fill:none;stroke:#8FE3FF;stroke-width:3.4;stroke-linecap:round;stroke-dasharray:7 13;animation:flow 3.4s linear infinite;filter:url(#glow)}
+.flow.fast{animation-duration:2.4s}
+.flow.slow{stroke:#7EE8D2;stroke-width:7;stroke-dasharray:12 8;animation-duration:9s}
+.flow.weak{stroke-dasharray:3 17;animation-duration:6s}
+.flow.big{stroke-width:5}
+.flow.still{animation:pulse 5s ease-in-out infinite;stroke-dasharray:none;opacity:.55;stroke-width:3}
+@keyframes flow{to{stroke-dashoffset:-40}}
+@keyframes pulse{50%{opacity:.95}}
+.spin{animation:spin 8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.drop{animation:drop 2.4s linear infinite;opacity:0}
+.drop.d2{animation-delay:-.8s}.drop.d3{animation-delay:-1.6s}
+@keyframes drop{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(46px);opacity:0}}
+.paused *,.paused *::before,.paused *::after{animation-play-state:paused!important}
+.lbl{fill:#EEF5FF;font:700 19px Calibri,Arial,sans-serif;paint-order:stroke;stroke:#0a2148;stroke-width:5px;stroke-linejoin:round}
+.tagt{fill:#fff;font:700 18px Calibri,Arial,sans-serif}
+.lett{fill:#0b1f3f;font:700 21px Calibri,Arial,sans-serif}
+
+@media (min-aspect-ratio:1/1) and (min-width:561px){.step.c2.answered .sit{display:none}}
+/* Écrans portrait / étroits : visuel au-dessus de la question */
+@media (max-aspect-ratio:1/1),(max-width:560px){
+  .step{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,34%) minmax(0,1fr)}
+  .step.c1{grid-template-rows:minmax(0,25%) minmax(0,1fr)}
+  .step.c2.answered,.step.c3.answered{grid-template-rows:minmax(0,1fr)}
+  .step.c2.answered .visual,.step.c3.answered .visual{display:none}
+  .result{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+  .ring{width:clamp(80px,14vh,130px)}
+  .rsteps{grid-template-columns:repeat(9,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .mod{display:none}
+  .top{justify-content:flex-end}
+  .nav .btxt,.tbtn .btxt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .nav .sp{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .nav{justify-content:space-between}
+  .ptxt{font-size:.85em}
+  .rsteps li{font-size:.75em}
+  .rsteps li .ic{width:1em;height:1em}
+  h1{font-size:1.7em}
+}
+@media (max-height:500px){
+  .top{padding-top:4px;padding-bottom:4px}
+  .prog{padding-bottom:4px}
+  .nav{padding-top:4px;padding-bottom:4px}
+  .icard img{max-height:22vh}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;scroll-behavior:auto!important}
+}
+
+/* ===== Compléments HYD-02 ===== */
+.hero{width:100%;height:auto;max-height:30vh;border-radius:14px;min-height:0;flex:0 1 auto;box-shadow:0 10px 30px rgba(0,10,40,.4)}
+.intro.c1 .hero{max-height:16vh}
+.intro.c2 .hero{display:none}
+.fx{white-space:nowrap;font-family:Calibri,Arial,sans-serif;font-weight:700;color:#FFE3B8}
+.fx sub{font-size:.72em;line-height:0}
+.opt.sm{min-height:44px;padding:.35em .7em;width:auto;flex:1 1 auto}
+.segs{display:flex;flex-wrap:wrap;gap:.4em}
+.grp{display:flex;flex-direction:column;gap:.3em;padding:.45em .6em;border:1px solid var(--line);border-radius:12px;background:rgba(6,24,56,.3)}
+.glab{margin:0;font-weight:700}
+.gsel{margin:0;color:var(--cyan);font-weight:700}
+.fxcard{border:1px solid rgba(85,194,251,.5);border-radius:14px;background:rgba(6,24,56,.45);padding:.6em .9em;display:flex;flex-direction:column;gap:.25em}
+.fxl{margin:0;font-size:.78em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--cyan)}
+.fxm{margin:0;font-size:1.35em}
+.fxd{margin:0;color:#fff;font-weight:700}
+.checks{display:grid;grid-template-columns:1fr;gap:.35em}
+@container (min-width:520px){.checks{grid-template-columns:1fr 1fr}}
+.chk{display:flex;align-items:center;gap:.6em;text-align:start;min-height:44px;padding:.35em .65em;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);line-height:1.15;font-size:.95em}
+.chk:hover:not([aria-disabled="true"]){background:rgba(255,255,255,.13)}
+.chk .box{flex:none;width:1.15em;height:1.15em;border-radius:4px;border:2px solid #D7E8F8;display:grid;place-items:center}
+.chk[aria-checked="true"]{border:2px solid var(--cyan);background:rgba(85,194,251,.17)}
+.chk[aria-checked="true"] .box{background:var(--cyan);border-color:var(--cyan)}
+.chk[aria-checked="true"] .box::after{content:"";width:.32em;height:.6em;border:solid #0b2350;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.chk .otx{flex:1}.chk .mk{flex:none;display:flex}
+.chk[aria-disabled="true"]{cursor:default}
+.is-miss{border:2px dashed var(--ok)!important}
+.vbtn{position:absolute;display:flex;align-items:center;justify-content:center;gap:.35em;min-width:44px;min-height:44px;border-radius:12px;border:2px solid rgba(207,221,242,.6);background:rgba(8,26,56,.85);font-weight:700;font-size:1em;padding:0 .4em}
+.vbtn:hover:not(:disabled){background:rgba(30,70,130,.9)}
+.vbtn[aria-pressed="true"]{border:3px solid var(--cyan);background:rgba(85,194,251,.25)}
+.vbtn:disabled{cursor:default}
+.hs.gauge{justify-content:flex-start;padding-top:.2em}
+.dz .zn{text-transform:none;font-size:.82em;line-height:1.1}
+/* SVG HYD-02 */
+.lbl.sym{font-size:22px}
+.lbl.small{font-size:15px;fill:#CFDDF2}
+.sbs{font-size:70%}
+.fxbox{fill:rgba(6,24,56,.75);stroke:#55C2FB;stroke-width:1.5}
+.fxs{fill:#FFE3B8;font:700 21px Calibri,Arial,sans-serif}
+.sbox{fill:rgba(6,24,56,.6);stroke:rgba(170,210,255,.45);stroke-width:1.5}
+.sbox.empty{stroke-dasharray:6 5;stroke:#FA9035}
+.big1{fill:#fff;font:700 24px Calibri,Arial,sans-serif}
+.gnum{fill:#0B2350;font:700 15px Calibri,Arial,sans-serif}
+.gunit{fill:#36506F;font:700 14px Calibri,Arial,sans-serif}
+.lcd{fill:#8FE3FF;font:700 20px Calibri,Arial,sans-serif}
+.tagr{fill:rgba(8,26,56,.9);stroke:#55C2FB;stroke-width:1.5}
+.tagr.big{stroke:#FA9035;stroke-width:2.5}
+.tagr.q{stroke:#FA9035;stroke-dasharray:5 4}
+.flow.up{animation-duration:4.5s}
+.flow.slow2{animation-duration:6s}
+.bub{animation:bub 3s ease-in-out infinite}
+@keyframes bub{50%{transform:translateY(-6px)}}
+.fill{transition:y .5s ease,height .5s ease}
+.rsteps.n8{grid-template-columns:repeat(8,minmax(0,1fr))}
+.pp8 .rgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.pp4 .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pp2 .rgrid{grid-template-columns:minmax(0,1fr)}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+/* ===== Compléments HYD-03 ===== */
+.sy{white-space:nowrap}
+.sy sub{font-size:.72em;line-height:0}
+.dz .zv{font-size:1.15em}
+
+</style>
+</head>
+<body>
+<svg class="defs" aria-hidden="true" focusable="false">
+ <defs>
+  <filter id="glow" filterUnits="userSpaceOnUse" x="-50" y="-50" width="700" height="460"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <radialGradient id="gBlue" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#7BC0FF"/><stop offset=".55" stop-color="#1F5FAE"/><stop offset="1" stop-color="#12396F"/></radialGradient>
+  <linearGradient id="gWhite" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C9D6E6"/></linearGradient>
+  <linearGradient id="gRed" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF7A7A"/><stop offset="1" stop-color="#A3121A"/></linearGradient>
+  <linearGradient id="gBrass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE29A"/><stop offset=".5" stop-color="#D2A23A"/><stop offset="1" stop-color="#8A6414"/></linearGradient>
+  <linearGradient id="gSteel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF3F9"/><stop offset="1" stop-color="#94A7BF"/></linearGradient>
+  <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FE3FF"/><stop offset="1" stop-color="#1E7FD0"/></linearGradient>
+  <linearGradient id="gRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FE3FF"/><stop offset="1" stop-color="#55C2FB"/></linearGradient>
+ </defs>
+</svg>
+<div id="app">
+ <header class="top">
+  <p class="mod" id="mod"></p>
+  <div class="tools">
+   <button type="button" class="tbtn" id="pauseBtn"></button>
+   <div class="langbox"><label for="langSel" id="langLbl">Langue</label><select id="langSel"></select></div>
+  </div>
+ </header>
+ <div class="prog" id="prog" role="group" hidden></div>
+ <main id="main"></main>
+ <footer class="nav" id="nav" hidden></footer>
+</div>
+<div id="live" class="sr" aria-live="polite" aria-atomic="true"></div>
+<script>
+(function(){
+"use strict";
+/* TRADUCTIONS HYD-03 — un objet par langue (fr = langue source).
+   Jetons non traduits : {F1}…{F6} formules, {qv} {qm} {cp} {Dint} symboles à indice. */
+const L = {
+fr: { name: "Français", ui: {
+  lang: "Langue", module: "HYD-03 | Débit, vitesse et puissance thermique", start: "Commencer", prev: "Précédent", next: "Suivant",
+  validate: "Valider", result: "Voir mon résultat", pause: "Pause", resume: "Reprendre",
+  pauseAria: "Pause : mettre en pause les animations", resumeAria: "Reprendre les animations",
+  stepOf: "Étape {n} sur {t}", progress: "Progression du défi", stDone: "terminée", stCur: "en cours", stTodo: "à venir",
+  introTitle: "Relevez le défi de fin de module",
+  introLead: "Vous avez découvert les notions essentielles de ce module. À vous maintenant de les mettre en pratique !",
+  introCase: "Vous intervenez sur le réseau d'eau glacée qui alimente la batterie d'une centrale de traitement d'air. Débitmètre, diamètre intérieur des conduites et températures d'aller et de retour sont disponibles. Votre mission : convertir les débits, calculer les vitesses et vérifier la puissance transportée.",
+  introMeta: "8 étapes · 1 décision ou 1 calcul par étape · une étude de cas fil rouge",
+  introAlt: "Illustration : conduites d'aller et de retour d'eau glacée équipées d'un débitmètre, de thermomètres et d'une pompe, reliées à une batterie.",
+  situation: "Situation", ok: "Bonne réponse", ko: "Réponse incorrecte", remember: "À retenir",
+  needAnswer: "Répondez, puis validez pour continuer.", selected: "Sélectionné", notSel: "Non sélectionné",
+  hDrag: "Glissez une carte sur une zone, ou sélectionnez-la puis choisissez la zone.", hMulti: "Plusieurs réponses possibles.",
+  choose: "Choisir…", zoneEmpty: "Déposez une carte", data: "Données",
+  labelSel: "Carte « {l} » sélectionnée. Choisissez maintenant une zone.", placed: "« {l} » placée dans « {z} ».", removed: "Zone « {z} » vidée.",
+  finalTitle: "Votre résultat", score: "Score", rate: "Taux de réussite", passed: "Étapes réussies",
+  toReview: "Notions à revoir", noneReview: "Aucune : toutes les notions sont acquises.",
+  lvl3t: "Maîtrise solide", lvl3m: "Excellent travail : vous savez convertir un débit, calculer une vitesse et relier débit, ΔT et puissance.",
+  lvl2t: "Acquis satisfaisants, quelques notions à consolider", lvl2m: "Bonne base. Revoyez les notions signalées avant de poursuivre le parcours.",
+  lvl1t: "Révision recommandée", lvl1m: "Reprenez les séquences liées aux notions à revoir, puis relevez à nouveau le défi.",
+  review: "Revoir mes réponses", restart: "Recommencer le défi", back: "Retour au résultat", reviewTitle: "Synthèse de vos réponses",
+  success: "Réussie", fail: "À revoir", yours: "Votre réponse", expected: "Réponse attendue", noAnswer: "Sans réponse",
+  step: "Étape", page: "Page {n} sur {t}", prevPage: "Page précédente", nextPage: "Page suivante",
+  scoreAria: "Score : {s} sur {t}", multiAns: "{c} bonne(s) réponse(s) sur {n} · {w} erreur(s)", allBut: "Toutes, sauf :"
+ }, steps: [
+ { title: "Volume ou masse ?",
+   sit: "Avant de contrôler la batterie, vous relisez la fiche technique : plusieurs grandeurs y figurent avec leurs unités.",
+   q: "Associez chaque grandeur à son unité cohérente.",
+   items: ["Débit volumique {qv}", "Débit massique {qm}", "Masse volumique ρ", "Capacité thermique massique {cp}", "Écart de température ΔT"],
+   choices: ["m³/s, m³/h, L/s, L/min", "kg/s, kg/h", "kg/m³", "kJ/(kg·K)", "K (écart en °C)"],
+   svg: { vol: "Volume", mass: "Masse", ex: "Exemple" },
+   ok: "Chaque grandeur a son unité. Le lien entre les deux débits est {F1}, avec {qv} en m³/s et ρ en kg/m³ pour obtenir {qm} en kg/s : 2 L/s d'eau représentent environ 2 kg/s.",
+   ko: "{qv} est un volume par unité de temps, {qm} une masse par unité de temps, ρ s'exprime en kg/m³ et {cp} en kJ/(kg·K). Les deux débits sont reliés par {F1}, avec des unités cohérentes.",
+   key: "Ne placez jamais un débit en m³/h directement dans {F1} : convertissez-le d'abord en m³/s.",
+   notion: "Débits volumique et massique",
+   alt: "Conduite d'eau : à gauche, un cube de 1 m³ symbolise le volume ; à droite, une masse sur une balance symbolise le kilogramme. Au centre, la formule qm = ρ × qv avec ρ ≈ 1 000 kg/m³. Exemple : 2 L/s = 0,002 m³/s, soit environ 2 kg/s." },
+ { title: "Convertissez le débit",
+   sit: "Le débitmètre de la batterie affiche 18 m³/h. Le fabricant de la vanne exprime le débit en L/s.",
+   q: "Sur le schéma, sélectionnez la valeur correcte en L/s.",
+   svg: { meter: "Débitmètre", ref: "Repères" },
+   ok: "18 m³/h = 18 000 L en 3 600 s, soit 5 L/s. Raccourci : m³/h ÷ 3,6 = L/s.",
+   ko: "1 m³ = 1 000 L et 1 h = 3 600 s : 18 m³/h = 18 000 L en 3 600 s, soit 5 L/s. Diviser par 3,6 revient au même calcul.",
+   key: "Un débit doit toujours être associé à une unité et au point du réseau où il est mesuré.",
+   notion: "Conversions de débit",
+   alt: "Débitmètre affichant 18 m³/h sur une conduite. Repères : 1 m³ = 1 000 L et 1 h = 3 600 s. Valeurs proposées : 5 L/s, 18 L/s, 50 L/s et 64,8 L/s." },
+ { title: "Choisissez le bon facteur",
+   sit: "Vous préparez un aide-mémoire de conversion pour l'équipe de maintenance.",
+   q: "Placez le bon facteur sur chaque conversion. Une carte est un piège.",
+   zones: ["1 · m³/h → L/s", "2 · L/s → m³/h"],
+   labels: ["÷ 3,6", "× 3,6", "× 3 600"],
+   svg: { big: "m³/h", small: "L/s" },
+   ok: "On divise par 3,6 pour passer des m³/h aux L/s et on multiplie par 3,6 pour l'inverse : 1,5 L/s × 3,6 = 5,4 m³/h. Le facteur 3 600 relie, lui, les m³/s et les m³/h.",
+   ko: "Erreur fréquente : confondre 3,6 et 3 600. Le facteur 3,6 relie m³/h et L/s ; 3 600 relie m³/s et m³/h. Exemple : 7,2 m³/h ÷ 3,6 = 2 L/s.",
+   key: "Méthode : unité de départ, unité cible, facteur, calcul, puis contrôle de l'ordre de grandeur.",
+   notion: "Méthodes de conversion",
+   alt: "Un cube d'eau symbolise les m³/h et un bécher les L/s. Une flèche 1 va des m³/h vers les L/s, une flèche 2 revient des L/s vers les m³/h. Repères : 1 m³ = 1 000 L, 1 h = 3 600 s. Deux zones de dépôt en haut du schéma." },
+ { title: "Section, débit et vitesse",
+   sit: "La conduite d'alimentation a un diamètre intérieur de 50 mm et transporte 5 m³/h d'eau.",
+   q: "Calculez la vitesse moyenne en trois étapes.",
+   groups: [{ label: "1. Section : {F2}" }, { label: "2. Débit en m³/s" }, { label: "3. Vitesse : {F3}" }],
+   svg: { pipe: "Conduite" },
+   ok: "A = π × 0,050² / 4 ≈ 0,001963 m² ; 5 m³/h ÷ 3 600 ≈ 0,001389 m³/s ; v ≈ 0,001389 / 0,001963 ≈ 0,71 m/s.",
+   ko: "Le diamètre doit être en mètres (50 mm = 0,050 m) et la formule divise par 4. Le débit doit être en m³/s : 5 ÷ 3 600 ≈ 0,001389 m³/s. Ensuite, {F3} ≈ 0,71 m/s.",
+   key: "Utilisez le diamètre intérieur, pas le diamètre nominal ni le diamètre extérieur, sauf si la documentation établit leur équivalence.",
+   notion: "Section et vitesse",
+   alt: "Coupe d'une conduite de diamètre intérieur 50 mm = 0,050 m transportant 5 m³/h. Chaîne de calcul : section A = π × Dint² / 4, puis débit en m³/s, puis vitesse v = qv / A." },
+ { title: "Pourquoi la vitesse compte",
+   sit: "Le même débit traverse trois tronçons de diamètres différents. Un occupant signale du bruit dans les canalisations.",
+   q: "Sélectionnez sur le schéma le tronçon le plus rapide, puis la conséquence probable.",
+   groups: [{ label: "1. Tronçon le plus rapide :", opts: ["Tronçon A", "Tronçon B", "Tronçon C"] },
+     { label: "2. Conséquence probable d'une vitesse élevée :", opts: ["Air difficile à entraîner, réponse plus lente", "Bruit, érosion et pertes de charge accrues", "Débit plus faible que dans les autres tronçons"] }],
+   svg: { same: "Même débit" },
+   ok: "À débit constant, {F3} : la plus petite section, le tronçon B, impose la vitesse la plus élevée, ce qui augmente le bruit, l'érosion et les pertes de charge.",
+   ko: "Le débit est identique dans les trois tronçons ; seule la section change. Le tronçon B, le plus étroit, est le plus rapide. Une vitesse très faible pose d'autres problèmes : air mal entraîné et temps de réponse plus longs.",
+   key: "Les plages de vitesse admissibles dépendent du réseau, des matériaux et des prescriptions du projet.",
+   notion: "Importance de la vitesse",
+   alt: "Une même conduite en trois tronçons traversés par le même débit : tronçon A de gros diamètre, tronçon B étroit avec un écoulement rapide, tronçon C de diamètre moyen." },
+ { title: "Débit et puissance thermique",
+   sit: "Sur une autre batterie d'eau glacée, vous relevez 6 m³/h, une température d'aller de 7 °C et une température de retour de 12 °C.",
+   q: "Quelle puissance thermique l'eau transporte-t-elle ?",
+   svg: { sup: "Aller", ret: "Retour", coil: "Batterie" },
+   ok: "En eau glacée, le ΔT utile vaut T retour − T aller = 12 − 7 = 5 K. Avec {F5} : 1,16 × 6 × 5 = 34,8 kW.",
+   ko: "Utilisez l'écart de température, pas une température seule : ΔT = 12 − 7 = 5 K. Puis {F5} : 1,16 × 6 × 5 ≈ 34,8 kW.",
+   key: "{F4} est la formule générale ; 1,16 est une approximation pour l'eau. Pour un mélange glycolé, utilisez ρ et {cp} réels.",
+   notion: "Puissance thermique",
+   alt: "Batterie d'eau glacée : aller à 7 °C, retour à 12 °C, débitmètre affichant 6 m³/h. Encadré : ΔT = ? K." },
+ { title: "Déterminez le débit requis",
+   sit: "Une batterie doit fournir 58 kW avec un régime d'eau glacée 7/12 °C. Vous préparez le réglage du débit.",
+   q: "Sélectionnez toutes les affirmations correctes.",
+   items: ["{qv} ≈ 58 / (1,16 × 5) = 10 m³/h", "À puissance constante, un débit trop faible augmente le ΔT", "À puissance constante, un débit trop élevé réduit le ΔT", "Pour un mélange glycolé, utiliser ρ et {cp} réels", "Vérifier charge, régulation et encrassement avant de conclure", "Régler le débit sur un seul ΔT instantané", "{qv} ≈ 58 × 1,16 × 5 ≈ 336 m³/h", "Appliquer 1,16 à tout fluide, sans contrôle"],
+   svg: { power: "Puissance" },
+   ok: "On inverse la formule : {F6}, soit 58 / (1,16 × 5) = 10 m³/h. Le ΔT réagit au débit : trop peu de débit l'augmente, trop de débit le réduit.",
+   ko: "Inversez la formule : {F6}, soit 58 / (1,16 × 5) = 10 m³/h. Un ΔT instantané dépend aussi de la charge, de la régulation, de l'encrassement et du régime transitoire.",
+   key: "Ne réglez pas un débit uniquement sur un ΔT instantané.",
+   notion: "Débit requis",
+   alt: "Puissance de 58 kW à transporter par une conduite d'eau glacée : aller 7 °C, retour 12 °C, ΔT = 5 K, débit inconnu. Formule : qv(m³/h) ≈ Φ(kW) / [1,16 × ΔT(K)]." },
+ { title: "Contrôlez la batterie",
+   sit: "Batterie alimentée en 7/12 °C, débitmètre à 9 m³/h, conduite de {Dint} 50 mm, puissance annoncée de 52 kW, fluide : eau.",
+   q: "Menez le contrôle en trois décisions.",
+   groups: [{ label: "1. Débit en m³/s" }, { label: "2. Vitesse moyenne dans la conduite" },
+     { label: "3. Puissance et conclusion", opts: ["45 kW : batterie sous-alimentée", "52,2 kW : cohérent avec l'annonce", "125,3 kW : débit très excessif"] }],
+   svg: { coil: "Batterie", ann: "Annoncée : 52 kW" },
+   ok: "9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s ; v ≈ 0,0025 / 0,001963 ≈ 1,27 m/s ; Φ ≈ 1,16 × 9 × 5 = 52,2 kW, cohérent avec les 52 kW annoncés.",
+   ko: "Débit : 9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s. Vitesse : 0,0025 / 0,001963 ≈ 1,27 m/s. Puissance : 1,16 × 9 × 5 = 52,2 kW, proche des 52 kW annoncés.",
+   key: "Débit, diamètre intérieur et ΔT permettent un premier contrôle ; la validation réelle exige des capteurs fiables, un régime stable et les propriétés exactes du fluide.",
+   notion: "Contrôle d'une batterie",
+   alt: "Batterie d'eau glacée : aller 7 °C, retour 12 °C, débitmètre à 9 m³/h, conduite de diamètre intérieur 50 mm, puissance annoncée 52 kW. Les résultats du débit en m³/s et de la vitesse s'affichent au fil des réponses." }
+ ]},
+en: { name: "English", ui: {
+  lang: "Language", module: "HYD-03 | Flow rate, velocity and thermal power", start: "Start", prev: "Previous", next: "Next",
+  validate: "Submit", result: "See my result", pause: "Pause", resume: "Resume",
+  pauseAria: "Pause the animations", resumeAria: "Resume the animations",
+  stepOf: "Step {n} of {t}", progress: "Challenge progress", stDone: "completed", stCur: "current", stTodo: "upcoming",
+  introTitle: "Take on the end-of-module challenge",
+  introLead: "You have discovered the key concepts of this module. Now it's your turn to put them into practice!",
+  introCase: "You are working on the chilled water network supplying the coil of an air handling unit. A flow meter, the inner diameter of the pipes and the supply and return temperatures are available. Your mission: convert the flow rates, calculate the velocities and check the power transported.",
+  introMeta: "8 steps · 1 decision or 1 calculation per step · one common case study",
+  introAlt: "Illustration: chilled water supply and return pipes fitted with a flow meter, thermometers and a pump, connected to a coil.",
+  situation: "Situation", ok: "Correct answer", ko: "Incorrect answer", remember: "Key point",
+  needAnswer: "Answer, then submit to continue.", selected: "Selected", notSel: "Not selected",
+  hDrag: "Drag a card onto a zone, or select it and then choose the zone.", hMulti: "Several answers possible.",
+  choose: "Choose…", zoneEmpty: "Drop a card here", data: "Data",
+  labelSel: "Card “{l}” selected. Now choose a zone.", placed: "“{l}” placed in “{z}”.", removed: "Zone “{z}” emptied.",
+  finalTitle: "Your result", score: "Score", rate: "Success rate", passed: "Steps passed",
+  toReview: "Concepts to review", noneReview: "None: all concepts are mastered.",
+  lvl3t: "Solid mastery", lvl3m: "Excellent work: you can convert a flow rate, calculate a velocity and relate flow rate, ΔT and power.",
+  lvl2t: "Satisfactory knowledge, a few concepts to consolidate", lvl2m: "Good foundation. Review the flagged concepts before continuing the learning path.",
+  lvl1t: "Review recommended", lvl1m: "Go back over the sequences linked to the concepts to review, then take the challenge again.",
+  review: "Review my answers", restart: "Restart the challenge", back: "Back to result", reviewTitle: "Summary of your answers",
+  success: "Passed", fail: "To review", yours: "Your answer", expected: "Expected answer", noAnswer: "No answer",
+  step: "Step", page: "Page {n} of {t}", prevPage: "Previous page", nextPage: "Next page",
+  scoreAria: "Score: {s} out of {t}", multiAns: "{c} correct answer(s) out of {n} · {w} error(s)", allBut: "All except:"
+ }, steps: [
+ { title: "Volume or mass?",
+   sit: "Before checking the coil, you reread the data sheet: it lists several quantities with their units.",
+   q: "Match each quantity with its consistent unit.",
+   items: ["Volume flow rate {qv}", "Mass flow rate {qm}", "Density ρ", "Specific heat capacity {cp}", "Temperature difference ΔT"],
+   choices: ["m³/s, m³/h, L/s, L/min", "kg/s, kg/h", "kg/m³", "kJ/(kg·K)", "K (difference in °C)"],
+   svg: { vol: "Volume", mass: "Mass", ex: "Example" },
+   ok: "Each quantity has its own unit. The two flow rates are linked by {F1}, with {qv} in m³/s and ρ in kg/m³ to obtain {qm} in kg/s: 2 L/s of water is about 2 kg/s.",
+   ko: "{qv} is a volume per unit of time, {qm} a mass per unit of time, ρ is expressed in kg/m³ and {cp} in kJ/(kg·K). The two flow rates are linked by {F1}, using consistent units.",
+   key: "Never put a flow rate in m³/h directly into {F1}: convert it to m³/s first.",
+   notion: "Volume and mass flow rates",
+   alt: "Water pipe: on the left, a 1 m³ cube represents volume; on the right, a mass on a scale represents the kilogram. In the centre, the formula qm = ρ × qv with ρ ≈ 1 000 kg/m³. Example: 2 L/s = 0.002 m³/s, i.e. about 2 kg/s." },
+ { title: "Convert the flow rate",
+   sit: "The coil's flow meter reads 18 m³/h. The valve manufacturer expresses the flow rate in L/s.",
+   q: "On the diagram, select the correct value in L/s.",
+   svg: { meter: "Flow meter", ref: "Reference" },
+   ok: "18 m³/h = 18 000 L in 3 600 s, i.e. 5 L/s. Shortcut: m³/h ÷ 3.6 = L/s.",
+   ko: "1 m³ = 1 000 L and 1 h = 3 600 s: 18 m³/h = 18 000 L in 3 600 s, i.e. 5 L/s. Dividing by 3.6 is the same calculation.",
+   key: "A flow rate must always be given with a unit and the point in the network where it is measured.",
+   notion: "Flow rate conversions",
+   alt: "Flow meter reading 18 m³/h on a pipe. Reference: 1 m³ = 1 000 L and 1 h = 3 600 s. Options: 5 L/s, 18 L/s, 50 L/s and 64.8 L/s." },
+ { title: "Choose the right factor",
+   sit: "You are preparing a conversion cheat sheet for the maintenance team.",
+   q: "Place the right factor on each conversion. One card is a trap.",
+   zones: ["1 · m³/h → L/s", "2 · L/s → m³/h"],
+   labels: ["÷ 3.6", "× 3.6", "× 3 600"],
+   svg: { big: "m³/h", small: "L/s" },
+   ok: "Divide by 3.6 to go from m³/h to L/s and multiply by 3.6 for the reverse: 1.5 L/s × 3.6 = 5.4 m³/h. The factor 3 600 links m³/s and m³/h.",
+   ko: "Common mistake: confusing 3.6 and 3 600. The factor 3.6 links m³/h and L/s; 3 600 links m³/s and m³/h. Example: 7.2 m³/h ÷ 3.6 = 2 L/s.",
+   key: "Method: starting unit, target unit, factor, calculation, then check the order of magnitude.",
+   notion: "Conversion methods",
+   alt: "A water cube represents m³/h and a beaker represents L/s. Arrow 1 goes from m³/h to L/s, arrow 2 returns from L/s to m³/h. Reference: 1 m³ = 1 000 L, 1 h = 3 600 s. Two drop zones at the top of the diagram." },
+ { title: "Cross-section, flow rate and velocity",
+   sit: "The supply pipe has an inner diameter of 50 mm and carries 5 m³/h of water.",
+   q: "Calculate the mean velocity in three steps.",
+   groups: [{ label: "1. Cross-section: {F2}" }, { label: "2. Flow rate in m³/s" }, { label: "3. Velocity: {F3}" }],
+   svg: { pipe: "Pipe" },
+   ok: "A = π × 0.050² / 4 ≈ 0.001963 m²; 5 m³/h ÷ 3 600 ≈ 0.001389 m³/s; v ≈ 0.001389 / 0.001963 ≈ 0.71 m/s.",
+   ko: "The diameter must be in metres (50 mm = 0.050 m) and the formula divides by 4. The flow rate must be in m³/s: 5 ÷ 3 600 ≈ 0.001389 m³/s. Then {F3} ≈ 0.71 m/s.",
+   key: "Use the inner diameter, not the nominal or outer diameter, unless the documentation states they are equivalent.",
+   notion: "Cross-section and velocity",
+   alt: "Cross-section of a pipe with an inner diameter of 50 mm = 0.050 m carrying 5 m³/h. Calculation chain: cross-section A = π × Dint² / 4, then flow rate in m³/s, then velocity v = qv / A." },
+ { title: "Why velocity matters",
+   sit: "The same flow rate passes through three sections of different diameters. An occupant reports noise in the pipes.",
+   q: "On the diagram, select the fastest section, then the likely consequence.",
+   groups: [{ label: "1. Fastest section:", opts: ["Section A", "Section B", "Section C"] },
+     { label: "2. Likely consequence of a high velocity:", opts: ["Air hard to entrain, slower response", "Noise, erosion and higher pressure losses", "Lower flow rate than in the other sections"] }],
+   svg: { same: "Same flow rate" },
+   ok: "At constant flow rate, {F3}: the smallest cross-section, section B, gives the highest velocity, which increases noise, erosion and pressure losses.",
+   ko: "The flow rate is the same in all three sections; only the cross-section changes. Section B, the narrowest, is the fastest. A very low velocity causes other problems: poor air entrainment and longer response times.",
+   key: "Acceptable velocity ranges depend on the network, the materials and the project specifications.",
+   notion: "Importance of velocity",
+   alt: "One pipe in three sections carrying the same flow rate: section A with a large diameter, narrow section B with fast flow, section C with a medium diameter." },
+ { title: "Flow rate and thermal power",
+   sit: "On another chilled water coil, you read 6 m³/h, a supply temperature of 7 °C and a return temperature of 12 °C.",
+   q: "What thermal power does the water transport?",
+   svg: { sup: "Supply", ret: "Return", coil: "Coil" },
+   ok: "For chilled water, the useful ΔT is T return − T supply = 12 − 7 = 5 K. With {F5}: 1.16 × 6 × 5 = 34.8 kW.",
+   ko: "Use the temperature difference, not a single temperature: ΔT = 12 − 7 = 5 K. Then {F5}: 1.16 × 6 × 5 ≈ 34.8 kW.",
+   key: "{F4} is the general formula; 1.16 is an approximation for water. For a glycol mixture, use the actual ρ and {cp}.",
+   notion: "Thermal power",
+   alt: "Chilled water coil: supply at 7 °C, return at 12 °C, flow meter reading 6 m³/h. Box: ΔT = ? K." },
+ { title: "Determine the required flow rate",
+   sit: "A coil must deliver 58 kW with a 7/12 °C chilled water regime. You are preparing the flow rate setting.",
+   q: "Select all the correct statements.",
+   items: ["{qv} ≈ 58 / (1.16 × 5) = 10 m³/h", "At constant power, too low a flow rate increases ΔT", "At constant power, too high a flow rate reduces ΔT", "For a glycol mixture, use the actual ρ and {cp}", "Check load, control and fouling before concluding", "Set the flow rate on a single instantaneous ΔT", "{qv} ≈ 58 × 1.16 × 5 ≈ 336 m³/h", "Apply 1.16 to any fluid without checking"],
+   svg: { power: "Power" },
+   ok: "Rearrange the formula: {F6}, i.e. 58 / (1.16 × 5) = 10 m³/h. ΔT responds to flow rate: too little flow increases it, too much flow reduces it.",
+   ko: "Rearrange the formula: {F6}, i.e. 58 / (1.16 × 5) = 10 m³/h. An instantaneous ΔT also depends on load, control, fouling and transient conditions.",
+   key: "Never set a flow rate based solely on an instantaneous ΔT.",
+   notion: "Required flow rate",
+   alt: "58 kW of power to be transported by a chilled water pipe: supply 7 °C, return 12 °C, ΔT = 5 K, unknown flow rate. Formula: qv(m³/h) ≈ Φ(kW) / [1.16 × ΔT(K)]." },
+ { title: "Check the coil",
+   sit: "Coil supplied at 7/12 °C, flow meter at 9 m³/h, pipe with {Dint} 50 mm, rated power 52 kW, fluid: water.",
+   q: "Carry out the check in three decisions.",
+   groups: [{ label: "1. Flow rate in m³/s" }, { label: "2. Mean velocity in the pipe" },
+     { label: "3. Power and conclusion", opts: ["45 kW: coil under-supplied", "52.2 kW: consistent with rating", "125.3 kW: flow rate far too high"] }],
+   svg: { coil: "Coil", ann: "Rated: 52 kW" },
+   ok: "9 ÷ 3.6 = 2.5 L/s = 0.0025 m³/s; v ≈ 0.0025 / 0.001963 ≈ 1.27 m/s; Φ ≈ 1.16 × 9 × 5 = 52.2 kW, consistent with the rated 52 kW.",
+   ko: "Flow rate: 9 ÷ 3.6 = 2.5 L/s = 0.0025 m³/s. Velocity: 0.0025 / 0.001963 ≈ 1.27 m/s. Power: 1.16 × 9 × 5 = 52.2 kW, close to the rated 52 kW.",
+   key: "Flow rate, inner diameter and ΔT allow an initial check; real validation requires reliable sensors, stable operation and the exact fluid properties.",
+   notion: "Checking a coil",
+   alt: "Chilled water coil: supply 7 °C, return 12 °C, flow meter at 9 m³/h, pipe with an inner diameter of 50 mm, rated power 52 kW. The results for flow rate in m³/s and velocity appear as you answer." }
+ ]},
+es: { name: "Español", ui: {
+  lang: "Idioma", module: "HYD-03 | Caudal, velocidad y potencia térmica", start: "Comenzar", prev: "Anterior", next: "Siguiente",
+  validate: "Validar", result: "Ver mi resultado", pause: "Pausa", resume: "Reanudar",
+  pauseAria: "Pausa: detener las animaciones", resumeAria: "Reanudar las animaciones",
+  stepOf: "Etapa {n} de {t}", progress: "Progreso del reto", stDone: "completada", stCur: "en curso", stTodo: "pendiente",
+  introTitle: "Acepte el reto de fin de módulo",
+  introLead: "Ha descubierto las nociones esenciales de este módulo. ¡Ahora le toca ponerlas en práctica!",
+  introCase: "Interviene en la red de agua helada que alimenta la batería de una unidad de tratamiento de aire. Dispone de un caudalímetro, del diámetro interior de las tuberías y de las temperaturas de impulsión y retorno. Su misión: convertir los caudales, calcular las velocidades y comprobar la potencia transportada.",
+  introMeta: "8 etapas · 1 decisión o 1 cálculo por etapa · un caso práctico común",
+  introAlt: "Ilustración: tuberías de impulsión y retorno de agua helada equipadas con un caudalímetro, termómetros y una bomba, conectadas a una batería.",
+  situation: "Situación", ok: "Respuesta correcta", ko: "Respuesta incorrecta", remember: "Para recordar",
+  needAnswer: "Responda y valide para continuar.", selected: "Seleccionado", notSel: "Sin seleccionar",
+  hDrag: "Arrastre una tarjeta a una zona, o selecciónela y elija después la zona.", hMulti: "Varias respuestas posibles.",
+  choose: "Elegir…", zoneEmpty: "Coloque una tarjeta", data: "Datos",
+  labelSel: "Tarjeta «{l}» seleccionada. Elija ahora una zona.", placed: "«{l}» colocada en «{z}».", removed: "Zona «{z}» vaciada.",
+  finalTitle: "Su resultado", score: "Puntuación", rate: "Porcentaje de aciertos", passed: "Etapas superadas",
+  toReview: "Nociones que repasar", noneReview: "Ninguna: domina todas las nociones.",
+  lvl3t: "Dominio sólido", lvl3m: "Excelente trabajo: sabe convertir un caudal, calcular una velocidad y relacionar caudal, ΔT y potencia.",
+  lvl2t: "Conocimientos satisfactorios, algunas nociones que consolidar", lvl2m: "Buena base. Repase las nociones señaladas antes de continuar el itinerario.",
+  lvl1t: "Se recomienda repasar", lvl1m: "Retome las secuencias relacionadas con las nociones que repasar y vuelva a realizar el reto.",
+  review: "Revisar mis respuestas", restart: "Reiniciar el reto", back: "Volver al resultado", reviewTitle: "Resumen de sus respuestas",
+  success: "Superada", fail: "Por repasar", yours: "Su respuesta", expected: "Respuesta esperada", noAnswer: "Sin respuesta",
+  step: "Etapa", page: "Página {n} de {t}", prevPage: "Página anterior", nextPage: "Página siguiente",
+  scoreAria: "Puntuación: {s} de {t}", multiAns: "{c} respuesta(s) correcta(s) de {n} · {w} error(es)", allBut: "Todas, excepto:"
+ }, steps: [
+ { title: "¿Volumen o masa?",
+   sit: "Antes de controlar la batería, revisa la ficha técnica: en ella figuran varias magnitudes con sus unidades.",
+   q: "Asocie cada magnitud a su unidad coherente.",
+   items: ["Caudal volumétrico {qv}", "Caudal másico {qm}", "Densidad ρ", "Capacidad calorífica específica {cp}", "Diferencia de temperatura ΔT"],
+   choices: ["m³/s, m³/h, L/s, L/min", "kg/s, kg/h", "kg/m³", "kJ/(kg·K)", "K (diferencia en °C)"],
+   svg: { vol: "Volumen", mass: "Masa", ex: "Ejemplo" },
+   ok: "Cada magnitud tiene su unidad. Ambos caudales se relacionan mediante {F1}, con {qv} en m³/s y ρ en kg/m³ para obtener {qm} en kg/s: 2 L/s de agua equivalen a unos 2 kg/s.",
+   ko: "{qv} es un volumen por unidad de tiempo, {qm} una masa por unidad de tiempo, ρ se expresa en kg/m³ y {cp} en kJ/(kg·K). Ambos caudales se relacionan mediante {F1}, con unidades coherentes.",
+   key: "Nunca introduzca un caudal en m³/h directamente en {F1}: conviértalo antes a m³/s.",
+   notion: "Caudales volumétrico y másico",
+   alt: "Tubería de agua: a la izquierda, un cubo de 1 m³ simboliza el volumen; a la derecha, una masa sobre una balanza simboliza el kilogramo. En el centro, la fórmula qm = ρ × qv con ρ ≈ 1 000 kg/m³. Ejemplo: 2 L/s = 0,002 m³/s, es decir, unos 2 kg/s." },
+ { title: "Convierta el caudal",
+   sit: "El caudalímetro de la batería indica 18 m³/h. El fabricante de la válvula expresa el caudal en L/s.",
+   q: "En el esquema, seleccione el valor correcto en L/s.",
+   svg: { meter: "Caudalímetro", ref: "Referencias" },
+   ok: "18 m³/h = 18 000 L en 3 600 s, es decir, 5 L/s. Atajo: m³/h ÷ 3,6 = L/s.",
+   ko: "1 m³ = 1 000 L y 1 h = 3 600 s: 18 m³/h = 18 000 L en 3 600 s, es decir, 5 L/s. Dividir entre 3,6 equivale al mismo cálculo.",
+   key: "Un caudal debe ir siempre asociado a una unidad y al punto de la red donde se mide.",
+   notion: "Conversiones de caudal",
+   alt: "Caudalímetro que indica 18 m³/h en una tubería. Referencias: 1 m³ = 1 000 L y 1 h = 3 600 s. Valores propuestos: 5 L/s, 18 L/s, 50 L/s y 64,8 L/s." },
+ { title: "Elija el factor correcto",
+   sit: "Prepara una guía rápida de conversión para el equipo de mantenimiento.",
+   q: "Coloque el factor correcto en cada conversión. Una tarjeta es una trampa.",
+   zones: ["1 · m³/h → L/s", "2 · L/s → m³/h"],
+   labels: ["÷ 3,6", "× 3,6", "× 3 600"],
+   svg: { big: "m³/h", small: "L/s" },
+   ok: "Se divide entre 3,6 para pasar de m³/h a L/s y se multiplica por 3,6 para lo inverso: 1,5 L/s × 3,6 = 5,4 m³/h. El factor 3 600 relaciona m³/s y m³/h.",
+   ko: "Error frecuente: confundir 3,6 y 3 600. El factor 3,6 relaciona m³/h y L/s; 3 600 relaciona m³/s y m³/h. Ejemplo: 7,2 m³/h ÷ 3,6 = 2 L/s.",
+   key: "Método: unidad de partida, unidad de destino, factor, cálculo y control del orden de magnitud.",
+   notion: "Métodos de conversión",
+   alt: "Un cubo de agua simboliza los m³/h y un vaso de precipitados los L/s. Una flecha 1 va de m³/h a L/s, una flecha 2 vuelve de L/s a m³/h. Referencias: 1 m³ = 1 000 L, 1 h = 3 600 s. Dos zonas de colocación en la parte superior del esquema." },
+ { title: "Sección, caudal y velocidad",
+   sit: "La tubería de impulsión tiene un diámetro interior de 50 mm y transporta 5 m³/h de agua.",
+   q: "Calcule la velocidad media en tres pasos.",
+   groups: [{ label: "1. Sección: {F2}" }, { label: "2. Caudal en m³/s" }, { label: "3. Velocidad: {F3}" }],
+   svg: { pipe: "Tubería" },
+   ok: "A = π × 0,050² / 4 ≈ 0,001963 m²; 5 m³/h ÷ 3 600 ≈ 0,001389 m³/s; v ≈ 0,001389 / 0,001963 ≈ 0,71 m/s.",
+   ko: "El diámetro debe estar en metros (50 mm = 0,050 m) y la fórmula divide entre 4. El caudal debe estar en m³/s: 5 ÷ 3 600 ≈ 0,001389 m³/s. Después, {F3} ≈ 0,71 m/s.",
+   key: "Utilice el diámetro interior, no el nominal ni el exterior, salvo que la documentación establezca su equivalencia.",
+   notion: "Sección y velocidad",
+   alt: "Corte de una tubería de diámetro interior 50 mm = 0,050 m que transporta 5 m³/h. Cadena de cálculo: sección A = π × Dint² / 4, después caudal en m³/s y luego velocidad v = qv / A." },
+ { title: "Por qué importa la velocidad",
+   sit: "El mismo caudal atraviesa tres tramos de diámetros distintos. Un ocupante señala ruido en las tuberías.",
+   q: "Seleccione en el esquema el tramo más rápido y, después, la consecuencia probable.",
+   groups: [{ label: "1. Tramo más rápido:", opts: ["Tramo A", "Tramo B", "Tramo C"] },
+     { label: "2. Consecuencia probable de una velocidad elevada:", opts: ["Aire difícil de arrastrar, respuesta más lenta", "Ruido, erosión y mayores pérdidas de carga", "Caudal menor que en los demás tramos"] }],
+   svg: { same: "Mismo caudal" },
+   ok: "A caudal constante, {F3}: la sección más pequeña, el tramo B, impone la velocidad más alta, lo que aumenta el ruido, la erosión y las pérdidas de carga.",
+   ko: "El caudal es idéntico en los tres tramos; solo cambia la sección. El tramo B, el más estrecho, es el más rápido. Una velocidad muy baja plantea otros problemas: aire mal arrastrado y tiempos de respuesta más largos.",
+   key: "Los rangos de velocidad admisibles dependen de la red, los materiales y las prescripciones del proyecto.",
+   notion: "Importancia de la velocidad",
+   alt: "Una misma tubería en tres tramos recorridos por el mismo caudal: tramo A de gran diámetro, tramo B estrecho con un flujo rápido, tramo C de diámetro medio." },
+ { title: "Caudal y potencia térmica",
+   sit: "En otra batería de agua helada, registra 6 m³/h, una temperatura de impulsión de 7 °C y una temperatura de retorno de 12 °C.",
+   q: "¿Qué potencia térmica transporta el agua?",
+   svg: { sup: "Impulsión", ret: "Retorno", coil: "Batería" },
+   ok: "En agua helada, el ΔT útil es T retorno − T impulsión = 12 − 7 = 5 K. Con {F5}: 1,16 × 6 × 5 = 34,8 kW.",
+   ko: "Utilice la diferencia de temperatura, no una sola temperatura: ΔT = 12 − 7 = 5 K. Después, {F5}: 1,16 × 6 × 5 ≈ 34,8 kW.",
+   key: "{F4} es la fórmula general; 1,16 es una aproximación para el agua. Para una mezcla glicolada, utilice ρ y {cp} reales.",
+   notion: "Potencia térmica",
+   alt: "Batería de agua helada: impulsión a 7 °C, retorno a 12 °C, caudalímetro que indica 6 m³/h. Recuadro: ΔT = ? K." },
+ { title: "Determine el caudal necesario",
+   sit: "Una batería debe suministrar 58 kW con un régimen de agua helada 7/12 °C. Prepara el ajuste del caudal.",
+   q: "Seleccione todas las afirmaciones correctas.",
+   items: ["{qv} ≈ 58 / (1,16 × 5) = 10 m³/h", "A potencia constante, un caudal demasiado bajo aumenta el ΔT", "A potencia constante, un caudal demasiado alto reduce el ΔT", "Para una mezcla glicolada, usar ρ y {cp} reales", "Comprobar carga, regulación y suciedad antes de concluir", "Ajustar el caudal según un único ΔT instantáneo", "{qv} ≈ 58 × 1,16 × 5 ≈ 336 m³/h", "Aplicar 1,16 a cualquier fluido, sin comprobar"],
+   svg: { power: "Potencia" },
+   ok: "Se despeja la fórmula: {F6}, es decir, 58 / (1,16 × 5) = 10 m³/h. El ΔT reacciona al caudal: poco caudal lo aumenta, demasiado caudal lo reduce.",
+   ko: "Despeje la fórmula: {F6}, es decir, 58 / (1,16 × 5) = 10 m³/h. Un ΔT instantáneo depende también de la carga, la regulación, la suciedad y el régimen transitorio.",
+   key: "No ajuste un caudal basándose únicamente en un ΔT instantáneo.",
+   notion: "Caudal necesario",
+   alt: "Potencia de 58 kW que debe transportar una tubería de agua helada: impulsión 7 °C, retorno 12 °C, ΔT = 5 K, caudal desconocido. Fórmula: qv(m³/h) ≈ Φ(kW) / [1,16 × ΔT(K)]." },
+ { title: "Controle la batería",
+   sit: "Batería alimentada a 7/12 °C, caudalímetro a 9 m³/h, tubería de {Dint} 50 mm, potencia anunciada de 52 kW, fluido: agua.",
+   q: "Realice el control en tres decisiones.",
+   groups: [{ label: "1. Caudal en m³/s" }, { label: "2. Velocidad media en la tubería" },
+     { label: "3. Potencia y conclusión", opts: ["45 kW: batería subalimentada", "52,2 kW: coherente con lo anunciado", "125,3 kW: caudal muy excesivo"] }],
+   svg: { coil: "Batería", ann: "Anunciada: 52 kW" },
+   ok: "9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s; v ≈ 0,0025 / 0,001963 ≈ 1,27 m/s; Φ ≈ 1,16 × 9 × 5 = 52,2 kW, coherente con los 52 kW anunciados.",
+   ko: "Caudal: 9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s. Velocidad: 0,0025 / 0,001963 ≈ 1,27 m/s. Potencia: 1,16 × 9 × 5 = 52,2 kW, próxima a los 52 kW anunciados.",
+   key: "Caudal, diámetro interior y ΔT permiten un primer control; la validación real exige sensores fiables, un régimen estable y las propiedades exactas del fluido.",
+   notion: "Control de una batería",
+   alt: "Batería de agua helada: impulsión 7 °C, retorno 12 °C, caudalímetro a 9 m³/h, tubería de diámetro interior 50 mm, potencia anunciada 52 kW. Los resultados del caudal en m³/s y de la velocidad aparecen a medida que responde." }
+ ]},
+pt: { name: "Português", ui: {
+  lang: "Idioma", module: "HYD-03 | Caudal, velocidade e potência térmica", start: "Começar", prev: "Anterior", next: "Seguinte",
+  validate: "Validar", result: "Ver o meu resultado", pause: "Pausa", resume: "Retomar",
+  pauseAria: "Pausa: parar as animações", resumeAria: "Retomar as animações",
+  stepOf: "Etapa {n} de {t}", progress: "Progresso do desafio", stDone: "concluída", stCur: "em curso", stTodo: "por fazer",
+  introTitle: "Aceite o desafio de fim de módulo",
+  introLead: "Descobriu as noções essenciais deste módulo. Agora é a sua vez de as pôr em prática!",
+  introCase: "Intervém na rede de água gelada que alimenta a bateria de uma unidade de tratamento de ar. Estão disponíveis o caudalímetro, o diâmetro interior das tubagens e as temperaturas de ida e de retorno. A sua missão: converter os caudais, calcular as velocidades e verificar a potência transportada.",
+  introMeta: "8 etapas · 1 decisão ou 1 cálculo por etapa · um caso prático comum",
+  introAlt: "Ilustração: tubagens de ida e de retorno de água gelada equipadas com um caudalímetro, termómetros e uma bomba, ligadas a uma bateria.",
+  situation: "Situação", ok: "Resposta correta", ko: "Resposta incorreta", remember: "A reter",
+  needAnswer: "Responda e valide para continuar.", selected: "Selecionado", notSel: "Não selecionado",
+  hDrag: "Arraste um cartão para uma zona, ou selecione-o e escolha depois a zona.", hMulti: "Várias respostas possíveis.",
+  choose: "Escolher…", zoneEmpty: "Coloque um cartão", data: "Dados",
+  labelSel: "Cartão «{l}» selecionado. Escolha agora uma zona.", placed: "«{l}» colocado em «{z}».", removed: "Zona «{z}» esvaziada.",
+  finalTitle: "O seu resultado", score: "Pontuação", rate: "Taxa de sucesso", passed: "Etapas concluídas com sucesso",
+  toReview: "Noções a rever", noneReview: "Nenhuma: domina todas as noções.",
+  lvl3t: "Domínio sólido", lvl3m: "Excelente trabalho: sabe converter um caudal, calcular uma velocidade e relacionar caudal, ΔT e potência.",
+  lvl2t: "Conhecimentos satisfatórios, algumas noções a consolidar", lvl2m: "Boa base. Reveja as noções assinaladas antes de continuar o percurso.",
+  lvl1t: "Revisão recomendada", lvl1m: "Retome as sequências ligadas às noções a rever e volte a fazer o desafio.",
+  review: "Rever as minhas respostas", restart: "Recomeçar o desafio", back: "Voltar ao resultado", reviewTitle: "Síntese das suas respostas",
+  success: "Concluída", fail: "A rever", yours: "A sua resposta", expected: "Resposta esperada", noAnswer: "Sem resposta",
+  step: "Etapa", page: "Página {n} de {t}", prevPage: "Página anterior", nextPage: "Página seguinte",
+  scoreAria: "Pontuação: {s} em {t}", multiAns: "{c} resposta(s) correta(s) em {n} · {w} erro(s)", allBut: "Todas, exceto:"
+ }, steps: [
+ { title: "Volume ou massa?",
+   sit: "Antes de verificar a bateria, relê a ficha técnica: nela constam várias grandezas com as respetivas unidades.",
+   q: "Associe cada grandeza à sua unidade coerente.",
+   items: ["Caudal volúmico {qv}", "Caudal mássico {qm}", "Massa volúmica ρ", "Capacidade térmica mássica {cp}", "Diferença de temperatura ΔT"],
+   choices: ["m³/s, m³/h, L/s, L/min", "kg/s, kg/h", "kg/m³", "kJ/(kg·K)", "K (diferença em °C)"],
+   svg: { vol: "Volume", mass: "Massa", ex: "Exemplo" },
+   ok: "Cada grandeza tem a sua unidade. A relação entre os dois caudais é {F1}, com {qv} em m³/s e ρ em kg/m³ para obter {qm} em kg/s: 2 L/s de água correspondem a cerca de 2 kg/s.",
+   ko: "{qv} é um volume por unidade de tempo, {qm} uma massa por unidade de tempo, ρ exprime-se em kg/m³ e {cp} em kJ/(kg·K). Os dois caudais relacionam-se por {F1}, com unidades coerentes.",
+   key: "Nunca coloque um caudal em m³/h diretamente em {F1}: converta-o primeiro para m³/s.",
+   notion: "Caudais volúmico e mássico",
+   alt: "Tubagem de água: à esquerda, um cubo de 1 m³ simboliza o volume; à direita, uma massa numa balança simboliza o quilograma. Ao centro, a fórmula qm = ρ × qv com ρ ≈ 1 000 kg/m³. Exemplo: 2 L/s = 0,002 m³/s, ou seja, cerca de 2 kg/s." },
+ { title: "Converta o caudal",
+   sit: "O caudalímetro da bateria indica 18 m³/h. O fabricante da válvula exprime o caudal em L/s.",
+   q: "No esquema, selecione o valor correto em L/s.",
+   svg: { meter: "Caudalímetro", ref: "Referências" },
+   ok: "18 m³/h = 18 000 L em 3 600 s, ou seja, 5 L/s. Atalho: m³/h ÷ 3,6 = L/s.",
+   ko: "1 m³ = 1 000 L e 1 h = 3 600 s: 18 m³/h = 18 000 L em 3 600 s, ou seja, 5 L/s. Dividir por 3,6 equivale ao mesmo cálculo.",
+   key: "Um caudal deve estar sempre associado a uma unidade e ao ponto da rede onde é medido.",
+   notion: "Conversões de caudal",
+   alt: "Caudalímetro a indicar 18 m³/h numa tubagem. Referências: 1 m³ = 1 000 L e 1 h = 3 600 s. Valores propostos: 5 L/s, 18 L/s, 50 L/s e 64,8 L/s." },
+ { title: "Escolha o fator correto",
+   sit: "Está a preparar um guia rápido de conversão para a equipa de manutenção.",
+   q: "Coloque o fator correto em cada conversão. Um cartão é uma armadilha.",
+   zones: ["1 · m³/h → L/s", "2 · L/s → m³/h"],
+   labels: ["÷ 3,6", "× 3,6", "× 3 600"],
+   svg: { big: "m³/h", small: "L/s" },
+   ok: "Divide-se por 3,6 para passar de m³/h a L/s e multiplica-se por 3,6 para o inverso: 1,5 L/s × 3,6 = 5,4 m³/h. O fator 3 600 relaciona os m³/s e os m³/h.",
+   ko: "Erro frequente: confundir 3,6 e 3 600. O fator 3,6 relaciona m³/h e L/s; 3 600 relaciona m³/s e m³/h. Exemplo: 7,2 m³/h ÷ 3,6 = 2 L/s.",
+   key: "Método: unidade de partida, unidade de destino, fator, cálculo e verificação da ordem de grandeza.",
+   notion: "Métodos de conversão",
+   alt: "Um cubo de água simboliza os m³/h e um copo graduado os L/s. Uma seta 1 vai dos m³/h para os L/s, uma seta 2 volta dos L/s para os m³/h. Referências: 1 m³ = 1 000 L, 1 h = 3 600 s. Duas zonas de colocação no topo do esquema." },
+ { title: "Secção, caudal e velocidade",
+   sit: "A tubagem de alimentação tem um diâmetro interior de 50 mm e transporta 5 m³/h de água.",
+   q: "Calcule a velocidade média em três etapas.",
+   groups: [{ label: "1. Secção: {F2}" }, { label: "2. Caudal em m³/s" }, { label: "3. Velocidade: {F3}" }],
+   svg: { pipe: "Tubagem" },
+   ok: "A = π × 0,050² / 4 ≈ 0,001963 m²; 5 m³/h ÷ 3 600 ≈ 0,001389 m³/s; v ≈ 0,001389 / 0,001963 ≈ 0,71 m/s.",
+   ko: "O diâmetro deve estar em metros (50 mm = 0,050 m) e a fórmula divide por 4. O caudal deve estar em m³/s: 5 ÷ 3 600 ≈ 0,001389 m³/s. Depois, {F3} ≈ 0,71 m/s.",
+   key: "Utilize o diâmetro interior, e não o diâmetro nominal nem o exterior, salvo se a documentação estabelecer a sua equivalência.",
+   notion: "Secção e velocidade",
+   alt: "Corte de uma tubagem com diâmetro interior de 50 mm = 0,050 m a transportar 5 m³/h. Cadeia de cálculo: secção A = π × Dint² / 4, depois caudal em m³/s, depois velocidade v = qv / A." },
+ { title: "Porque é que a velocidade conta",
+   sit: "O mesmo caudal atravessa três troços de diâmetros diferentes. Um ocupante assinala ruído nas tubagens.",
+   q: "Selecione no esquema o troço mais rápido e, depois, a consequência provável.",
+   groups: [{ label: "1. Troço mais rápido:", opts: ["Troço A", "Troço B", "Troço C"] },
+     { label: "2. Consequência provável de uma velocidade elevada:", opts: ["Ar difícil de arrastar, resposta mais lenta", "Ruído, erosão e perdas de carga maiores", "Caudal mais baixo do que nos outros troços"] }],
+   svg: { same: "Mesmo caudal" },
+   ok: "A caudal constante, {F3}: a secção mais pequena, o troço B, impõe a velocidade mais elevada, o que aumenta o ruído, a erosão e as perdas de carga.",
+   ko: "O caudal é idêntico nos três troços; só a secção muda. O troço B, o mais estreito, é o mais rápido. Uma velocidade muito baixa causa outros problemas: ar mal arrastado e tempos de resposta mais longos.",
+   key: "As gamas de velocidade admissíveis dependem da rede, dos materiais e das prescrições do projeto.",
+   notion: "Importância da velocidade",
+   alt: "Uma mesma tubagem em três troços atravessados pelo mesmo caudal: troço A de grande diâmetro, troço B estreito com escoamento rápido, troço C de diâmetro médio." },
+ { title: "Caudal e potência térmica",
+   sit: "Noutra bateria de água gelada, regista 6 m³/h, uma temperatura de ida de 7 °C e uma temperatura de retorno de 12 °C.",
+   q: "Que potência térmica transporta a água?",
+   svg: { sup: "Ida", ret: "Retorno", coil: "Bateria" },
+   ok: "Em água gelada, o ΔT útil é T retorno − T ida = 12 − 7 = 5 K. Com {F5}: 1,16 × 6 × 5 = 34,8 kW.",
+   ko: "Utilize a diferença de temperatura e não uma só temperatura: ΔT = 12 − 7 = 5 K. Depois {F5}: 1,16 × 6 × 5 ≈ 34,8 kW.",
+   key: "{F4} é a fórmula geral; 1,16 é uma aproximação para a água. Para uma mistura glicolada, utilize ρ e {cp} reais.",
+   notion: "Potência térmica",
+   alt: "Bateria de água gelada: ida a 7 °C, retorno a 12 °C, caudalímetro a indicar 6 m³/h. Caixa: ΔT = ? K." },
+ { title: "Determine o caudal necessário",
+   sit: "Uma bateria deve fornecer 58 kW com um regime de água gelada 7/12 °C. Está a preparar a regulação do caudal.",
+   q: "Selecione todas as afirmações corretas.",
+   items: ["{qv} ≈ 58 / (1,16 × 5) = 10 m³/h", "A potência constante, caudal baixo demais aumenta o ΔT", "A potência constante, caudal alto demais reduz o ΔT", "Para mistura glicolada, usar ρ e {cp} reais", "Verificar carga, regulação e sujidade antes de concluir", "Regular o caudal com base num só ΔT instantâneo", "{qv} ≈ 58 × 1,16 × 5 ≈ 336 m³/h", "Aplicar 1,16 a qualquer fluido, sem verificação"],
+   svg: { power: "Potência" },
+   ok: "Inverte-se a fórmula: {F6}, ou seja, 58 / (1,16 × 5) = 10 m³/h. O ΔT reage ao caudal: caudal a menos aumenta-o, caudal a mais reduz-o.",
+   ko: "Inverta a fórmula: {F6}, ou seja, 58 / (1,16 × 5) = 10 m³/h. Um ΔT instantâneo depende também da carga, da regulação, da sujidade e do regime transitório.",
+   key: "Não regule um caudal apenas com base num ΔT instantâneo.",
+   notion: "Caudal necessário",
+   alt: "Potência de 58 kW a transportar por uma tubagem de água gelada: ida 7 °C, retorno 12 °C, ΔT = 5 K, caudal desconhecido. Fórmula: qv(m³/h) ≈ Φ(kW) / [1,16 × ΔT(K)]." },
+ { title: "Verifique a bateria",
+   sit: "Bateria alimentada a 7/12 °C, caudalímetro a 9 m³/h, tubagem com {Dint} 50 mm, potência anunciada de 52 kW, fluido: água.",
+   q: "Faça a verificação em três decisões.",
+   groups: [{ label: "1. Caudal em m³/s" }, { label: "2. Velocidade média na tubagem" },
+     { label: "3. Potência e conclusão", opts: ["45 kW: bateria subalimentada", "52,2 kW: coerente com o anunciado", "125,3 kW: caudal muito excessivo"] }],
+   svg: { coil: "Bateria", ann: "Anunciada: 52 kW" },
+   ok: "9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s; v ≈ 0,0025 / 0,001963 ≈ 1,27 m/s; Φ ≈ 1,16 × 9 × 5 = 52,2 kW, coerente com os 52 kW anunciados.",
+   ko: "Caudal: 9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s. Velocidade: 0,0025 / 0,001963 ≈ 1,27 m/s. Potência: 1,16 × 9 × 5 = 52,2 kW, próxima dos 52 kW anunciados.",
+   key: "Caudal, diâmetro interior e ΔT permitem uma primeira verificação; a validação real exige sensores fiáveis, regime estável e as propriedades exatas do fluido.",
+   notion: "Verificação de uma bateria",
+   alt: "Bateria de água gelada: ida 7 °C, retorno 12 °C, caudalímetro a 9 m³/h, tubagem com diâmetro interior de 50 mm, potência anunciada de 52 kW. Os resultados do caudal em m³/s e da velocidade aparecem à medida das respostas." }
+ ]},
+it: { name: "Italiano", ui: {
+  lang: "Lingua", module: "HYD-03 | Portata, velocità e potenza termica", start: "Inizia", prev: "Indietro", next: "Avanti",
+  validate: "Conferma", result: "Vedi il mio risultato", pause: "Pausa", resume: "Riprendi",
+  pauseAria: "Pausa: ferma le animazioni", resumeAria: "Riprendi le animazioni",
+  stepOf: "Tappa {n} di {t}", progress: "Avanzamento della sfida", stDone: "completata", stCur: "in corso", stTodo: "da fare",
+  introTitle: "Accetta la sfida di fine modulo",
+  introLead: "Hai scoperto i concetti essenziali di questo modulo. Ora tocca a te metterli in pratica!",
+  introCase: "Intervieni sulla rete di acqua refrigerata che alimenta la batteria di un'unità di trattamento aria. Sono disponibili il misuratore di portata, il diametro interno delle tubazioni e le temperature di mandata e di ritorno. La tua missione: convertire le portate, calcolare le velocità e verificare la potenza trasportata.",
+  introMeta: "8 tappe · 1 decisione o 1 calcolo per tappa · un caso di studio comune",
+  introAlt: "Illustrazione: tubazioni di mandata e di ritorno dell'acqua refrigerata dotate di misuratore di portata, termometri e pompa, collegate a una batteria.",
+  situation: "Situazione", ok: "Risposta corretta", ko: "Risposta errata", remember: "Da ricordare",
+  needAnswer: "Rispondi, poi conferma per continuare.", selected: "Selezionato", notSel: "Non selezionato",
+  hDrag: "Trascina una carta su una zona, oppure selezionala e scegli poi la zona.", hMulti: "Più risposte possibili.",
+  choose: "Scegli…", zoneEmpty: "Inserisci una carta", data: "Dati",
+  labelSel: "Carta «{l}» selezionata. Ora scegli una zona.", placed: "«{l}» inserita in «{z}».", removed: "Zona «{z}» svuotata.",
+  finalTitle: "Il tuo risultato", score: "Punteggio", rate: "Percentuale di successo", passed: "Tappe superate",
+  toReview: "Concetti da ripassare", noneReview: "Nessuno: padroneggi tutti i concetti.",
+  lvl3t: "Padronanza solida", lvl3m: "Ottimo lavoro: sai convertire una portata, calcolare una velocità e collegare portata, ΔT e potenza.",
+  lvl2t: "Conoscenze soddisfacenti, alcuni concetti da consolidare", lvl2m: "Buona base. Ripassa i concetti segnalati prima di proseguire il percorso.",
+  lvl1t: "Ripasso consigliato", lvl1m: "Riprendi le sequenze legate ai concetti da ripassare, poi affronta di nuovo la sfida.",
+  review: "Rivedi le mie risposte", restart: "Ricomincia la sfida", back: "Torna al risultato", reviewTitle: "Sintesi delle tue risposte",
+  success: "Superata", fail: "Da ripassare", yours: "La tua risposta", expected: "Risposta attesa", noAnswer: "Nessuna risposta",
+  step: "Tappa", page: "Pagina {n} di {t}", prevPage: "Pagina precedente", nextPage: "Pagina successiva",
+  scoreAria: "Punteggio: {s} su {t}", multiAns: "{c} risposta/e corretta/e su {n} · {w} errore/i", allBut: "Tutte, tranne:"
+ }, steps: [
+ { title: "Volume o massa?",
+   sit: "Prima di verificare la batteria, rileggi la scheda tecnica: vi compaiono diverse grandezze con le relative unità.",
+   q: "Associa ogni grandezza alla sua unità coerente.",
+   items: ["Portata volumetrica {qv}", "Portata massica {qm}", "Massa volumica ρ", "Capacità termica massica {cp}", "Differenza di temperatura ΔT"],
+   choices: ["m³/s, m³/h, L/s, L/min", "kg/s, kg/h", "kg/m³", "kJ/(kg·K)", "K (differenza in °C)"],
+   svg: { vol: "Volume", mass: "Massa", ex: "Esempio" },
+   ok: "Ogni grandezza ha la sua unità. Il legame tra le due portate è {F1}, con {qv} in m³/s e ρ in kg/m³ per ottenere {qm} in kg/s: 2 L/s d'acqua corrispondono a circa 2 kg/s.",
+   ko: "{qv} è un volume per unità di tempo, {qm} una massa per unità di tempo, ρ si esprime in kg/m³ e {cp} in kJ/(kg·K). Le due portate sono legate da {F1}, con unità coerenti.",
+   key: "Non inserire mai una portata in m³/h direttamente in {F1}: convertila prima in m³/s.",
+   notion: "Portate volumetrica e massica",
+   alt: "Tubazione d'acqua: a sinistra, un cubo di 1 m³ simboleggia il volume; a destra, una massa su una bilancia simboleggia il chilogrammo. Al centro, la formula qm = ρ × qv con ρ ≈ 1 000 kg/m³. Esempio: 2 L/s = 0,002 m³/s, ossia circa 2 kg/s." },
+ { title: "Converti la portata",
+   sit: "Il misuratore di portata della batteria indica 18 m³/h. Il costruttore della valvola esprime la portata in L/s.",
+   q: "Nello schema, seleziona il valore corretto in L/s.",
+   svg: { meter: "Misuratore", ref: "Riferimenti" },
+   ok: "18 m³/h = 18 000 L in 3 600 s, ossia 5 L/s. Scorciatoia: m³/h ÷ 3,6 = L/s.",
+   ko: "1 m³ = 1 000 L e 1 h = 3 600 s: 18 m³/h = 18 000 L in 3 600 s, ossia 5 L/s. Dividere per 3,6 equivale allo stesso calcolo.",
+   key: "Una portata va sempre associata a un'unità e al punto della rete in cui viene misurata.",
+   notion: "Conversioni di portata",
+   alt: "Misuratore di portata che indica 18 m³/h su una tubazione. Riferimenti: 1 m³ = 1 000 L e 1 h = 3 600 s. Valori proposti: 5 L/s, 18 L/s, 50 L/s e 64,8 L/s." },
+ { title: "Scegli il fattore corretto",
+   sit: "Stai preparando un promemoria di conversione per la squadra di manutenzione.",
+   q: "Inserisci il fattore corretto in ogni conversione. Una carta è una trappola.",
+   zones: ["1 · m³/h → L/s", "2 · L/s → m³/h"],
+   labels: ["÷ 3,6", "× 3,6", "× 3 600"],
+   svg: { big: "m³/h", small: "L/s" },
+   ok: "Si divide per 3,6 per passare da m³/h a L/s e si moltiplica per 3,6 per l'inverso: 1,5 L/s × 3,6 = 5,4 m³/h. Il fattore 3 600 lega invece m³/s e m³/h.",
+   ko: "Errore frequente: confondere 3,6 e 3 600. Il fattore 3,6 lega m³/h e L/s; 3 600 lega m³/s e m³/h. Esempio: 7,2 m³/h ÷ 3,6 = 2 L/s.",
+   key: "Metodo: unità di partenza, unità di arrivo, fattore, calcolo, poi controllo dell'ordine di grandezza.",
+   notion: "Metodi di conversione",
+   alt: "Un cubo d'acqua simboleggia i m³/h e un becher i L/s. Una freccia 1 va dai m³/h ai L/s, una freccia 2 torna dai L/s ai m³/h. Riferimenti: 1 m³ = 1 000 L, 1 h = 3 600 s. Due zone di rilascio in alto nello schema." },
+ { title: "Sezione, portata e velocità",
+   sit: "La tubazione di alimentazione ha un diametro interno di 50 mm e trasporta 5 m³/h d'acqua.",
+   q: "Calcola la velocità media in tre passaggi.",
+   groups: [{ label: "1. Sezione: {F2}" }, { label: "2. Portata in m³/s" }, { label: "3. Velocità: {F3}" }],
+   svg: { pipe: "Tubazione" },
+   ok: "A = π × 0,050² / 4 ≈ 0,001963 m²; 5 m³/h ÷ 3 600 ≈ 0,001389 m³/s; v ≈ 0,001389 / 0,001963 ≈ 0,71 m/s.",
+   ko: "Il diametro va espresso in metri (50 mm = 0,050 m) e la formula divide per 4. La portata va in m³/s: 5 ÷ 3 600 ≈ 0,001389 m³/s. Poi {F3} ≈ 0,71 m/s.",
+   key: "Usa il diametro interno, non il diametro nominale né quello esterno, salvo che la documentazione ne stabilisca l'equivalenza.",
+   notion: "Sezione e velocità",
+   alt: "Sezione di una tubazione con diametro interno di 50 mm = 0,050 m che trasporta 5 m³/h. Catena di calcolo: sezione A = π × Dint² / 4, poi portata in m³/s, poi velocità v = qv / A." },
+ { title: "Perché la velocità conta",
+   sit: "La stessa portata attraversa tre tratti di diametro diverso. Un occupante segnala rumore nelle tubazioni.",
+   q: "Seleziona nello schema il tratto più veloce, poi la conseguenza probabile.",
+   groups: [{ label: "1. Tratto più veloce:", opts: ["Tratto A", "Tratto B", "Tratto C"] },
+     { label: "2. Conseguenza probabile di una velocità elevata:", opts: ["Aria difficile da trascinare, risposta più lenta", "Rumore, erosione e perdite di carico maggiori", "Portata più bassa rispetto agli altri tratti"] }],
+   svg: { same: "Stessa portata" },
+   ok: "A portata costante, {F3}: la sezione più piccola, il tratto B, impone la velocità più elevata, il che aumenta rumore, erosione e perdite di carico.",
+   ko: "La portata è identica nei tre tratti; cambia solo la sezione. Il tratto B, il più stretto, è il più veloce. Una velocità molto bassa causa altri problemi: aria mal trascinata e tempi di risposta più lunghi.",
+   key: "I campi di velocità ammissibili dipendono dalla rete, dai materiali e dalle prescrizioni di progetto.",
+   notion: "Importanza della velocità",
+   alt: "Una stessa tubazione in tre tratti attraversati dalla stessa portata: tratto A di grande diametro, tratto B stretto con flusso rapido, tratto C di diametro medio." },
+ { title: "Portata e potenza termica",
+   sit: "Su un'altra batteria ad acqua refrigerata rilevi 6 m³/h, una temperatura di mandata di 7 °C e una temperatura di ritorno di 12 °C.",
+   q: "Quale potenza termica trasporta l'acqua?",
+   svg: { sup: "Mandata", ret: "Ritorno", coil: "Batteria" },
+   ok: "Con acqua refrigerata, il ΔT utile è T ritorno − T mandata = 12 − 7 = 5 K. Con {F5}: 1,16 × 6 × 5 = 34,8 kW.",
+   ko: "Usa la differenza di temperatura, non una sola temperatura: ΔT = 12 − 7 = 5 K. Poi {F5}: 1,16 × 6 × 5 ≈ 34,8 kW.",
+   key: "{F4} è la formula generale; 1,16 è un'approssimazione per l'acqua. Per una miscela glicolata, usa ρ e {cp} reali.",
+   notion: "Potenza termica",
+   alt: "Batteria ad acqua refrigerata: mandata a 7 °C, ritorno a 12 °C, misuratore di portata che indica 6 m³/h. Riquadro: ΔT = ? K." },
+ { title: "Determina la portata richiesta",
+   sit: "Una batteria deve fornire 58 kW con un regime di acqua refrigerata 7/12 °C. Stai preparando la regolazione della portata.",
+   q: "Seleziona tutte le affermazioni corrette.",
+   items: ["{qv} ≈ 58 / (1,16 × 5) = 10 m³/h", "A potenza costante, una portata troppo bassa aumenta il ΔT", "A potenza costante, una portata troppo alta riduce il ΔT", "Per una miscela glicolata, usare ρ e {cp} reali", "Verificare carico, regolazione e sporcamento prima di concludere", "Regolare la portata su un solo ΔT istantaneo", "{qv} ≈ 58 × 1,16 × 5 ≈ 336 m³/h", "Applicare 1,16 a ogni fluido, senza verifica"],
+   svg: { power: "Potenza" },
+   ok: "Si inverte la formula: {F6}, ossia 58 / (1,16 × 5) = 10 m³/h. Il ΔT reagisce alla portata: troppo poca portata lo aumenta, troppa lo riduce.",
+   ko: "Inverti la formula: {F6}, ossia 58 / (1,16 × 5) = 10 m³/h. Un ΔT istantaneo dipende anche da carico, regolazione, sporcamento e regime transitorio.",
+   key: "Non regolare una portata basandoti solo su un ΔT istantaneo.",
+   notion: "Portata richiesta",
+   alt: "Potenza di 58 kW da trasportare con una tubazione di acqua refrigerata: mandata 7 °C, ritorno 12 °C, ΔT = 5 K, portata sconosciuta. Formula: qv(m³/h) ≈ Φ(kW) / [1,16 × ΔT(K)]." },
+ { title: "Verifica la batteria",
+   sit: "Batteria alimentata a 7/12 °C, misuratore a 9 m³/h, tubazione con {Dint} 50 mm, potenza dichiarata di 52 kW, fluido: acqua.",
+   q: "Esegui la verifica in tre decisioni.",
+   groups: [{ label: "1. Portata in m³/s" }, { label: "2. Velocità media nella tubazione" },
+     { label: "3. Potenza e conclusione", opts: ["45 kW: batteria sottoalimentata", "52,2 kW: coerente con il dichiarato", "125,3 kW: portata molto eccessiva"] }],
+   svg: { coil: "Batteria", ann: "Dichiarata: 52 kW" },
+   ok: "9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s; v ≈ 0,0025 / 0,001963 ≈ 1,27 m/s; Φ ≈ 1,16 × 9 × 5 = 52,2 kW, coerente con i 52 kW dichiarati.",
+   ko: "Portata: 9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s. Velocità: 0,0025 / 0,001963 ≈ 1,27 m/s. Potenza: 1,16 × 9 × 5 = 52,2 kW, vicina ai 52 kW dichiarati.",
+   key: "Portata, diametro interno e ΔT consentono un primo controllo; la validazione reale richiede sensori affidabili, regime stabile e le proprietà esatte del fluido.",
+   notion: "Verifica di una batteria",
+   alt: "Batteria ad acqua refrigerata: mandata 7 °C, ritorno 12 °C, misuratore a 9 m³/h, tubazione con diametro interno di 50 mm, potenza dichiarata di 52 kW. I risultati della portata in m³/s e della velocità compaiono man mano che rispondi." }
+ ]},
+ro: { name: "Română", ui: {
+  lang: "Limbă", module: "HYD-03 | Debit, viteză și putere termică", start: "Începe", prev: "Înapoi", next: "Următorul",
+  validate: "Validează", result: "Vezi rezultatul meu", pause: "Pauză", resume: "Reia",
+  pauseAria: "Pauză: oprește animațiile", resumeAria: "Reia animațiile",
+  stepOf: "Etapa {n} din {t}", progress: "Progresul provocării", stDone: "finalizată", stCur: "în curs", stTodo: "urmează",
+  introTitle: "Acceptă provocarea de final de modul",
+  introLead: "Ai descoperit noțiunile esențiale ale acestui modul. Acum este rândul tău să le pui în practică!",
+  introCase: "Intervii pe rețeaua de apă răcită care alimentează bateria unei centrale de tratare a aerului. Ai la dispoziție debitmetrul, diametrul interior al conductelor și temperaturile pe tur și pe retur. Misiunea ta: să convertești debitele, să calculezi vitezele și să verifici puterea transportată.",
+  introMeta: "8 etape · 1 decizie sau 1 calcul pe etapă · un studiu de caz comun",
+  introAlt: "Ilustrație: conducte de tur și retur de apă răcită, echipate cu debitmetru, termometre și pompă, racordate la o baterie.",
+  situation: "Situație", ok: "Răspuns corect", ko: "Răspuns incorect", remember: "De reținut",
+  needAnswer: "Răspunde, apoi validează pentru a continua.", selected: "Selectat", notSel: "Neselectat",
+  hDrag: "Trage un card pe o zonă sau selectează-l și alege apoi zona.", hMulti: "Sunt posibile mai multe răspunsuri.",
+  choose: "Alege…", zoneEmpty: "Plasează un card", data: "Date",
+  labelSel: "Cardul „{l}” a fost selectat. Alege acum o zonă.", placed: "„{l}” plasat în „{z}”.", removed: "Zona „{z}” a fost golită.",
+  finalTitle: "Rezultatul tău", score: "Scor", rate: "Rată de reușită", passed: "Etape reușite",
+  toReview: "Noțiuni de recapitulat", noneReview: "Niciuna: stăpânești toate noțiunile.",
+  lvl3t: "Stăpânire solidă", lvl3m: "Excelent: știi să convertești un debit, să calculezi o viteză și să corelezi debitul, ΔT și puterea.",
+  lvl2t: "Cunoștințe satisfăcătoare, câteva noțiuni de consolidat", lvl2m: "Bază bună. Recapitulează noțiunile semnalate înainte de a continua parcursul.",
+  lvl1t: "Recapitulare recomandată", lvl1m: "Reia secvențele legate de noțiunile de recapitulat, apoi încearcă din nou provocarea.",
+  review: "Revezi răspunsurile", restart: "Reia provocarea", back: "Înapoi la rezultat", reviewTitle: "Sinteza răspunsurilor tale",
+  success: "Reușită", fail: "De recapitulat", yours: "Răspunsul tău", expected: "Răspuns așteptat", noAnswer: "Fără răspuns",
+  step: "Etapa", page: "Pagina {n} din {t}", prevPage: "Pagina anterioară", nextPage: "Pagina următoare",
+  scoreAria: "Scor: {s} din {t}", multiAns: "{c} răspunsuri corecte din {n} · {w} erori", allBut: "Toate, cu excepția:"
+ }, steps: [
+ { title: "Volum sau masă?",
+   sit: "Înainte de a verifica bateria, recitești fișa tehnică: în ea apar mai multe mărimi cu unitățile lor.",
+   q: "Asociază fiecare mărime cu unitatea corespunzătoare.",
+   items: ["Debit volumic {qv}", "Debit masic {qm}", "Densitate ρ", "Căldură specifică masică {cp}", "Diferență de temperatură ΔT"],
+   choices: ["m³/s, m³/h, L/s, L/min", "kg/s, kg/h", "kg/m³", "kJ/(kg·K)", "K (diferență în °C)"],
+   svg: { vol: "Volum", mass: "Masă", ex: "Exemplu" },
+   ok: "Fiecare mărime are unitatea sa. Legătura dintre cele două debite este {F1}, cu {qv} în m³/s și ρ în kg/m³, pentru a obține {qm} în kg/s: 2 L/s de apă reprezintă circa 2 kg/s.",
+   ko: "{qv} este un volum pe unitatea de timp, {qm} o masă pe unitatea de timp, ρ se exprimă în kg/m³, iar {cp} în kJ/(kg·K). Cele două debite sunt legate prin {F1}, cu unități coerente.",
+   key: "Nu introduce niciodată un debit în m³/h direct în {F1}: convertește-l mai întâi în m³/s.",
+   notion: "Debit volumic și debit masic",
+   alt: "Conductă de apă: în stânga, un cub de 1 m³ simbolizează volumul; în dreapta, o masă pe un cântar simbolizează kilogramul. În centru, formula qm = ρ × qv, cu ρ ≈ 1 000 kg/m³. Exemplu: 2 L/s = 0,002 m³/s, adică circa 2 kg/s." },
+ { title: "Convertește debitul",
+   sit: "Debitmetrul bateriei afișează 18 m³/h. Producătorul vanei exprimă debitul în L/s.",
+   q: "Pe schemă, selectează valoarea corectă în L/s.",
+   svg: { meter: "Debitmetru", ref: "Repere" },
+   ok: "18 m³/h = 18 000 L în 3 600 s, adică 5 L/s. Scurtătură: m³/h ÷ 3,6 = L/s.",
+   ko: "1 m³ = 1 000 L și 1 h = 3 600 s: 18 m³/h = 18 000 L în 3 600 s, adică 5 L/s. Împărțirea la 3,6 este același calcul.",
+   key: "Un debit trebuie asociat întotdeauna cu o unitate și cu punctul din rețea în care este măsurat.",
+   notion: "Conversii de debit",
+   alt: "Debitmetru care afișează 18 m³/h pe o conductă. Repere: 1 m³ = 1 000 L și 1 h = 3 600 s. Valori propuse: 5 L/s, 18 L/s, 50 L/s și 64,8 L/s." },
+ { title: "Alege factorul corect",
+   sit: "Pregătești un memento de conversii pentru echipa de mentenanță.",
+   q: "Plasează factorul corect pe fiecare conversie. Un card este o capcană.",
+   zones: ["1 · m³/h → L/s", "2 · L/s → m³/h"],
+   labels: ["÷ 3,6", "× 3,6", "× 3 600"],
+   svg: { big: "m³/h", small: "L/s" },
+   ok: "Se împarte la 3,6 pentru a trece din m³/h în L/s și se înmulțește cu 3,6 pentru invers: 1,5 L/s × 3,6 = 5,4 m³/h. Factorul 3 600 leagă, în schimb, m³/s și m³/h.",
+   ko: "Eroare frecventă: confuzia între 3,6 și 3 600. Factorul 3,6 leagă m³/h și L/s; 3 600 leagă m³/s și m³/h. Exemplu: 7,2 m³/h ÷ 3,6 = 2 L/s.",
+   key: "Metodă: unitatea de plecare, unitatea țintă, factorul, calculul, apoi verificarea ordinului de mărime.",
+   notion: "Metode de conversie",
+   alt: "Un cub de apă simbolizează m³/h, iar un pahar gradat L/s. Săgeata 1 merge din m³/h spre L/s, săgeata 2 revine din L/s spre m³/h. Repere: 1 m³ = 1 000 L, 1 h = 3 600 s. Două zone de plasare în partea de sus a schemei." },
+ { title: "Secțiune, debit și viteză",
+   sit: "Conducta de alimentare are un diametru interior de 50 mm și transportă 5 m³/h de apă.",
+   q: "Calculează viteza medie în trei etape.",
+   groups: [{ label: "1. Secțiune: {F2}" }, { label: "2. Debit în m³/s" }, { label: "3. Viteză: {F3}" }],
+   svg: { pipe: "Conductă" },
+   ok: "A = π × 0,050² / 4 ≈ 0,001963 m²; 5 m³/h ÷ 3 600 ≈ 0,001389 m³/s; v ≈ 0,001389 / 0,001963 ≈ 0,71 m/s.",
+   ko: "Diametrul trebuie exprimat în metri (50 mm = 0,050 m), iar formula împarte la 4. Debitul trebuie să fie în m³/s: 5 ÷ 3 600 ≈ 0,001389 m³/s. Apoi, {F3} ≈ 0,71 m/s.",
+   key: "Folosește diametrul interior, nu diametrul nominal sau exterior, cu excepția cazului în care documentația stabilește echivalența lor.",
+   notion: "Secțiune și viteză",
+   alt: "Secțiune printr-o conductă cu diametrul interior de 50 mm = 0,050 m, care transportă 5 m³/h. Lanț de calcul: secțiunea A = π × Dint² / 4, apoi debitul în m³/s, apoi viteza v = qv / A." },
+ { title: "De ce contează viteza",
+   sit: "Același debit trece prin trei tronsoane cu diametre diferite. Un ocupant semnalează zgomot în conducte.",
+   q: "Selectează pe schemă tronsonul cel mai rapid, apoi consecința probabilă.",
+   groups: [{ label: "1. Tronsonul cel mai rapid:", opts: ["Tronsonul A", "Tronsonul B", "Tronsonul C"] },
+     { label: "2. Consecința probabilă a unei viteze mari:", opts: ["Aer greu de antrenat, răspuns mai lent", "Zgomot, eroziune și pierderi de sarcină mai mari", "Debit mai mic decât în celelalte tronsoane"] }],
+   svg: { same: "Același debit" },
+   ok: "La debit constant, {F3}: secțiunea cea mai mică, tronsonul B, impune viteza cea mai mare, ceea ce crește zgomotul, eroziunea și pierderile de sarcină.",
+   ko: "Debitul este identic în cele trei tronsoane; se schimbă doar secțiunea. Tronsonul B, cel mai îngust, este cel mai rapid. O viteză foarte mică ridică alte probleme: aer antrenat greu și timpi de răspuns mai lungi.",
+   key: "Domeniile de viteză admisibile depind de rețea, de materiale și de cerințele proiectului.",
+   notion: "Importanța vitezei",
+   alt: "Aceeași conductă în trei tronsoane parcurse de același debit: tronsonul A cu diametru mare, tronsonul B îngust, cu curgere rapidă, tronsonul C cu diametru mediu." },
+ { title: "Debit și putere termică",
+   sit: "Pe o altă baterie de apă răcită, citești 6 m³/h, o temperatură pe tur de 7 °C și o temperatură pe retur de 12 °C.",
+   q: "Ce putere termică transportă apa?",
+   svg: { sup: "Tur", ret: "Retur", coil: "Baterie" },
+   ok: "La apa răcită, ΔT util este T retur − T tur = 12 − 7 = 5 K. Cu {F5}: 1,16 × 6 × 5 = 34,8 kW.",
+   ko: "Folosește diferența de temperatură, nu o singură temperatură: ΔT = 12 − 7 = 5 K. Apoi {F5}: 1,16 × 6 × 5 ≈ 34,8 kW.",
+   key: "{F4} este formula generală; 1,16 este o aproximare pentru apă. Pentru un amestec cu glicol, folosește ρ și {cp} reale.",
+   notion: "Putere termică",
+   alt: "Baterie de apă răcită: tur la 7 °C, retur la 12 °C, debitmetru care afișează 6 m³/h. Casetă: ΔT = ? K." },
+ { title: "Determină debitul necesar",
+   sit: "O baterie trebuie să furnizeze 58 kW cu un regim de apă răcită 7/12 °C. Pregătești reglajul debitului.",
+   q: "Selectează toate afirmațiile corecte.",
+   items: ["{qv} ≈ 58 / (1,16 × 5) = 10 m³/h", "La putere constantă, un debit prea mic crește ΔT", "La putere constantă, un debit prea mare reduce ΔT", "Pentru amestec cu glicol, folosește ρ și {cp} reale", "Verifică sarcina, reglarea și colmatarea înainte de concluzie", "Reglează debitul după un singur ΔT instantaneu", "{qv} ≈ 58 × 1,16 × 5 ≈ 336 m³/h", "Aplică 1,16 oricărui fluid, fără verificare"],
+   svg: { power: "Putere" },
+   ok: "Se inversează formula: {F6}, adică 58 / (1,16 × 5) = 10 m³/h. ΔT reacționează la debit: un debit prea mic îl crește, un debit prea mare îl reduce.",
+   ko: "Inversează formula: {F6}, adică 58 / (1,16 × 5) = 10 m³/h. Un ΔT instantaneu depinde și de sarcină, de reglare, de colmatare și de regimul tranzitoriu.",
+   key: "Nu regla un debit doar pe baza unui ΔT instantaneu.",
+   notion: "Debit necesar",
+   alt: "Putere de 58 kW de transportat printr-o conductă de apă răcită: tur 7 °C, retur 12 °C, ΔT = 5 K, debit necunoscut. Formula: qv(m³/h) ≈ Φ(kW) / [1,16 × ΔT(K)]." },
+ { title: "Verifică bateria",
+   sit: "Baterie alimentată la 7/12 °C, debitmetru la 9 m³/h, conductă cu {Dint} 50 mm, putere declarată 52 kW, fluid: apă.",
+   q: "Efectuează verificarea în trei decizii.",
+   groups: [{ label: "1. Debit în m³/s" }, { label: "2. Viteza medie în conductă" },
+     { label: "3. Putere și concluzie", opts: ["45 kW: baterie subalimentată", "52,2 kW: coerent cu valoarea declarată", "125,3 kW: debit mult prea mare"] }],
+   svg: { coil: "Baterie", ann: "Declarată: 52 kW" },
+   ok: "9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s; v ≈ 0,0025 / 0,001963 ≈ 1,27 m/s; Φ ≈ 1,16 × 9 × 5 = 52,2 kW, coerent cu cei 52 kW declarați.",
+   ko: "Debit: 9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s. Viteză: 0,0025 / 0,001963 ≈ 1,27 m/s. Putere: 1,16 × 9 × 5 = 52,2 kW, apropiat de cei 52 kW declarați.",
+   key: "Debitul, diametrul interior și ΔT permit o primă verificare; validarea reală necesită senzori fiabili, un regim stabil și proprietățile exacte ale fluidului.",
+   notion: "Verificarea unei baterii",
+   alt: "Baterie de apă răcită: tur 7 °C, retur 12 °C, debitmetru la 9 m³/h, conductă cu diametrul interior de 50 mm, putere declarată 52 kW. Rezultatele pentru debitul în m³/s și viteză apar pe măsură ce răspunzi." }
+ ]},
+pl: { name: "Polski", ui: {
+  lang: "Język", module: "HYD-03 | Przepływ, prędkość i moc cieplna", start: "Rozpocznij", prev: "Wstecz", next: "Dalej",
+  validate: "Zatwierdź", result: "Zobacz mój wynik", pause: "Pauza", resume: "Wznów",
+  pauseAria: "Pauza: wstrzymaj animacje", resumeAria: "Wznów animacje",
+  stepOf: "Etap {n} z {t}", progress: "Postęp wyzwania", stDone: "ukończony", stCur: "bieżący", stTodo: "następny",
+  introTitle: "Podejmij wyzwanie na zakończenie modułu",
+  introLead: "Znasz już najważniejsze zagadnienia tego modułu. Teraz czas zastosować je w praktyce!",
+  introCase: "Pracujesz przy instalacji wody lodowej zasilającej chłodnicę centrali wentylacyjnej. Dostępne są: przepływomierz, średnica wewnętrzna rur oraz temperatury zasilania i powrotu. Twoje zadanie: przeliczyć przepływy, obliczyć prędkości i sprawdzić przenoszoną moc.",
+  introMeta: "8 etapów · 1 decyzja lub 1 obliczenie na etap · jedno wspólne studium przypadku",
+  introAlt: "Ilustracja: rury zasilania i powrotu wody lodowej z przepływomierzem, termometrami i pompą, podłączone do chłodnicy.",
+  situation: "Sytuacja", ok: "Dobra odpowiedź", ko: "Błędna odpowiedź", remember: "Do zapamiętania",
+  needAnswer: "Odpowiedz, a następnie zatwierdź, aby przejść dalej.", selected: "Wybrano", notSel: "Nie wybrano",
+  hDrag: "Przeciągnij kartę na strefę albo wybierz ją, a potem wskaż strefę.", hMulti: "Możliwych jest kilka odpowiedzi.",
+  choose: "Wybierz…", zoneEmpty: "Umieść kartę", data: "Dane",
+  labelSel: "Wybrano kartę „{l}”. Teraz wskaż strefę.", placed: "„{l}” umieszczono w strefie „{z}”.", removed: "Strefa „{z}” została opróżniona.",
+  finalTitle: "Twój wynik", score: "Wynik", rate: "Odsetek poprawnych odpowiedzi", passed: "Zaliczone etapy",
+  toReview: "Zagadnienia do powtórzenia", noneReview: "Brak: wszystkie zagadnienia zostały opanowane.",
+  lvl3t: "Solidne opanowanie", lvl3m: "Świetna praca: potrafisz przeliczyć przepływ, obliczyć prędkość i powiązać przepływ, ΔT i moc.",
+  lvl2t: "Zadowalająca wiedza, kilka zagadnień do utrwalenia", lvl2m: "Dobra podstawa. Powtórz wskazane zagadnienia przed kontynuowaniem ścieżki.",
+  lvl1t: "Zalecane powtórzenie", lvl1m: "Wróć do sekwencji związanych z zagadnieniami do powtórzenia, a potem podejmij wyzwanie ponownie.",
+  review: "Przejrzyj moje odpowiedzi", restart: "Rozpocznij wyzwanie od nowa", back: "Powrót do wyniku", reviewTitle: "Podsumowanie odpowiedzi",
+  success: "Zaliczony", fail: "Do powtórki", yours: "Twoja odpowiedź", expected: "Oczekiwana odpowiedź", noAnswer: "Brak odpowiedzi",
+  step: "Etap", page: "Strona {n} z {t}", prevPage: "Poprzednia strona", nextPage: "Następna strona",
+  scoreAria: "Wynik: {s} z {t}", multiAns: "Poprawne odpowiedzi: {c} z {n} · błędy: {w}", allBut: "Wszystkie oprócz:"
+ }, steps: [
+ { title: "Objętość czy masa?",
+   sit: "Przed sprawdzeniem chłodnicy przeglądasz kartę techniczną: podano w niej kilka wielkości wraz z jednostkami.",
+   q: "Przyporządkuj każdej wielkości właściwą jednostkę.",
+   items: ["Przepływ objętościowy {qv}", "Przepływ masowy {qm}", "Gęstość ρ", "Ciepło właściwe {cp}", "Różnica temperatur ΔT"],
+   choices: ["m³/s, m³/h, L/s, L/min", "kg/s, kg/h", "kg/m³", "kJ/(kg·K)", "K (różnica w °C)"],
+   svg: { vol: "Objętość", mass: "Masa", ex: "Przykład" },
+   ok: "Każda wielkość ma swoją jednostkę. Oba przepływy łączy wzór {F1}, z {qv} w m³/s i ρ w kg/m³, co daje {qm} w kg/s: 2 L/s wody to około 2 kg/s.",
+   ko: "{qv} to objętość na jednostkę czasu, {qm} to masa na jednostkę czasu, ρ wyraża się w kg/m³, a {cp} w kJ/(kg·K). Oba przepływy łączy wzór {F1}, przy spójnych jednostkach.",
+   key: "Nigdy nie wstawiaj przepływu w m³/h bezpośrednio do {F1}: najpierw przelicz go na m³/s.",
+   notion: "Przepływ objętościowy i masowy",
+   alt: "Rura z wodą: po lewej sześcian 1 m³ symbolizuje objętość; po prawej odważnik na wadze symbolizuje kilogram. Pośrodku wzór qm = ρ × qv, przy ρ ≈ 1 000 kg/m³. Przykład: 2 L/s = 0,002 m³/s, czyli około 2 kg/s." },
+ { title: "Przelicz przepływ",
+   sit: "Przepływomierz chłodnicy wskazuje 18 m³/h. Producent zaworu podaje przepływ w L/s.",
+   q: "Na schemacie wybierz poprawną wartość w L/s.",
+   svg: { meter: "Przepływomierz", ref: "Punkty odniesienia" },
+   ok: "18 m³/h = 18 000 L w 3 600 s, czyli 5 L/s. Skrót: m³/h ÷ 3,6 = L/s.",
+   ko: "1 m³ = 1 000 L i 1 h = 3 600 s: 18 m³/h = 18 000 L w 3 600 s, czyli 5 L/s. Dzielenie przez 3,6 to to samo obliczenie.",
+   key: "Przepływ należy zawsze podawać z jednostką i miejscem w instalacji, w którym go zmierzono.",
+   notion: "Przeliczanie przepływu",
+   alt: "Przepływomierz na rurze wskazujący 18 m³/h. Punkty odniesienia: 1 m³ = 1 000 L i 1 h = 3 600 s. Proponowane wartości: 5 L/s, 18 L/s, 50 L/s i 64,8 L/s." },
+ { title: "Wybierz właściwy współczynnik",
+   sit: "Przygotowujesz ściągę z przeliczeń dla zespołu serwisowego.",
+   q: "Umieść właściwy współczynnik przy każdym przeliczeniu. Jedna karta to pułapka.",
+   zones: ["1 · m³/h → L/s", "2 · L/s → m³/h"],
+   labels: ["÷ 3,6", "× 3,6", "× 3 600"],
+   svg: { big: "m³/h", small: "L/s" },
+   ok: "Dzielimy przez 3,6, aby przejść z m³/h na L/s, i mnożymy przez 3,6 w drugą stronę: 1,5 L/s × 3,6 = 5,4 m³/h. Współczynnik 3 600 łączy natomiast m³/s i m³/h.",
+   ko: "Częsty błąd: mylenie 3,6 i 3 600. Współczynnik 3,6 łączy m³/h i L/s; 3 600 łączy m³/s i m³/h. Przykład: 7,2 m³/h ÷ 3,6 = 2 L/s.",
+   key: "Metoda: jednostka wyjściowa, jednostka docelowa, współczynnik, obliczenie, a potem kontrola rzędu wielkości.",
+   notion: "Metody przeliczania",
+   alt: "Sześcian wody symbolizuje m³/h, a zlewka L/s. Strzałka 1 prowadzi z m³/h do L/s, strzałka 2 wraca z L/s do m³/h. Punkty odniesienia: 1 m³ = 1 000 L, 1 h = 3 600 s. Dwie strefy upuszczania u góry schematu." },
+ { title: "Przekrój, przepływ i prędkość",
+   sit: "Rura zasilająca ma średnicę wewnętrzną 50 mm i przenosi 5 m³/h wody.",
+   q: "Oblicz prędkość średnią w trzech krokach.",
+   groups: [{ label: "1. Przekrój: {F2}" }, { label: "2. Przepływ w m³/s" }, { label: "3. Prędkość: {F3}" }],
+   svg: { pipe: "Rura" },
+   ok: "A = π × 0,050² / 4 ≈ 0,001963 m²; 5 m³/h ÷ 3 600 ≈ 0,001389 m³/s; v ≈ 0,001389 / 0,001963 ≈ 0,71 m/s.",
+   ko: "Średnica musi być w metrach (50 mm = 0,050 m), a wzór dzieli przez 4. Przepływ musi być w m³/s: 5 ÷ 3 600 ≈ 0,001389 m³/s. Następnie {F3} ≈ 0,71 m/s.",
+   key: "Używaj średnicy wewnętrznej, a nie nominalnej ani zewnętrznej, chyba że dokumentacja wskazuje ich równoważność.",
+   notion: "Przekrój i prędkość",
+   alt: "Przekrój rury o średnicy wewnętrznej 50 mm = 0,050 m, przenoszącej 5 m³/h. Kolejność obliczeń: przekrój A = π × Dint² / 4, następnie przepływ w m³/s, następnie prędkość v = qv / A." },
+ { title: "Dlaczego prędkość ma znaczenie",
+   sit: "Ten sam przepływ płynie przez trzy odcinki o różnych średnicach. Użytkownik zgłasza hałas w rurach.",
+   q: "Wybierz na schemacie najszybszy odcinek, a następnie prawdopodobny skutek.",
+   groups: [{ label: "1. Najszybszy odcinek:", opts: ["Odcinek A", "Odcinek B", "Odcinek C"] },
+     { label: "2. Prawdopodobny skutek dużej prędkości:", opts: ["Trudne porywanie powietrza, wolniejsza reakcja", "Hałas, erozja i większe straty ciśnienia", "Mniejszy przepływ niż w pozostałych odcinkach"] }],
+   svg: { same: "Ten sam przepływ" },
+   ok: "Przy stałym przepływie {F3}: najmniejszy przekrój, odcinek B, wymusza największą prędkość, co zwiększa hałas, erozję i straty ciśnienia.",
+   ko: "Przepływ jest jednakowy we wszystkich trzech odcinkach; zmienia się tylko przekrój. Najwęższy odcinek B jest najszybszy. Bardzo mała prędkość powoduje inne problemy: słabe porywanie powietrza i dłuższy czas reakcji.",
+   key: "Dopuszczalne zakresy prędkości zależą od instalacji, materiałów i wymagań projektu.",
+   notion: "Znaczenie prędkości",
+   alt: "Jedna rura w trzech odcinkach z tym samym przepływem: odcinek A o dużej średnicy, wąski odcinek B z szybkim przepływem, odcinek C o średniej średnicy." },
+ { title: "Przepływ i moc cieplna",
+   sit: "Na innej chłodnicy wody lodowej odczytujesz 6 m³/h, temperaturę zasilania 7 °C i temperaturę powrotu 12 °C.",
+   q: "Jaką moc cieplną przenosi woda?",
+   svg: { sup: "Zasilanie", ret: "Powrót", coil: "Chłodnica" },
+   ok: "Dla wody lodowej użyteczne ΔT to T powrotu − T zasilania = 12 − 7 = 5 K. Ze wzoru {F5}: 1,16 × 6 × 5 = 34,8 kW.",
+   ko: "Użyj różnicy temperatur, a nie pojedynczej temperatury: ΔT = 12 − 7 = 5 K. Następnie {F5}: 1,16 × 6 × 5 ≈ 34,8 kW.",
+   key: "{F4} to wzór ogólny; 1,16 to przybliżenie dla wody. Dla mieszaniny glikolowej użyj rzeczywistych ρ i {cp}.",
+   notion: "Moc cieplna",
+   alt: "Chłodnica wody lodowej: zasilanie 7 °C, powrót 12 °C, przepływomierz wskazujący 6 m³/h. Ramka: ΔT = ? K." },
+ { title: "Wyznacz wymagany przepływ",
+   sit: "Chłodnica ma dostarczać 58 kW przy parametrach wody lodowej 7/12 °C. Przygotowujesz regulację przepływu.",
+   q: "Wybierz wszystkie poprawne stwierdzenia.",
+   items: ["{qv} ≈ 58 / (1,16 × 5) = 10 m³/h", "Przy stałej mocy zbyt mały przepływ zwiększa ΔT", "Przy stałej mocy zbyt duży przepływ zmniejsza ΔT", "Dla glikolu użyć rzeczywistych ρ i {cp}", "Przed wnioskiem sprawdzić obciążenie, regulację i zabrudzenie", "Ustawić przepływ wg jednego chwilowego ΔT", "{qv} ≈ 58 × 1,16 × 5 ≈ 336 m³/h", "Stosować 1,16 dla każdego czynnika bez kontroli"],
+   svg: { power: "Moc" },
+   ok: "Przekształcamy wzór: {F6}, czyli 58 / (1,16 × 5) = 10 m³/h. ΔT reaguje na przepływ: zbyt mały przepływ go zwiększa, zbyt duży – zmniejsza.",
+   ko: "Przekształć wzór: {F6}, czyli 58 / (1,16 × 5) = 10 m³/h. Chwilowe ΔT zależy też od obciążenia, regulacji, zabrudzenia i stanów przejściowych.",
+   key: "Nie ustawiaj przepływu wyłącznie na podstawie chwilowego ΔT.",
+   notion: "Wymagany przepływ",
+   alt: "Moc 58 kW do przeniesienia rurą wody lodowej: zasilanie 7 °C, powrót 12 °C, ΔT = 5 K, przepływ nieznany. Wzór: qv(m³/h) ≈ Φ(kW) / [1,16 × ΔT(K)]." },
+ { title: "Sprawdź chłodnicę",
+   sit: "Chłodnica zasilana 7/12 °C, przepływomierz 9 m³/h, rura o {Dint} 50 mm, deklarowana moc 52 kW, czynnik: woda.",
+   q: "Przeprowadź kontrolę w trzech decyzjach.",
+   groups: [{ label: "1. Przepływ w m³/s" }, { label: "2. Prędkość średnia w rurze" },
+     { label: "3. Moc i wniosek", opts: ["45 kW: chłodnica niedozasilona", "52,2 kW: zgodne z deklaracją", "125,3 kW: przepływ znacznie za duży"] }],
+   svg: { coil: "Chłodnica", ann: "Deklarowana: 52 kW" },
+   ok: "9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s; v ≈ 0,0025 / 0,001963 ≈ 1,27 m/s; Φ ≈ 1,16 × 9 × 5 = 52,2 kW, zgodnie z deklarowanymi 52 kW.",
+   ko: "Przepływ: 9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s. Prędkość: 0,0025 / 0,001963 ≈ 1,27 m/s. Moc: 1,16 × 9 × 5 = 52,2 kW, blisko deklarowanych 52 kW.",
+   key: "Przepływ, średnica wewnętrzna i ΔT pozwalają na wstępną kontrolę; rzeczywista weryfikacja wymaga wiarygodnych czujników, stabilnych warunków pracy i dokładnych właściwości czynnika.",
+   notion: "Kontrola chłodnicy",
+   alt: "Chłodnica wody lodowej: zasilanie 7 °C, powrót 12 °C, przepływomierz 9 m³/h, rura o średnicy wewnętrznej 50 mm, deklarowana moc 52 kW. Wyniki przepływu w m³/s i prędkości pojawiają się wraz z kolejnymi odpowiedziami." }
+ ]},
+nl: { name: "Nederlands", ui: {
+  lang: "Taal", module: "HYD-03 | Debiet, snelheid en thermisch vermogen", start: "Beginnen", prev: "Vorige", next: "Volgende",
+  validate: "Bevestigen", result: "Bekijk mijn resultaat", pause: "Pauzeren", resume: "Hervatten",
+  pauseAria: "Pauzeren: animaties stoppen", resumeAria: "Hervatten: animaties opnieuw starten",
+  stepOf: "Stap {n} van {t}", progress: "Voortgang van de uitdaging", stDone: "voltooid", stCur: "bezig", stTodo: "nog te doen",
+  introTitle: "Ga de eindopdracht van de module aan",
+  introLead: "Je hebt de belangrijkste begrippen van deze module ontdekt. Nu is het jouw beurt om ze in de praktijk te brengen!",
+  introCase: "Je werkt aan het gekoeldwaternet dat de koelbatterij van een luchtbehandelingskast voedt. Debietmeter, binnendiameter van de leidingen en aanvoer- en retourtemperaturen zijn beschikbaar. Jouw opdracht: debieten omrekenen, snelheden berekenen en het getransporteerde vermogen controleren.",
+  introMeta: "8 stappen · 1 beslissing of 1 berekening per stap · één doorlopende casus",
+  introAlt: "Illustratie: aanvoer- en retourleidingen voor gekoeld water met een debietmeter, thermometers en een pomp, aangesloten op een koelbatterij.",
+  situation: "Situatie", ok: "Juist antwoord", ko: "Onjuist antwoord", remember: "Om te onthouden",
+  needAnswer: "Beantwoord de vraag en bevestig om verder te gaan.", selected: "Geselecteerd", notSel: "Niet geselecteerd",
+  hDrag: "Sleep een kaart naar een zone, of selecteer ze en kies daarna de zone.", hMulti: "Meerdere antwoorden mogelijk.",
+  choose: "Kiezen…", zoneEmpty: "Plaats een kaart", data: "Gegevens",
+  labelSel: "Kaart ‘{l}’ geselecteerd. Kies nu een zone.", placed: "‘{l}’ geplaatst in ‘{z}’.", removed: "Zone ‘{z}’ leeggemaakt.",
+  finalTitle: "Jouw resultaat", score: "Score", rate: "Slagingspercentage", passed: "Geslaagde stappen",
+  toReview: "Te herhalen begrippen", noneReview: "Geen: je beheerst alle begrippen.",
+  lvl3t: "Grondige beheersing", lvl3m: "Uitstekend werk: je kunt een debiet omrekenen, een snelheid berekenen en debiet, ΔT en vermogen met elkaar verbinden.",
+  lvl2t: "Voldoende kennis, enkele begrippen om te versterken", lvl2m: "Goede basis. Herhaal de aangegeven begrippen voordat je verdergaat met het traject.",
+  lvl1t: "Herhaling aanbevolen", lvl1m: "Neem de sequenties over de te herhalen begrippen opnieuw door en ga daarna de uitdaging opnieuw aan.",
+  review: "Mijn antwoorden bekijken", restart: "Uitdaging opnieuw starten", back: "Terug naar resultaat", reviewTitle: "Overzicht van je antwoorden",
+  success: "Geslaagd", fail: "Te herhalen", yours: "Jouw antwoord", expected: "Verwacht antwoord", noAnswer: "Geen antwoord",
+  step: "Stap", page: "Pagina {n} van {t}", prevPage: "Vorige pagina", nextPage: "Volgende pagina",
+  scoreAria: "Score: {s} van {t}", multiAns: "{c} juist(e) antwoord(en) van {n} · {w} fout(en)", allBut: "Alle, behalve:"
+ }, steps: [
+ { title: "Volume of massa?",
+   sit: "Voordat je de koelbatterij controleert, lees je het technische blad: er staan verschillende grootheden met hun eenheden op.",
+   q: "Koppel elke grootheid aan de bijbehorende eenheid.",
+   items: ["Volumedebiet {qv}", "Massadebiet {qm}", "Dichtheid ρ", "Soortelijke warmte {cp}", "Temperatuurverschil ΔT"],
+   choices: ["m³/s, m³/h, L/s, L/min", "kg/s, kg/h", "kg/m³", "kJ/(kg·K)", "K (verschil in °C)"],
+   svg: { vol: "Volume", mass: "Massa", ex: "Voorbeeld" },
+   ok: "Elke grootheid heeft haar eenheid. Het verband tussen beide debieten is {F1}, met {qv} in m³/s en ρ in kg/m³ om {qm} in kg/s te krijgen: 2 L/s water is ongeveer 2 kg/s.",
+   ko: "{qv} is een volume per tijdseenheid, {qm} een massa per tijdseenheid, ρ wordt uitgedrukt in kg/m³ en {cp} in kJ/(kg·K). Beide debieten zijn verbonden door {F1}, met consistente eenheden.",
+   key: "Vul nooit een debiet in m³/h rechtstreeks in {F1} in: reken het eerst om naar m³/s.",
+   notion: "Volume- en massadebiet",
+   alt: "Waterleiding: links symboliseert een kubus van 1 m³ het volume; rechts symboliseert een massa op een weegschaal de kilogram. In het midden de formule qm = ρ × qv met ρ ≈ 1 000 kg/m³. Voorbeeld: 2 L/s = 0,002 m³/s, dus ongeveer 2 kg/s." },
+ { title: "Reken het debiet om",
+   sit: "De debietmeter van de koelbatterij geeft 18 m³/h aan. De fabrikant van de regelafsluiter geeft het debiet in L/s.",
+   q: "Selecteer op het schema de juiste waarde in L/s.",
+   svg: { meter: "Debietmeter", ref: "Referenties" },
+   ok: "18 m³/h = 18 000 L in 3 600 s, dus 5 L/s. Snelle regel: m³/h ÷ 3,6 = L/s.",
+   ko: "1 m³ = 1 000 L en 1 h = 3 600 s: 18 m³/h = 18 000 L in 3 600 s, dus 5 L/s. Delen door 3,6 is dezelfde berekening.",
+   key: "Een debiet moet altijd gekoppeld zijn aan een eenheid en aan het punt in het net waar het gemeten wordt.",
+   notion: "Debietomrekeningen",
+   alt: "Debietmeter op een leiding die 18 m³/h aangeeft. Referenties: 1 m³ = 1 000 L en 1 h = 3 600 s. Voorgestelde waarden: 5 L/s, 18 L/s, 50 L/s en 64,8 L/s." },
+ { title: "Kies de juiste factor",
+   sit: "Je maakt een spiekbriefje met omrekeningen voor het onderhoudsteam.",
+   q: "Plaats de juiste factor bij elke omrekening. Eén kaart is een valkuil.",
+   zones: ["1 · m³/h → L/s", "2 · L/s → m³/h"],
+   labels: ["÷ 3,6", "× 3,6", "× 3 600"],
+   svg: { big: "m³/h", small: "L/s" },
+   ok: "Je deelt door 3,6 om van m³/h naar L/s te gaan en vermenigvuldigt met 3,6 voor de omgekeerde richting: 1,5 L/s × 3,6 = 5,4 m³/h. De factor 3 600 verbindt m³/s en m³/h.",
+   ko: "Veelgemaakte fout: 3,6 en 3 600 verwarren. De factor 3,6 verbindt m³/h en L/s; 3 600 verbindt m³/s en m³/h. Voorbeeld: 7,2 m³/h ÷ 3,6 = 2 L/s.",
+   key: "Methode: begineenheid, doeleenheid, factor, berekening en dan de grootteorde controleren.",
+   notion: "Omrekenmethoden",
+   alt: "Een waterkubus symboliseert m³/h en een maatbeker L/s. Pijl 1 gaat van m³/h naar L/s, pijl 2 gaat terug van L/s naar m³/h. Referenties: 1 m³ = 1 000 L, 1 h = 3 600 s. Twee neerzetzones bovenaan het schema." },
+ { title: "Doorsnede, debiet en snelheid",
+   sit: "De aanvoerleiding heeft een binnendiameter van 50 mm en transporteert 5 m³/h water.",
+   q: "Bereken de gemiddelde snelheid in drie stappen.",
+   groups: [{ label: "1. Doorsnede: {F2}" }, { label: "2. Debiet in m³/s" }, { label: "3. Snelheid: {F3}" }],
+   svg: { pipe: "Leiding" },
+   ok: "A = π × 0,050² / 4 ≈ 0,001963 m²; 5 m³/h ÷ 3 600 ≈ 0,001389 m³/s; v ≈ 0,001389 / 0,001963 ≈ 0,71 m/s.",
+   ko: "De diameter moet in meter (50 mm = 0,050 m) en de formule deelt door 4. Het debiet moet in m³/s: 5 ÷ 3 600 ≈ 0,001389 m³/s. Daarna {F3} ≈ 0,71 m/s.",
+   key: "Gebruik de binnendiameter, niet de nominale of de buitendiameter, tenzij de documentatie hun gelijkwaardigheid aantoont.",
+   notion: "Doorsnede en snelheid",
+   alt: "Doorsnede van een leiding met binnendiameter 50 mm = 0,050 m die 5 m³/h transporteert. Rekenketen: doorsnede A = π × Dint² / 4, daarna debiet in m³/s, daarna snelheid v = qv / A." },
+ { title: "Waarom snelheid telt",
+   sit: "Hetzelfde debiet stroomt door drie leidingdelen met verschillende diameters. Een gebruiker meldt geluid in de leidingen.",
+   q: "Selecteer op het schema het snelste leidingdeel en daarna het waarschijnlijke gevolg.",
+   groups: [{ label: "1. Snelste leidingdeel:", opts: ["Deel A", "Deel B", "Deel C"] },
+     { label: "2. Waarschijnlijk gevolg van een hoge snelheid:", opts: ["Lucht slecht meegevoerd, tragere reactie", "Geluid, erosie en hogere drukverliezen", "Lager debiet dan in de andere delen"] }],
+   svg: { same: "Zelfde debiet" },
+   ok: "Bij constant debiet geldt {F3}: de kleinste doorsnede, deel B, geeft de hoogste snelheid, wat geluid, erosie en drukverliezen verhoogt.",
+   ko: "Het debiet is in de drie delen gelijk; alleen de doorsnede verandert. Deel B, het smalste, is het snelste. Een zeer lage snelheid geeft andere problemen: lucht slecht meegevoerd en langere reactietijden.",
+   key: "De toelaatbare snelheidsbereiken hangen af van het net, de materialen en de projecteisen.",
+   notion: "Belang van de snelheid",
+   alt: "Eén leiding in drie delen met hetzelfde debiet: deel A met grote diameter, deel B smal met snelle stroming, deel C met middelgrote diameter." },
+ { title: "Debiet en thermisch vermogen",
+   sit: "Op een andere koelbatterij meet je 6 m³/h, een aanvoertemperatuur van 7 °C en een retourtemperatuur van 12 °C.",
+   q: "Welk thermisch vermogen transporteert het water?",
+   svg: { sup: "Aanvoer", ret: "Retour", coil: "Batterij" },
+   ok: "Bij gekoeld water is de nuttige ΔT = T retour − T aanvoer = 12 − 7 = 5 K. Met {F5}: 1,16 × 6 × 5 = 34,8 kW.",
+   ko: "Gebruik het temperatuurverschil, niet één temperatuur: ΔT = 12 − 7 = 5 K. Daarna {F5}: 1,16 × 6 × 5 ≈ 34,8 kW.",
+   key: "{F4} is de algemene formule; 1,16 is een benadering voor water. Gebruik voor een glycolmengsel de werkelijke ρ en {cp}.",
+   notion: "Thermisch vermogen",
+   alt: "Koelbatterij voor gekoeld water: aanvoer 7 °C, retour 12 °C, debietmeter geeft 6 m³/h aan. Kader: ΔT = ? K." },
+ { title: "Bepaal het vereiste debiet",
+   sit: "Een koelbatterij moet 58 kW leveren met een gekoeldwaterregime van 7/12 °C. Je bereidt de debietinregeling voor.",
+   q: "Selecteer alle juiste beweringen.",
+   items: ["{qv} ≈ 58 / (1,16 × 5) = 10 m³/h", "Bij constant vermogen verhoogt te weinig debiet de ΔT", "Bij constant vermogen verlaagt te veel debiet de ΔT", "Bij een glycolmengsel de werkelijke ρ en {cp} gebruiken", "Belasting, regeling en vervuiling nagaan vóór een conclusie", "Het debiet inregelen op één momentane ΔT", "{qv} ≈ 58 × 1,16 × 5 ≈ 336 m³/h", "1,16 op elke vloeistof toepassen, zonder controle"],
+   svg: { power: "Vermogen" },
+   ok: "Je keert de formule om: {F6}, dus 58 / (1,16 × 5) = 10 m³/h. De ΔT reageert op het debiet: te weinig debiet verhoogt ze, te veel debiet verlaagt ze.",
+   ko: "Keer de formule om: {F6}, dus 58 / (1,16 × 5) = 10 m³/h. Een momentane ΔT hangt ook af van de belasting, de regeling, de vervuiling en het overgangsregime.",
+   key: "Regel een debiet niet uitsluitend in op een momentane ΔT.",
+   notion: "Vereist debiet",
+   alt: "Vermogen van 58 kW te transporteren door een gekoeldwaterleiding: aanvoer 7 °C, retour 12 °C, ΔT = 5 K, debiet onbekend. Formule: qv(m³/h) ≈ Φ(kW) / [1,16 × ΔT(K)]." },
+ { title: "Controleer de koelbatterij",
+   sit: "Koelbatterij op 7/12 °C, debietmeter op 9 m³/h, leiding met {Dint} 50 mm, opgegeven vermogen 52 kW, medium: water.",
+   q: "Voer de controle uit in drie beslissingen.",
+   groups: [{ label: "1. Debiet in m³/s" }, { label: "2. Gemiddelde snelheid in de leiding" },
+     { label: "3. Vermogen en conclusie", opts: ["45 kW: batterij krijgt te weinig debiet", "52,2 kW: in lijn met de opgave", "125,3 kW: debiet sterk te hoog"] }],
+   svg: { coil: "Batterij", ann: "Opgegeven: 52 kW" },
+   ok: "9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s; v ≈ 0,0025 / 0,001963 ≈ 1,27 m/s; Φ ≈ 1,16 × 9 × 5 = 52,2 kW, in lijn met de opgegeven 52 kW.",
+   ko: "Debiet: 9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s. Snelheid: 0,0025 / 0,001963 ≈ 1,27 m/s. Vermogen: 1,16 × 9 × 5 = 52,2 kW, dicht bij de opgegeven 52 kW.",
+   key: "Debiet, binnendiameter en ΔT maken een eerste controle mogelijk; echte validatie vraagt betrouwbare sensoren, een stabiel regime en de exacte eigenschappen van het medium.",
+   notion: "Controle van een koelbatterij",
+   alt: "Koelbatterij voor gekoeld water: aanvoer 7 °C, retour 12 °C, debietmeter op 9 m³/h, leiding met binnendiameter 50 mm, opgegeven vermogen 52 kW. De resultaten voor het debiet in m³/s en de snelheid verschijnen naarmate je antwoordt." }
+ ]},
+de: { name: "Deutsch", ui: {
+  lang: "Sprache", module: "HYD-03 | Volumenstrom, Geschwindigkeit und Wärmeleistung", start: "Starten", prev: "Zurück", next: "Weiter",
+  validate: "Bestätigen", result: "Mein Ergebnis anzeigen", pause: "Pause", resume: "Fortsetzen",
+  pauseAria: "Pause: Animationen anhalten", resumeAria: "Fortsetzen: Animationen wieder starten",
+  stepOf: "Schritt {n} von {t}", progress: "Fortschritt der Aufgabe", stDone: "abgeschlossen", stCur: "aktuell", stTodo: "ausstehend",
+  introTitle: "Stellen Sie sich der Abschlussaufgabe des Moduls",
+  introLead: "Sie haben die wesentlichen Inhalte dieses Moduls kennengelernt. Jetzt sind Sie an der Reihe, sie in die Praxis umzusetzen!",
+  introCase: "Sie arbeiten am Kaltwassernetz, das das Kühlregister eines RLT-Geräts versorgt. Durchflussmesser, Innendurchmesser der Rohre sowie Vorlauf- und Rücklauftemperatur liegen vor. Ihre Aufgabe: Volumenströme umrechnen, Geschwindigkeiten berechnen und die übertragene Leistung prüfen.",
+  introMeta: "8 Schritte · 1 Entscheidung oder 1 Berechnung pro Schritt · eine durchgehende Fallstudie",
+  introAlt: "Illustration: Kaltwasser-Vorlauf- und Rücklaufleitungen mit Durchflussmesser, Thermometern und Pumpe, angeschlossen an ein Kühlregister.",
+  situation: "Situation", ok: "Richtige Antwort", ko: "Falsche Antwort", remember: "Merke",
+  needAnswer: "Antworten Sie und bestätigen Sie, um fortzufahren.", selected: "Ausgewählt", notSel: "Nicht ausgewählt",
+  hDrag: "Ziehen Sie eine Karte auf eine Zone, oder wählen Sie sie aus und wählen Sie dann die Zone.", hMulti: "Mehrere Antworten möglich.",
+  choose: "Auswählen…", zoneEmpty: "Karte hier ablegen", data: "Daten",
+  labelSel: "Karte „{l}“ ausgewählt. Wählen Sie jetzt eine Zone.", placed: "„{l}“ in „{z}“ abgelegt.", removed: "Zone „{z}“ geleert.",
+  finalTitle: "Ihr Ergebnis", score: "Punktzahl", rate: "Erfolgsquote", passed: "Bestandene Schritte",
+  toReview: "Zu wiederholende Inhalte", noneReview: "Keine: Sie beherrschen alle Inhalte.",
+  lvl3t: "Sichere Beherrschung", lvl3m: "Hervorragende Arbeit: Sie können Volumenströme umrechnen, Geschwindigkeiten berechnen und Volumenstrom, ΔT und Leistung verknüpfen.",
+  lvl2t: "Zufriedenstellende Kenntnisse, einige Inhalte zu festigen", lvl2m: "Gute Grundlage. Wiederholen Sie die markierten Inhalte, bevor Sie den Lernpfad fortsetzen.",
+  lvl1t: "Wiederholung empfohlen", lvl1m: "Bearbeiten Sie die Sequenzen zu den markierten Inhalten erneut und stellen Sie sich dann noch einmal der Aufgabe.",
+  review: "Meine Antworten ansehen", restart: "Aufgabe neu starten", back: "Zurück zum Ergebnis", reviewTitle: "Übersicht Ihrer Antworten",
+  success: "Bestanden", fail: "Wiederholen", yours: "Ihre Antwort", expected: "Erwartete Antwort", noAnswer: "Keine Antwort",
+  step: "Schritt", page: "Seite {n} von {t}", prevPage: "Vorherige Seite", nextPage: "Nächste Seite",
+  scoreAria: "Punktzahl: {s} von {t}", multiAns: "{c} richtige Antwort(en) von {n} · {w} Fehler", allBut: "Alle außer:"
+ }, steps: [
+ { title: "Volumen oder Masse?",
+   sit: "Vor der Prüfung des Kühlregisters lesen Sie das Datenblatt: Es nennt mehrere Größen mit ihren Einheiten.",
+   q: "Ordnen Sie jeder Größe die passende Einheit zu.",
+   items: ["Volumenstrom {qv}", "Massenstrom {qm}", "Dichte ρ", "Spez. Wärmekapazität {cp}", "Temperaturdifferenz ΔT"],
+   choices: ["m³/s, m³/h, L/s, L/min", "kg/s, kg/h", "kg/m³", "kJ/(kg·K)", "K (Differenz in °C)"],
+   svg: { vol: "Volumen", mass: "Masse", ex: "Beispiel" },
+   ok: "Jede Größe hat ihre Einheit. Beide Ströme verknüpft {F1}, mit {qv} in m³/s und ρ in kg/m³, um {qm} in kg/s zu erhalten: 2 L/s Wasser entsprechen etwa 2 kg/s.",
+   ko: "{qv} ist ein Volumen pro Zeit, {qm} eine Masse pro Zeit, ρ wird in kg/m³ und {cp} in kJ/(kg·K) angegeben. Beide Ströme sind über {F1} verknüpft, mit konsistenten Einheiten.",
+   key: "Setzen Sie nie einen Volumenstrom in m³/h direkt in {F1} ein: Rechnen Sie ihn zuerst in m³/s um.",
+   notion: "Volumen- und Massenstrom",
+   alt: "Wasserleitung: links symbolisiert ein Würfel von 1 m³ das Volumen; rechts symbolisiert ein Gewicht auf einer Waage das Kilogramm. In der Mitte die Formel qm = ρ × qv mit ρ ≈ 1 000 kg/m³. Beispiel: 2 L/s = 0,002 m³/s, also etwa 2 kg/s." },
+ { title: "Rechnen Sie den Volumenstrom um",
+   sit: "Der Durchflussmesser des Kühlregisters zeigt 18 m³/h. Der Ventilhersteller gibt den Volumenstrom in L/s an.",
+   q: "Wählen Sie im Schema den richtigen Wert in L/s.",
+   svg: { meter: "Durchflussmesser", ref: "Bezugswerte" },
+   ok: "18 m³/h = 18 000 L in 3 600 s, also 5 L/s. Faustregel: m³/h ÷ 3,6 = L/s.",
+   ko: "1 m³ = 1 000 L und 1 h = 3 600 s: 18 m³/h = 18 000 L in 3 600 s, also 5 L/s. Teilen durch 3,6 ist dieselbe Rechnung.",
+   key: "Ein Volumenstrom gehört immer zu einer Einheit und zu dem Netzpunkt, an dem er gemessen wird.",
+   notion: "Umrechnung von Volumenströmen",
+   alt: "Durchflussmesser an einer Leitung zeigt 18 m³/h. Bezugswerte: 1 m³ = 1 000 L und 1 h = 3 600 s. Vorgeschlagene Werte: 5 L/s, 18 L/s, 50 L/s und 64,8 L/s." },
+ { title: "Wählen Sie den richtigen Faktor",
+   sit: "Sie erstellen eine Umrechnungshilfe für das Wartungsteam.",
+   q: "Ordnen Sie jeder Umrechnung den richtigen Faktor zu. Eine Karte ist eine Falle.",
+   zones: ["1 · m³/h → L/s", "2 · L/s → m³/h"],
+   labels: ["÷ 3,6", "× 3,6", "× 3 600"],
+   svg: { big: "m³/h", small: "L/s" },
+   ok: "Von m³/h nach L/s teilt man durch 3,6, umgekehrt multipliziert man mit 3,6: 1,5 L/s × 3,6 = 5,4 m³/h. Der Faktor 3 600 verknüpft dagegen m³/s und m³/h.",
+   ko: "Häufiger Fehler: 3,6 und 3 600 verwechseln. Der Faktor 3,6 verknüpft m³/h und L/s; 3 600 verknüpft m³/s und m³/h. Beispiel: 7,2 m³/h ÷ 3,6 = 2 L/s.",
+   key: "Methode: Ausgangseinheit, Zieleinheit, Faktor, Rechnung, dann Größenordnung prüfen.",
+   notion: "Umrechnungsmethoden",
+   alt: "Ein Wasserwürfel symbolisiert m³/h, ein Messbecher L/s. Pfeil 1 führt von m³/h zu L/s, Pfeil 2 von L/s zurück zu m³/h. Bezugswerte: 1 m³ = 1 000 L, 1 h = 3 600 s. Zwei Ablagezonen oben im Schema." },
+ { title: "Querschnitt, Volumenstrom, Geschwindigkeit",
+   sit: "Die Vorlaufleitung hat einen Innendurchmesser von 50 mm und führt 5 m³/h Wasser.",
+   q: "Berechnen Sie die mittlere Geschwindigkeit in drei Schritten.",
+   groups: [{ label: "1. Querschnitt: {F2}" }, { label: "2. Volumenstrom in m³/s" }, { label: "3. Geschwindigkeit: {F3}" }],
+   svg: { pipe: "Leitung" },
+   ok: "A = π × 0,050² / 4 ≈ 0,001963 m²; 5 m³/h ÷ 3 600 ≈ 0,001389 m³/s; v ≈ 0,001389 / 0,001963 ≈ 0,71 m/s.",
+   ko: "Der Durchmesser muss in Metern sein (50 mm = 0,050 m), und die Formel teilt durch 4. Der Volumenstrom muss in m³/s sein: 5 ÷ 3 600 ≈ 0,001389 m³/s. Dann {F3} ≈ 0,71 m/s.",
+   key: "Verwenden Sie den Innendurchmesser, nicht Nenn- oder Außendurchmesser, außer die Unterlagen belegen ihre Gleichwertigkeit.",
+   notion: "Querschnitt und Geschwindigkeit",
+   alt: "Schnitt einer Leitung mit Innendurchmesser 50 mm = 0,050 m, die 5 m³/h führt. Rechenkette: Querschnitt A = π × Dint² / 4, dann Volumenstrom in m³/s, dann Geschwindigkeit v = qv / A." },
+ { title: "Warum die Geschwindigkeit zählt",
+   sit: "Derselbe Volumenstrom fließt durch drei Abschnitte mit unterschiedlichen Durchmessern. Ein Nutzer meldet Geräusche in den Leitungen.",
+   q: "Wählen Sie im Schema den schnellsten Abschnitt, dann die wahrscheinliche Folge.",
+   groups: [{ label: "1. Schnellster Abschnitt:", opts: ["Abschnitt A", "Abschnitt B", "Abschnitt C"] },
+     { label: "2. Wahrscheinliche Folge hoher Geschwindigkeit:", opts: ["Luft schlecht mitgerissen, trägere Reaktion", "Geräusche, Erosion und höhere Druckverluste", "Geringerer Volumenstrom als in den anderen"] }],
+   svg: { same: "Gleicher Volumenstrom" },
+   ok: "Bei konstantem Volumenstrom gilt {F3}: Der kleinste Querschnitt, Abschnitt B, ergibt die höchste Geschwindigkeit, was Geräusche, Erosion und Druckverluste erhöht.",
+   ko: "Der Volumenstrom ist in allen drei Abschnitten gleich; nur der Querschnitt ändert sich. Abschnitt B, der engste, ist der schnellste. Sehr geringe Geschwindigkeit bringt andere Probleme: Luft schlecht mitgerissen, längere Reaktionszeiten.",
+   key: "Zulässige Geschwindigkeitsbereiche hängen vom Netz, den Werkstoffen und den Projektvorgaben ab.",
+   notion: "Bedeutung der Geschwindigkeit",
+   alt: "Eine Leitung in drei Abschnitten mit gleichem Volumenstrom: Abschnitt A mit großem Durchmesser, Abschnitt B eng mit schneller Strömung, Abschnitt C mit mittlerem Durchmesser." },
+ { title: "Volumenstrom und Wärmeleistung",
+   sit: "An einem anderen Kaltwasser-Kühlregister messen Sie 6 m³/h, 7 °C im Vorlauf und 12 °C im Rücklauf.",
+   q: "Welche Wärmeleistung transportiert das Wasser?",
+   svg: { sup: "Vorlauf", ret: "Rücklauf", coil: "Register" },
+   ok: "Bei Kaltwasser gilt ΔT = T Rücklauf − T Vorlauf = 12 − 7 = 5 K. Mit {F5}: 1,16 × 6 × 5 = 34,8 kW.",
+   ko: "Verwenden Sie die Temperaturdifferenz, nicht eine Einzeltemperatur: ΔT = 12 − 7 = 5 K. Dann {F5}: 1,16 × 6 × 5 ≈ 34,8 kW.",
+   key: "{F4} ist die allgemeine Formel; 1,16 ist eine Näherung für Wasser. Für Glykolgemische die tatsächlichen Werte ρ und {cp} verwenden.",
+   notion: "Wärmeleistung",
+   alt: "Kaltwasser-Kühlregister: Vorlauf 7 °C, Rücklauf 12 °C, Durchflussmesser zeigt 6 m³/h. Kasten: ΔT = ? K." },
+ { title: "Bestimmen Sie den Volumenstrom",
+   sit: "Ein Kühlregister soll 58 kW bei Kaltwasser 7/12 °C liefern. Sie bereiten die Einregulierung des Volumenstroms vor.",
+   q: "Wählen Sie alle richtigen Aussagen.",
+   items: ["{qv} ≈ 58 / (1,16 × 5) = 10 m³/h", "Bei gleicher Leistung erhöht zu wenig Durchfluss ΔT", "Bei gleicher Leistung senkt zu viel Durchfluss ΔT", "Bei Glykolgemisch reale ρ und {cp} verwenden", "Vor dem Fazit Last, Regelung, Verschmutzung prüfen", "Volumenstrom nach einem einzigen Momentan-ΔT einstellen", "{qv} ≈ 58 × 1,16 × 5 ≈ 336 m³/h", "1,16 ohne Prüfung für jedes Medium verwenden"],
+   svg: { power: "Leistung" },
+   ok: "Man stellt die Formel um: {F6}, also 58 / (1,16 × 5) = 10 m³/h. ΔT reagiert auf den Volumenstrom: zu wenig erhöht sie, zu viel senkt sie.",
+   ko: "Stellen Sie die Formel um: {F6}, also 58 / (1,16 × 5) = 10 m³/h. Ein Momentan-ΔT hängt auch von Last, Regelung, Verschmutzung und Übergangsbetrieb ab.",
+   key: "Stellen Sie einen Volumenstrom nie allein nach einem Momentan-ΔT ein.",
+   notion: "Erforderlicher Volumenstrom",
+   alt: "Leistung von 58 kW über eine Kaltwasserleitung: Vorlauf 7 °C, Rücklauf 12 °C, ΔT = 5 K, Volumenstrom unbekannt. Formel: qv(m³/h) ≈ Φ(kW) / [1,16 × ΔT(K)]." },
+ { title: "Prüfen Sie das Kühlregister",
+   sit: "Register mit 7/12 °C, Durchflussmesser bei 9 m³/h, Leitung {Dint} 50 mm, angegebene Leistung 52 kW, Medium: Wasser.",
+   q: "Führen Sie die Prüfung in drei Entscheidungen durch.",
+   groups: [{ label: "1. Volumenstrom in m³/s" }, { label: "2. Mittlere Geschwindigkeit in der Leitung" },
+     { label: "3. Leistung und Fazit", opts: ["45 kW: Register unterversorgt", "52,2 kW: passt zur Angabe", "125,3 kW: Durchfluss viel zu hoch"] }],
+   svg: { coil: "Register", ann: "Angegeben: 52 kW" },
+   ok: "9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s; v ≈ 0,0025 / 0,001963 ≈ 1,27 m/s; Φ ≈ 1,16 × 9 × 5 = 52,2 kW, passend zu den angegebenen 52 kW.",
+   ko: "Volumenstrom: 9 ÷ 3,6 = 2,5 L/s = 0,0025 m³/s. Geschwindigkeit: 0,0025 / 0,001963 ≈ 1,27 m/s. Leistung: 1,16 × 9 × 5 = 52,2 kW, nahe den angegebenen 52 kW.",
+   key: "Volumenstrom, Innendurchmesser und ΔT erlauben eine erste Prüfung; eine echte Validierung erfordert zuverlässige Sensoren, stabilen Betrieb und die genauen Stoffwerte des Mediums.",
+   notion: "Prüfung eines Kühlregisters",
+   alt: "Kaltwasser-Kühlregister: Vorlauf 7 °C, Rücklauf 12 °C, Durchflussmesser bei 9 m³/h, Leitung mit Innendurchmesser 50 mm, angegebene Leistung 52 kW. Die Ergebnisse für den Volumenstrom in m³/s und die Geschwindigkeit erscheinen mit den Antworten." }
+ ]}
+};
+
+/* ==========================================================
+   LOGIQUE DE L'ACTIVITÉ HYD-03
+   ========================================================== */
+const LANGS = Object.keys(L);
+const N = 8;
+const NB = "\u00a0";
+/* Bonnes réponses et valeurs numériques (indépendantes de la langue) */
+const CFG = [
+  { type: "assoc", correct: [0, 1, 2, 3, 4], order: [2, 4, 0, 3, 1] },
+  { type: "valpick", correct: 0, vals: ["5 L/s", "18 L/s", "50 L/s", "64,8 L/s"] },
+  { type: "drag", correct: [0, 1] },
+  { type: "groups", groups: [{ vals: ["0,007854 m²", "0,1963 m²", "0,001963 m²"], correct: 2 }, { vals: ["0,08333 m³/s", "0,001389 m³/s", "1,389 m³/s"], correct: 1 }, { vals: ["0,18 m/s", "0,71 m/s", "7,1 m/s"], correct: 1 }] },
+  { type: "groups", groups: [{ visual: true, correct: 1, spots: [[28, 92, 196, 196], [236, 92, 150, 196], [398, 92, 176, 196]] }, { correct: 1 }] },
+  { type: "single", correct: 2, pre: "Φ ≈ ", vals: ["3,48 kW", "30 kW", "34,8 kW", "83,5 kW"] },
+  { type: "multi", correct: [0, 1, 2, 3, 4], order: [5, 0, 6, 1, 2, 7, 3, 4] },
+  { type: "groups", progressive: true, groups: [{ vals: ["0,025 m³/s", "0,0025 m³/s", "2,5 m³/s"], correct: 1 }, { vals: ["0,32 m/s", "1,27 m/s", "12,7 m/s"], correct: 1 }, { correct: 1 }] }
+];
+const S = { lang: "fr", view: "intro", i: 0, resp: [], done: [], ok: [], paused: false, sel: null, page: 0 };
+
+function initResp() {
+  S.resp = CFG.map(c => c.type === "drag" ? [null, null] : c.type === "assoc" ? c.correct.map(() => "") :
+    c.type === "groups" ? c.groups.map(() => null) : c.type === "multi" ? [] : null);
+  S.done = Array(N).fill(false); S.ok = Array(N).fill(false); S.sel = null; S.page = 0;
+}
+initResp();
+
+const U = k => L[S.lang].ui[k];
+const ST = i => L[S.lang].steps[i];
+const fmtT = (s, o) => s.replace(/\{(\w)\}/g, (m, k) => (o[k] !== undefined ? o[k] : m));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const nv = s => (S.lang === "en" ? s.replace(/,/g, ".") : s);
+const pctTxt = p => (["fr", "es", "de", "pt"].indexOf(S.lang) >= 0 ? p + NB + "%" : p + "%");
+/* Formules et symboles : indices conservés et jamais traduits */
+const FXH = {
+  F1: "q<sub>m</sub> = ρ × q<sub>v</sub>", F2: "A = π × D<sub>int</sub>² / 4", F3: "v = q<sub>v</sub> / A",
+  F4: "Φ = q<sub>m</sub> × c<sub>p</sub> × ΔT", F5: "Φ(kW) ≈ 1,16 × q<sub>v</sub>(m³/h) × ΔT(K)", F6: "q<sub>v</sub>(m³/h) ≈ Φ(kW) / [1,16 × ΔT(K)]",
+  qv: "q<sub>v</sub>", qm: "q<sub>m</sub>", cp: "c<sub>p</sub>", Dint: "D<sub>int</sub>"
+};
+const FXT = { F1: "qm = ρ × qv", F2: "A = π × Dint² / 4", F3: "v = qv / A", F4: "Φ = qm × cp × ΔT", F5: "Φ(kW) ≈ 1,16 × qv(m³/h) × ΔT(K)", F6: "qv(m³/h) ≈ Φ(kW) / [1,16 × ΔT(K)]", qv: "qv", qm: "qm", cp: "cp", Dint: "Dint" };
+const TOK = /\{(F[1-6]|qv|qm|cp|Dint)\}/g;
+const FX = k => (k[0] === "F" ? `<span class="fx">${nv(FXH[k])}</span>` : `<span class="sy">${FXH[k]}</span>`);
+const tx = s => esc(s).replace(TOK, (m, k) => FX(k));
+const plain = s => String(s).replace(TOK, (m, k) => nv(FXT[k]));
+
+function complete(i) {
+  const c = CFG[i], r = S.resp[i];
+  switch (c.type) {
+    case "drag": return r.every(v => v !== null);
+    case "assoc": return r.every(v => v !== "");
+    case "groups": return r.every(v => v !== null);
+    case "multi": return r.length > 0;
+    default: return r !== null;
+  }
+}
+function check(i) {
+  const c = CFG[i], r = S.resp[i];
+  switch (c.type) {
+    case "drag": return r[0] === c.correct[0] && r[1] === c.correct[1];
+    case "assoc": return r.every((v, k) => Number(v) === c.correct[k]);
+    case "groups": return r.every((v, k) => v === c.groups[k].correct);
+    case "multi": return r.length === c.correct.length && c.correct.every(x => r.indexOf(x) >= 0);
+    default: return r === c.correct;
+  }
+}
+function groupOpts(i, g) {
+  const c = CFG[i], st = ST(i);
+  if (st.groups[g].opts) return st.groups[g].opts;
+  return c.groups[g].vals.map(nv);
+}
+function singleOpts(i) { const c = CFG[i]; return c.vals ? c.vals.map(v => (c.pre || "") + nv(v)) : ST(i).opts; }
+function ansText(i, r, isCorrect) {
+  const c = CFG[i], st = ST(i);
+  switch (c.type) {
+    case "single": return r == null ? null : singleOpts(i)[r];
+    case "valpick": return r == null ? null : (c.pre || "") + nv(c.vals[r]);
+    case "assoc": return r.every(v => v === "") ? null : r.map((v, k) => st.items[k] + " → " + (v === "" ? "—" : st.choices[+v])).join(" · ");
+    case "groups": return r.every(v => v == null) ? null : r.map((v, g) => (v == null ? "—" : groupOpts(i, g)[v])).join(" · ");
+    case "drag": return r.every(v => v == null) ? null : r.map((l, z) => st.zones[z] + " = " + (l == null ? "—" : st.labels[l])).join(" · ");
+    case "multi": {
+      if (isCorrect) return U("allBut") + " " + st.items.filter((t, k) => c.correct.indexOf(k) < 0).join(" ; ");
+      if (!r.length) return null;
+      const good = r.filter(x => c.correct.indexOf(x) >= 0).length, bad = r.length - good + (c.correct.length - good);
+      return fmtT(U("multiAns"), { c: good, n: c.correct.length, w: bad });
+    }
+  }
+  return null;
+}
+function corrText(i) {
+  const c = CFG[i];
+  if (c.type === "drag" || c.type === "assoc") return ansText(i, c.correct.map(x => c.type === "assoc" ? String(x) : x));
+  if (c.type === "groups") return ansText(i, c.groups.map(g => g.correct));
+  if (c.type === "multi") return ansText(i, c.correct, true);
+  return ansText(i, c.correct);
+}
+
+/* ---------- Icônes ---------- */
+const IC_OK = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="#5EE0A0"/><path d="M6.5 12.5l3.5 3.5 7.5-8" fill="none" stroke="#06331F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const IC_KO = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="#FF9A8C"/><path d="M8 8l8 8M16 8l-8 8" fill="none" stroke="#4A0E08" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const AR_L = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const AR_R = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const IC_PAUSE = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>';
+const IC_PLAY = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>';
+
+/* ---------- Dessins SVG ---------- */
+const G = (x, y, inner) => `<g transform="translate(${x} ${y})">${inner}</g>`;
+const P = (d, c = "") => `<path class="pipe" d="${d}"/><path class="pipe-in" d="${d}"/><path class="flow ${c}" d="${d}"/>`;
+const T = (x, y, t, a = "middle", cls = "lbl") => `<text class="${cls}" x="${x}" y="${y}" text-anchor="${a}">${esc(t)}</text>`;
+const pump = (x, y, r = 21) => G(x, y, `<circle r="${r}" fill="url(#gBlue)" stroke="#BFE3FF" stroke-width="2"/><circle r="${r * 0.7}" fill="none" stroke="#9FD2FF" stroke-opacity=".45"/><path d="M${-r * 0.38} ${-r * 0.52}L${r * 0.62} 0L${-r * 0.38} ${r * 0.52}Z" fill="#EAF6FF"/>`);
+const filterY = (x, y) => G(x, y, '<path d="M-3 4L12 24L21 17L6 -3Z" fill="url(#gBrass)" stroke="#7A5512" stroke-linejoin="round"/><rect x="-15" y="-8" width="30" height="16" rx="3" fill="url(#gBrass)" stroke="#7A5512"/>');
+function tag(x, y, t, cls = "") { const w = Math.max(70, t.length * 9.2 + 28); return G(x, y, `<rect class="tagr ${cls}" x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/><text class="tagt" y="6" text-anchor="middle">${esc(t)}</text>`); }
+/* manomètre : valeur v sur l'échelle [min, max] */
+function gauge(x, y, r, min, max, v, opt = {}) {
+  const f = p => (p - min) / (max - min);
+  const A = t => (135 + 270 * t) * Math.PI / 180;
+  const pt = (t, rr) => [(rr * Math.cos(A(t))).toFixed(1), (rr * Math.sin(A(t))).toFixed(1)];
+  let s = `<circle r="${r + 4}" fill="#C9D6E6"/><circle r="${r}" fill="url(#gWhite)" stroke="#8FA3BD" stroke-width="2"/>`;
+  const steps = opt.ticks || [];
+  const nmin = opt.minor || 10;
+  for (let k = 0; k <= nmin; k++) { const a = pt(k / nmin, r - 3), b = pt(k / nmin, r - 9); s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#36506F" stroke-width="1.3"/>`; }
+  steps.forEach(p => { const t = f(p), a = pt(t, r - 3), b = pt(t, r - 14), c = pt(t, r - 28); s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${p === 0 && opt.zero ? "#1E7FD0" : "#1B2A41"}" stroke-width="${p === 0 && opt.zero ? 4 : 2.4}"/><text class="gnum" x="${c[0]}" y="${(+c[1] + 6).toFixed(1)}" text-anchor="middle">${esc(nv(String(p)))}</text>`; });
+  const n = pt(f(v), r - 12);
+  s += `<line x1="0" y1="0" x2="${n[0]}" y2="${n[1]}" stroke="#C21B22" stroke-width="${Math.max(3, r / 22)}" stroke-linecap="round"/><circle r="${Math.max(4, r / 12)}" fill="#0B2350"/>`;
+  if (opt.unit) s += `<text class="gunit" y="${(r * 0.55).toFixed(1)}" text-anchor="middle">${esc(opt.unit)}</text>`;
+  return G(x, y, s);
+}
+const sub = (b, s) => `${b}<tspan class="sbs" dy="5">${s}</tspan><tspan dy="-5">\u200b</tspan>`;
+const fxF1 = () => `${sub("p", "abs")} = ${sub("p", "rel")} + ${sub("p", "atm")}`;
+
+const thermo = (x, y, col = "#55C2FB") => G(x, y, `<rect x="-5" y="-34" width="10" height="34" rx="5" fill="#EAF2FB" stroke="#9FB4CC"/><rect x="-2" y="-22" width="4" height="22" fill="${col}"/><circle r="9" fill="${col}" stroke="#fff" stroke-width="2"/>`);
+const meter = (x, y, txt) => G(x, y, `<rect x="-26" y="-22" width="52" height="44" rx="8" fill="#2C4A78" stroke="#9FD2FF" stroke-width="2"/><line x1="0" y1="-22" x2="0" y2="-40" stroke="#DCE6F2" stroke-width="6"/><rect x="-70" y="-96" width="140" height="58" rx="10" fill="#1C2633" stroke="#55C2FB" stroke-width="2"/><rect x="-60" y="-86" width="120" height="38" rx="5" fill="#0E3B5C"/><text class="lcd" x="0" y="-60" text-anchor="middle">${esc(txt)}</text>`);
+const coil = (x, y, w, h) => { let f = ""; for (let k = 10; k < w; k += 12) f += `<line x1="${x + k}" y1="${y + 6}" x2="${x + k}" y2="${y + h - 6}" stroke="#9FC6E8" stroke-width="2.4"/>`; return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="rgba(160,200,240,.18)" stroke="#BFD6EE" stroke-width="2"/>${f}<rect x="${x - 10}" y="${y}" width="12" height="${h}" rx="4" fill="#C0835A"/>`; };
+const sym = (b, s) => sub(b, s);
+const qv = () => sym("q", "v"), qm = () => sym("q", "m");
+const arrowR = (x1, y, x2, c = "#8FE3FF") => `<path d="M${x1} ${y}H${x2 - 10}" stroke="${c}" stroke-width="3"/><path d="M${x2} ${y}l-12 -7v14z" fill="${c}"/>`;
+const arrowD = (x, y1, y2, c = "#8FE3FF") => `<path d="M${x} ${y1}V${y2 - 9}" stroke="${c}" stroke-width="3"/><path d="M${x} ${y2}l-7 -11h14z" fill="${c}"/>`;
+const cube = (x, y, s) => { const d = s * 0.35; return G(x, y, `<path d="M0 ${d}L${d} 0H${s + d}V${s}L${s} ${s + d}H0Z" fill="rgba(85,194,251,.28)" stroke="#8FE3FF" stroke-width="2"/><path d="M0 ${d}H${s}V${s + d}M${s} ${d}L${s + d} 0" fill="none" stroke="#8FE3FF" stroke-width="2"/><rect x="2" y="${d + s * 0.35}" width="${s - 4}" height="${s * 0.63}" fill="url(#gWater)" opacity=".75"/>`); };
+const beaker = (x, y, w, h) => G(x, y, `<path d="M0 0V${h}Q0 ${h + 8} 8 ${h + 8}H${w - 8}Q${w} ${h + 8} ${w} ${h}V0" fill="rgba(215,235,255,.12)" stroke="#D7E7F7" stroke-width="2.4"/><rect x="3" y="${h * 0.4}" width="${w - 6}" height="${h * 0.6 + 5}" rx="4" fill="url(#gWater)" opacity=".85"/>${[0.25, 0.5, 0.75].map(t => `<line x1="${w - 14}" y1="${h * t}" x2="${w - 3}" y2="${h * t}" stroke="#D7E7F7" stroke-width="2"/>`).join("")}`);
+const vtag = (x, y, t, cls = "") => tag(x, y, nv(t), cls);
+function seg(x1, x2, y, h, cls) { return `<rect x="${x1}" y="${y - h / 2 - 5}" width="${x2 - x1}" height="${h + 10}" rx="5" fill="#C0835A" stroke="#4A3020" stroke-width="2"/><rect x="${x1}" y="${y - h / 2}" width="${x2 - x1}" height="${h}" fill="url(#gWater)" opacity=".85"/>${[-0.25, 0, 0.25].map(o => `<path class="flow ${cls}" d="M${x1 + 6} ${y + o * h}H${x2 - 6}"/>`).join("")}`; }
+function cone(x1, x2, y, h1, h2) { return `<path d="M${x1} ${y - h1 / 2 - 5}L${x2} ${y - h2 / 2 - 5}V${y + h2 / 2 + 5}L${x1} ${y + h1 / 2 + 5}Z" fill="#B87A50" stroke="#4A3020" stroke-width="2"/>`; }
+
+const VIS = [
+  /* 1 — volume / masse */
+  s => `${P("M30 280H570")}
+    ${cube(70, 110, 110)}${T(145, 92, s.vol)}<text class="lbl" x="125" y="236" text-anchor="middle">1 m³</text>
+    <path d="M150 250V265" stroke="#8FE3FF" stroke-width="3"/>
+    ${G(470, 214, `<rect x="-62" y="10" width="124" height="16" rx="5" fill="url(#gSteel)" stroke="#7F93AD"/><rect x="-26" y="-50" width="52" height="60" rx="8" fill="url(#gSteel)" stroke="#7F93AD"/><rect x="-12" y="-62" width="24" height="14" rx="4" fill="url(#gSteel)" stroke="#7F93AD"/>`)}
+    ${T(470, 132, s.mass)}<text class="lbl" x="470" y="200" text-anchor="middle">kg</text>
+    <rect x="215" y="40" width="170" height="54" rx="12" class="fxbox"/><text class="fxs" x="300" y="75" text-anchor="middle">${qm()} = ρ × ${qv()}</text>
+    ${arrowR(200, 160, 400)}
+    <text class="lbl small" x="300" y="146" text-anchor="middle">ρ ≈ 1${NB}000 kg/m³</text>
+    ${T(300, 322, s.ex)}<text class="lbl small" x="300" y="348" text-anchor="middle">${esc(nv("2 L/s = 0,002 m³/s → ≈ 2 kg/s"))}</text>`,
+  /* 2 — débitmètre 18 m³/h */
+  s => `${P("M30 290H420")}${meter(210, 290, "18 m³/h")}${T(210, 345, s.meter)}
+    <rect x="24" y="30" width="390" height="120" rx="14" class="sbox"/>${T(219, 60, s.ref)}
+    <text class="big1" x="219" y="98" text-anchor="middle">1 m³ = 1${NB}000 L</text><text class="big1" x="219" y="134" text-anchor="middle">1 h = 3${NB}600 s</text>
+    <path d="M430 290H446" stroke="#8FE3FF" stroke-width="3" stroke-dasharray="4 4"/>`,
+  /* 3 — facteurs de conversion (zones en haut) */
+  s => `${cube(70, 168, 92)}${T(118, 330, s.big)}
+    ${beaker(440, 196, 70, 92)}${T(475, 330, s.small)}
+    <path d="M190 170Q300 120 420 170" fill="none" stroke="#FA9035" stroke-width="4"/><path d="M432 178l-16 -2 8 -12z" fill="#FA9035"/><text class="lbl" x="300" y="152" text-anchor="middle">1</text>
+    <path d="M420 300Q300 345 190 300" fill="none" stroke="#55C2FB" stroke-width="4"/><path d="M178 293l16 -1 -6 13z" fill="#55C2FB"/><text class="lbl" x="300" y="314" text-anchor="middle">2</text>
+    <rect x="214" y="196" width="172" height="78" rx="12" class="sbox"/><text class="lbl small" x="300" y="226" text-anchor="middle">1 m³ = 1${NB}000 L</text><text class="lbl small" x="300" y="256" text-anchor="middle">1 h = 3${NB}600 s</text>`,
+  /* 4 — section et vitesse : calcul en chaîne */
+  (s, r) => {
+    const v = (g, k) => r[g] == null ? "?" : nv(CFG[3].groups[g].vals[r[g]]);
+    return `<circle cx="120" cy="140" r="84" fill="#C0835A" stroke="#4A3020" stroke-width="3"/><circle cx="120" cy="140" r="72" fill="url(#gWater)"/>
+    <path d="M52 140H188" stroke="#fff" stroke-width="3"/><path d="M48 140l12 -7v14zM192 140l-12 -7v14z" fill="#fff"/>
+    <text class="lbl" x="120" y="128" text-anchor="middle">${sub("D", "int")}</text>
+    ${vtag(120, 258, "50 mm = 0,050 m")}${vtag(120, 312, "5 m³/h")}${T(120, 352, s.pipe)}
+    <rect x="262" y="24" width="320" height="86" rx="12" class="sbox ${r[0] == null ? "empty" : ""}"/><text class="fxs" x="422" y="56" text-anchor="middle">A = π × ${sub("D", "int")}² / 4</text><text class="big1" x="422" y="94" text-anchor="middle">A ≈ ${esc(v(0))}</text>
+    ${arrowD(422, 112, 136)}
+    <rect x="262" y="138" width="320" height="86" rx="12" class="sbox ${r[1] == null ? "empty" : ""}"/><text class="fxs" x="422" y="170" text-anchor="middle">${qv()} = 5 m³/h ÷ 3${NB}600</text><text class="big1" x="422" y="208" text-anchor="middle">${qv()} ≈ ${esc(v(1))}</text>
+    ${arrowD(422, 226, 250)}
+    <rect x="262" y="252" width="320" height="86" rx="12" class="sbox ${r[2] == null ? "empty" : ""}"/><text class="fxs" x="422" y="284" text-anchor="middle">v = ${qv()} / A</text><text class="big1" x="422" y="322" text-anchor="middle">v ≈ ${esc(v(2))}</text>`;
+  },
+  /* 5 — trois tronçons, même débit */
+  s => `${seg(36, 214, 190, 92, "slow2")}${cone(214, 246, 190, 92, 30)}${seg(246, 378, 190, 30, "fast")}${cone(378, 406, 190, 30, 56)}${seg(406, 566, 190, 56, "")}
+    <circle cx="320" cy="150" r="12" fill="none" stroke="#FFD27A" stroke-width="2" class="bub"/><circle cx="320" cy="150" r="22" fill="none" stroke="#FFD27A" stroke-width="1.5" opacity=".6" class="bub"/>
+    ${arrowR(150, 330, 450)}${T(300, 318, s.same)}
+    <text class="lbl small" x="300" y="58" text-anchor="middle">${qv()} = const.</text>`,
+  /* 6 — batterie : aller 7 °C / retour 12 °C, 6 m³/h */
+  s => `${P("M30 110H400")}${P("M400 250H30", "slow2")}${coil(410, 70, 150, 220)}${T(485, 320, s.coil)}
+    ${thermo(110, 96, "#55C2FB")}${vtag(110, 40, "7 °C")}${T(110, 150, s.sup)}
+    ${thermo(110, 236, "#8FE3FF")}${vtag(110, 180, "12 °C")}${T(110, 290, s.ret)}
+    ${meter(290, 110, "6 m³/h")}
+    <rect x="190" y="300" width="210" height="46" rx="12" class="fxbox"/><text class="fxs" x="295" y="330" text-anchor="middle">ΔT = ? K</text>`,
+  /* 7 — puissance requise → débit */
+  s => `<circle cx="100" cy="130" r="58" fill="url(#gRed)" opacity=".9"/><circle cx="100" cy="130" r="58" fill="none" stroke="#FFD27A" stroke-width="3"/><text class="big1" x="100" y="138" text-anchor="middle">58 kW</text>${T(100, 216, s.power)}
+    ${arrowR(170, 130, 250, "#FA9035")}
+    ${P("M260 130H570")}${thermo(330, 116)}${vtag(330, 66, "7 °C")}${thermo(500, 116, "#8FE3FF")}${vtag(500, 66, "12 °C")}
+    ${vtag(415, 180, "ΔT = 5 K")}${tag(415, 236, "", "q")}<text class="tagt" x="415" y="242" text-anchor="middle">${qv()} = ?</text>
+    <rect x="96" y="284" width="408" height="54" rx="12" class="fxbox"/><text class="fxs" x="300" y="318" text-anchor="middle">${qv()}(m³/h) ≈ Φ(kW) / [${esc(nv("1,16"))} × ΔT(K)]</text>`,
+  /* 8 — contrôle de la batterie */
+  (s, r) => {
+    const g = CFG[7].groups;
+    const t0 = r[0] == null ? "? m³/s" : nv(g[0].vals[r[0]]), t1 = r[1] == null ? "v = ?" : "v ≈ " + nv(g[1].vals[r[1]]);
+    return `${P("M30 100H400")}${P("M400 230H30", "slow2")}${coil(410, 60, 150, 210)}${T(485, 300, s.coil)}<text class="lbl small" x="485" y="326" text-anchor="middle">${esc(nv(s.ann))}</text>
+    ${thermo(70, 86)}${vtag(70, 36, "7 °C")}${thermo(70, 216, "#8FE3FF")}${vtag(70, 272, "12 °C")}
+    ${meter(250, 100, "9 m³/h")}${vtag(250, 140, t0, r[0] == null ? "q" : "")}
+    ${vtag(250, 186, t1, r[1] == null ? "q" : "")}
+    <text class="lbl small" x="250" y="276" text-anchor="middle">${sub("D", "int")} = 50 mm</text>
+    <path d="M150 230V244M350 230V244" stroke="none"/>`;
+  }
+];
+
+/* ---------- Éléments de la page ---------- */
+const $ = s => document.querySelector(s);
+let main, nav, prog, live;
+let suppressClick = false, drag = null;
+function announce(msg) { live.textContent = ""; setTimeout(() => { live.textContent = msg; }, 60); }
+
+function render(focusSel) {
+  const u = L[S.lang].ui;
+  document.documentElement.lang = S.lang;
+  document.title = u.module + " – " + u.introTitle;
+  $("#mod").textContent = u.module;
+  $("#langLbl").textContent = u.lang;
+  $("#langSel").value = S.lang;
+  renderPause(); renderProg();
+  if (S.view === "intro") renderIntro();
+  else if (S.view === "step") renderStep();
+  else if (S.view === "result") renderResult();
+  else renderReview();
+  renderNav();
+  requestAnimationFrame(() => {
+    fit();
+    if (focusSel) { const el = document.querySelector(focusSel); if (el) el.focus({ preventScroll: true }); }
+  });
+}
+function renderPause() {
+  const b = $("#pauseBtn");
+  document.body.classList.toggle("paused", S.paused);
+  b.innerHTML = (S.paused ? IC_PLAY : IC_PAUSE) + '<span class="btxt">' + esc(S.paused ? U("resume") : U("pause")) + "</span>";
+  b.setAttribute("aria-label", S.paused ? U("resumeAria") : U("pauseAria"));
+}
+function renderProg() {
+  if (S.view === "intro") { prog.hidden = true; prog.innerHTML = ""; return; }
+  prog.hidden = false;
+  const cur = S.view === "step" ? S.i : -1, n = S.view === "step" ? S.i + 1 : N;
+  prog.setAttribute("aria-label", U("progress"));
+  let h = `<p class="ptxt">${esc(fmtT(U("stepOf"), { n: n, t: N }))}</p><ol class="dots">`;
+  for (let k = 0; k < N; k++) {
+    const st = k === cur ? "cur" : (S.done[k] ? "done" : "todo");
+    const t = k === cur ? U("stCur") : (S.done[k] ? U("stDone") : U("stTodo"));
+    h += `<li><span class="dot ${st}" aria-hidden="true">${S.done[k] && k !== cur ? CHK : (k + 1)}</span><span class="sr">${esc(U("step"))} ${k + 1}, ${esc(t)}</span>${k < N - 1 ? `<span class="seg${S.done[k] ? " done" : ""}" aria-hidden="true"></span>` : ""}</li>`;
+  }
+  prog.innerHTML = h + "</ol>";
+}
+function renderIntro() {
+  const hero = `<svg class="hero" viewBox="0 0 980 230" role="img" aria-label="${esc(U("introAlt"))}"><defs><linearGradient id="hb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B6CB8"/><stop offset="1" stop-color="#123F7C"/></linearGradient></defs>
+    <rect width="980" height="230" rx="14" fill="url(#hb)"/>${P("M60 110H760")}${P("M760 190H60", "slow2")}${coil(770, 50, 150, 160)}
+    ${meter(420, 110, "9 m³/h")}${thermo(200, 96)}${thermo(200, 176, "#8FE3FF")}${pump(600, 190, 26)}
+    <circle cx="120" cy="40" r="3" fill="#FA9035"/><circle cx="940" cy="30" r="3" fill="#7EE8A8"/><circle cx="640" cy="40" r="2.5" fill="#FA9035"/></svg>`;
+  main.innerHTML = `<section class="intro" aria-labelledby="introTitle"><div class="icard card fit">${hero}
+    <h1 id="introTitle" tabindex="-1">${esc(U("introTitle"))}</h1>
+    <p class="lead">${esc(U("introLead"))}</p>
+    <p class="case">${esc(U("introCase"))}</p>
+    <p class="meta">${esc(U("introMeta"))}</p>
+    <button type="button" class="btn pri big" id="startBtn" data-act="start" data-key="start">${esc(U("start"))}${AR_R}</button>
+  </div></section>`;
+}
+function mark(isC, chosen) { return isC ? IC_OK : (chosen ? IC_KO : ""); }
+function stage(inner, ov) { return `<div class="stagewrap"><div class="stage"><svg viewBox="0 0 600 360" aria-hidden="true" focusable="false">${inner}</svg>${ov || ""}</div></div>`; }
+function box(x, y, w, h) { return `left:${(x / 6).toFixed(2)}%;top:${(y / 3.6).toFixed(2)}%;width:${(w / 6).toFixed(2)}%;height:${(h / 3.6).toFixed(2)}%`; }
+
+function renderStep() {
+  const i = S.i, c = CFG[i], st = ST(i), done = S.done[i], r = S.resp[i];
+  let vis = "", inter = "", hint = "", role = "img";
+  const cls = (isC, sel) => done ? (isC ? " is-ok" : (sel ? " is-ko" : "")) : "";
+  const seg = (g, opts, cur, corr, key) => opts.map((o, v) => { const sel = cur === v; return `<button type="button" class="opt sm${cls(v === corr, sel)}" data-act="gpick" data-g="${g}" data-v="${v}" data-key="${key}-${g}-${v}" aria-pressed="${sel}" ${done ? "disabled" : ""}><span class="rad" aria-hidden="true"></span><span class="otx">${tx(o)}</span>${done ? `<span class="mk">${mark(v === corr, sel)}</span>` : ""}</button>`; }).join("");
+  switch (c.type) {
+    case "assoc": {
+      vis = stage(VIS[i](st.svg));
+      inter = st.items.map((it, k) => { const v = r[k]; return `<div class="arow"><label for="as${k}">${done ? (Number(v) === c.correct[k] ? IC_OK : IC_KO) : ""}${tx(it)}</label><select id="as${k}" data-row="${k}" ${done ? "disabled" : ""}><option value="">${esc(U("choose"))}</option>${c.order.map(o => `<option value="${o}"${String(o) === v ? " selected" : ""}>${esc(st.choices[o])}</option>`).join("")}</select></div>`; }).join("");
+      break;
+    }
+    case "single": {
+      vis = stage(VIS[i](st.svg));
+      inter = `<div class="opts" role="group" aria-labelledby="qText">` + singleOpts(i).map((o, v) => { const sel = r === v; return `<button type="button" class="opt${cls(v === c.correct, sel)}" data-act="pick" data-v="${v}" data-key="o-${v}" aria-pressed="${sel}" ${done ? "disabled" : ""}><span class="rad" aria-hidden="true"></span><span class="otx">${tx(o)}</span>${done ? `<span class="mk">${mark(v === c.correct, sel)}</span>` : ""}</button>`; }).join("") + `</div>`;
+      break;
+    }
+    case "valpick": {
+      role = "group";
+      const ov = c.vals.map((v, k) => { const sel = r === k; return `<button type="button" class="vbtn${cls(k === c.correct, sel)}" style="${box(452, 44 + k * 72, 136, 56)}" data-act="pick" data-v="${k}" data-key="v-${k}" aria-pressed="${sel}" ${done ? "disabled" : ""}>${done ? mark(k === c.correct, sel) : ""}<span>${esc((c.pre || "") + nv(v))}</span></button>`; }).join("");
+      vis = stage(VIS[i](st.svg), ov);
+      inter = `<div class="fxcard"><p class="fxl">${esc(U("data"))}</p><p class="fxm"><span class="fx">18 m³/h → ? L/s</span></p><p class="fxd">1 m³ = 1${NB}000 L · 1 h = 3${NB}600 s</p></div>`;
+      break;
+    }
+    case "groups": {
+      const show = g => !c.progressive || done || g === 0 || r[g - 1] != null;
+      let ov = "";
+      inter = c.groups.map((gr, g) => {
+        if (!show(g)) return "";
+        const lab = st.groups[g].label;
+        if (gr.visual) {
+          role = "group";
+          const names = st.groups[g].opts;
+          ov = names.map((nm, v) => { const sel = r[g] === v; const sp = gr.spots[v]; return `<button type="button" class="hs${cls(v === gr.correct, sel)}" style="${box(sp[0], sp[1], sp[2], sp[3])}" data-act="gpick" data-g="${g}" data-v="${v}" data-key="vg-${v}" aria-pressed="${sel}" ${done ? "disabled" : ""}><span class="ztag">${done ? mark(v === gr.correct, sel) : ""}${esc(nm)}</span></button>`; }).join("");
+          return `<div class="grp"><p class="glab">${tx(lab)}</p><p class="gsel">${r[g] == null ? esc(U("notSel")) : esc(names[r[g]])}</p></div>`;
+        }
+        return `<div class="grp" role="group" aria-label="${esc(plain(lab))}"><p class="glab">${tx(lab)}</p><div class="segs">${seg(g, groupOpts(i, g), r[g], gr.correct, "g")}</div></div>`;
+      }).join("");
+      vis = stage(VIS[i](st.svg, r), ov);
+      break;
+    }
+    case "drag": {
+      role = "group"; hint = U("hDrag");
+      const ov = [0, 1].map(z => { const l = r[z]; const okz = done && l === c.correct[z]; return `<button type="button" class="dz${l != null ? " filled" : ""}${done ? (okz ? " is-ok" : " is-ko") : ""}" style="${z ? "left:51.3%" : "left:1.7%"};top:2%;width:47%;height:28%" data-act="dz" data-z="${z}" data-key="dz-${z}" ${done ? "disabled" : ""}><span class="zn">${done ? (okz ? IC_OK : IC_KO) : ""}${esc(st.zones[z])}</span><span class="zv">${l != null ? esc(st.labels[l]) : esc(U("zoneEmpty"))}</span></button>`; }).join("");
+      vis = stage(VIS[i](st.svg), ov);
+      inter = `<div class="chips" role="group" aria-labelledby="qText">` + st.labels.map((lab, l) => { const z = r.indexOf(l); return `<button type="button" class="chip" data-act="chip" data-l="${l}" data-key="chip-${l}" aria-pressed="${S.sel === l}" ${done ? "disabled" : ""}>${esc(lab)}${z >= 0 ? `<span class="where"> → ${z + 1}</span>` : ""}</button>`; }).join("") + `</div>`;
+      break;
+    }
+    case "multi": {
+      vis = stage(VIS[i](st.svg)); hint = U("hMulti");
+      inter = `<div class="checks" role="group" aria-labelledby="qText">` + c.order.map(k => { const on = r.indexOf(k) >= 0, good = c.correct.indexOf(k) >= 0;
+        const st2 = done ? (good ? (on ? " is-ok" : " is-miss") : (on ? " is-ko" : "")) : "";
+        return `<button type="button" class="chk${st2}" role="checkbox" aria-checked="${on}" data-act="toggle" data-v="${k}" data-key="c-${k}" ${done ? "aria-disabled=\"true\"" : ""}><span class="box" aria-hidden="true"></span><span class="otx">${tx(st.items[k])}</span>${done ? `<span class="mk">${good ? IC_OK : (on ? IC_KO : "")}</span>` : ""}</button>`; }).join("") + `</div>`;
+      break;
+    }
+  }
+  const fb = done ? `<div class="fb ${S.ok[i] ? "ok" : "ko"}" id="fb"><p class="fb-t">${S.ok[i] ? IC_OK : IC_KO}${esc(S.ok[i] ? U("ok") : U("ko"))}</p><p class="fb-x">${tx(S.ok[i] ? st.ok : st.ko)}</p><p class="fb-k"><span class="tag">${esc(U("remember"))}</span>${tx(st.key)}</p></div>` : "";
+  main.innerHTML = `<section class="step t-${c.type}${done ? " answered" : ""}" aria-labelledby="stTitle">
+    <div class="qpanel card fit">
+      <div class="qhead"><span class="badge">${esc(U("step"))} ${i + 1}/${N}</span><h2 id="stTitle" tabindex="-1">${esc(st.title)}</h2></div>
+      <p class="sit"><span class="lab">${esc(U("situation"))}</span>${tx(st.sit)}</p>
+      <p class="q" id="qText">${tx(st.q)}</p>
+      ${hint && !done ? `<p class="hint">${esc(hint)}</p>` : ""}
+      <div class="inter">${inter}</div>
+      ${fb}
+    </div>
+    <div class="visual card fit" role="${role}" aria-label="${esc(st.alt)}">${vis}</div>
+  </section>`;
+}
+
+function notionsToReview() { const out = []; S.ok.forEach((o, k) => { if (!o) { const n = ST(k).notion; if (out.indexOf(n) < 0) out.push(n); } }); return out; }
+function renderResult() {
+  const s = S.ok.filter(Boolean).length, p = Math.round(s / N * 100);
+  const lvl = s >= 7 ? 3 : s >= 5 ? 2 : 1;
+  const C = 2 * Math.PI * 52, d = (C * s / N).toFixed(1);
+  const fails = notionsToReview();
+  main.innerHTML = `<section class="result" aria-labelledby="resTitle">
+    <div class="card rcard rsum fit">
+      <h2 id="resTitle" tabindex="-1">${esc(U("finalTitle"))}</h2>
+      <div class="rs-top">
+        <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="${esc(fmtT(U("scoreAria"), { s: s, t: N }))}"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="10"/><circle cx="60" cy="60" r="52" fill="none" stroke="url(#gRing)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${d} 400" transform="rotate(-90 60 60)"/><text x="60" y="66" text-anchor="middle" class="rnum">${s}/${N}</text></svg>
+        <div class="kpis"><p class="kpi"><span>${esc(U("score"))}</span><strong>${s} / ${N}</strong></p><p class="kpi"><span>${esc(U("rate"))}</span><strong>${pctTxt(p)}</strong></p></div>
+      </div>
+      <p class="lvl lvl${lvl}"><span class="lvlb" aria-hidden="true">${lvl > 1 ? IC_OK : IC_KO}</span>${esc(U("lvl" + lvl + "t"))}</p>
+      <p class="lmsg">${esc(U("lvl" + lvl + "m"))}</p>
+    </div>
+    <div class="card rcard rdet fit">
+      <h3>${esc(U("passed"))} (${s})</h3>
+      <ul class="rsteps n8">${S.ok.map((o, k) => `<li class="${o ? "ok" : "ko"}">${o ? IC_OK : IC_KO}<span>${k + 1}</span><span class="sr">${esc(U("step"))} ${k + 1}, ${esc(o ? U("success") : U("fail"))}</span></li>`).join("")}</ul>
+      <h3>${esc(U("toReview"))}</h3>
+      ${fails.length ? `<ul class="notions">${fails.map(n => `<li><span class="nn" aria-hidden="true">!</span><span>${esc(n)}</span></li>`).join("")}</ul>` : `<p class="none">${esc(U("noneReview"))}</p>`}
+      <div class="rbtns"><button type="button" class="btn pri" data-act="review" data-key="review">${esc(U("review"))}</button><button type="button" class="btn" data-act="restart" data-key="restart">${esc(U("restart"))}</button></div>
+    </div>
+  </section>`;
+}
+function perPage() {
+  if (window.matchMedia("(min-width: 900px) and (min-aspect-ratio: 1/1) and (min-height: 520px)").matches) return 8;
+  if (window.matchMedia("(min-width: 600px) and (min-height: 520px)").matches) return 4;
+  return 2;
+}
+function pageCount() { return Math.ceil(N / perPage()); }
+function renderReview() {
+  const pp = perPage(), pages = Math.ceil(N / pp);
+  if (S.page > pages - 1) S.page = pages - 1;
+  const ks = []; for (let k = S.page * pp; k < Math.min(N, (S.page + 1) * pp); k++) ks.push(k);
+  main.innerHTML = `<section class="review pp${pp}" aria-labelledby="rvTitle">
+    <h2 id="rvTitle" tabindex="-1">${esc(U("reviewTitle"))}</h2>
+    <div class="rgrid fit">${ks.map(k => { const o = S.ok[k], a = S.done[k] ? ansText(k, S.resp[k]) : null;
+      return `<article class="card rv fit ${o ? "ok" : "ko"}"><p class="rvh"><span class="badge">${esc(U("step"))} ${k + 1}</span><span class="st">${o ? IC_OK : IC_KO}${esc(o ? U("success") : U("fail"))}</span></p><h3>${esc(ST(k).title)}</h3><p><span class="lab2">${esc(U("yours"))}</span> ${esc(a == null ? U("noAnswer") : plain(a))}</p>${o ? "" : `<p><span class="lab2">${esc(U("expected"))}</span> ${esc(plain(corrText(k)))}</p>`}</article>`; }).join("")}</div>
+  </section>`;
+}
+function renderNav() {
+  if (S.view === "intro" || S.view === "result") { nav.hidden = true; nav.innerHTML = ""; return; }
+  nav.hidden = false;
+  if (S.view === "review") {
+    const pages = pageCount();
+    nav.innerHTML = `<button type="button" class="btn" data-act="back" data-key="back">${AR_L}<span class="btxt">${esc(U("back"))}</span></button>
+      <p class="sp">${pages > 1 ? esc(fmtT(U("page"), { n: S.page + 1, t: pages })) : ""}</p>
+      ${pages > 1 ? `<button type="button" class="btn" data-act="pgprev" data-key="pgprev" ${S.page === 0 ? "disabled" : ""} aria-label="${esc(U("prevPage"))}">${AR_L}</button><button type="button" class="btn" data-act="pgnext" data-key="pgnext" ${S.page >= pages - 1 ? "disabled" : ""} aria-label="${esc(U("nextPage"))}">${AR_R}</button>` : ""}
+      <button type="button" class="btn pri" data-act="restart" data-key="restart2">${esc(U("restart"))}</button>`;
+    return;
+  }
+  const i = S.i, done = S.done[i], last = i === N - 1;
+  nav.innerHTML = `<button type="button" class="btn" data-act="prev" data-key="prev" aria-label="${esc(U("prev"))}">${AR_L}<span class="btxt" aria-hidden="true">${esc(U("prev"))}</span></button>
+    <p class="sp" id="navHint">${done ? "" : esc(U("needAnswer"))}</p>
+    ${done ? "" : `<button type="button" class="btn pri" data-act="validate" data-key="validate" ${complete(i) ? "" : "disabled"} aria-describedby="navHint">${esc(U("validate"))}</button>`}
+    <button type="button" class="btn${done ? " pri" : ""}" data-act="next" data-key="next" ${done ? "" : "disabled"}>${esc(last ? U("result") : U("next"))}${AR_R}</button>`;
+}
+
+/* ---------- Ajustement automatique : aucun défilement ---------- */
+function setK(k) { document.documentElement.style.setProperty("--k", k.toFixed(2)); }
+function overflowing() {
+  const els = [main].concat(Array.prototype.slice.call(main.querySelectorAll(".fit")));
+  return els.some(el => el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1);
+}
+function fit() {
+  const root = main.firstElementChild; if (!root) return;
+  root.classList.remove("c1", "c2", "c3");
+  let k = 1; setK(k);
+  while (overflowing() && k > 0.8) { k -= 0.04; setK(k); }
+  if (!overflowing()) return;
+  root.classList.add("c1"); k = 1; setK(k);
+  while (overflowing() && k > 0.76) { k -= 0.04; setK(k); }
+  if (!overflowing()) return;
+  root.classList.add("c2"); k = 1; setK(k);
+  while (overflowing() && k > 0.72) { k -= 0.04; setK(k); }
+  if (!overflowing()) return;
+  root.classList.add("c3"); k = 1; setK(k);
+  while (overflowing() && k > 0.62) { k -= 0.04; setK(k); }
+}
+
+/* ---------- Actions ---------- */
+function validate() {
+  const i = S.i; if (S.done[i] || !complete(i)) return;
+  S.done[i] = true; S.ok[i] = check(i); S.sel = null;
+  render('[data-key="next"]');
+  const st = ST(i);
+  announce((S.ok[i] ? U("ok") : U("ko")) + ". " + plain(S.ok[i] ? st.ok : st.ko) + " " + U("remember") + " : " + plain(st.key));
+}
+function place(l, z) {
+  const arr = S.resp[S.i];
+  for (let k = 0; k < arr.length; k++) if (arr[k] === l) arr[k] = null;
+  arr[z] = l; S.sel = null;
+  render(`[data-key="dz-${z}"]`);
+  announce(fmtT(U("placed"), { l: ST(S.i).labels[l], z: ST(S.i).zones[z] }));
+}
+function act(a, b) {
+  const i = S.i;
+  switch (a) {
+    case "start": S.view = "step"; S.i = 0; render("#stTitle"); break;
+    case "prev": if (S.i > 0) { S.i--; render("#stTitle"); } else { S.view = "intro"; render("#startBtn"); } break;
+    case "next": if (!S.done[i]) return; if (i < N - 1) { S.i++; render("#stTitle"); } else { S.view = "result"; render("#resTitle"); } break;
+    case "validate": validate(); break;
+    case "pick": if (S.done[i]) return; S.resp[i] = parseInt(b.dataset.v, 10); render(`[data-key="${b.dataset.key}"]`); break;
+    case "gpick": {
+      if (S.done[i]) return;
+      const g = parseInt(b.dataset.g, 10); S.resp[i][g] = parseInt(b.dataset.v, 10);
+      render(`[data-key="${b.dataset.key}"]`); break;
+    }
+    case "toggle": {
+      if (S.done[i]) return;
+      const v = parseInt(b.dataset.v, 10), arr = S.resp[i], p = arr.indexOf(v);
+      if (p >= 0) arr.splice(p, 1); else arr.push(v);
+      render(`[data-key="${b.dataset.key}"]`); break;
+    }
+    case "chip": {
+      if (S.done[i]) return;
+      if (suppressClick) { suppressClick = false; return; }
+      const l = parseInt(b.dataset.l, 10); S.sel = S.sel === l ? null : l;
+      if (S.sel != null) { const arr = S.resp[i]; const z = arr[0] == null ? 0 : (arr[1] == null ? 1 : 0); render(`[data-key="dz-${z}"]`); announce(fmtT(U("labelSel"), { l: ST(i).labels[l] })); }
+      else render(`[data-key="chip-${l}"]`);
+      break;
+    }
+    case "dz": {
+      if (S.done[i]) return;
+      const z = parseInt(b.dataset.z, 10);
+      if (S.sel != null) place(S.sel, z);
+      else if (S.resp[i][z] != null) { S.resp[i][z] = null; render(`[data-key="dz-${z}"]`); announce(fmtT(U("removed"), { z: ST(i).zones[z] })); }
+      else announce(U("hDrag"));
+      break;
+    }
+    case "review": S.view = "review"; S.page = 0; render("#rvTitle"); break;
+    case "restart": initResp(); S.view = "step"; S.i = 0; render("#stTitle"); break;
+    case "back": S.view = "result"; render("#resTitle"); break;
+    case "pgprev": if (S.page > 0) { S.page--; render(S.page === 0 ? '[data-key="pgnext"]' : '[data-key="pgprev"]'); } break;
+    case "pgnext": if (S.page < pageCount() - 1) { S.page++; render(S.page >= pageCount() - 1 ? '[data-key="pgprev"]' : '[data-key="pgnext"]'); } break;
+    case "pause": S.paused = !S.paused; renderPause(); break;
+  }
+}
+
+/* ---------- Glisser-déposer (souris, stylet, tactile) ---------- */
+function onDown(e) { const c = e.target.closest(".chip"); if (!c || c.disabled || S.done[S.i]) return; drag = { l: parseInt(c.dataset.l, 10), x: e.clientX, y: e.clientY, el: c, moved: false, ghost: null }; }
+function onMove(e) {
+  if (!drag) return;
+  if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 8) {
+    drag.moved = true; const g = document.createElement("div"); g.className = "ghost"; g.textContent = drag.el.firstChild.textContent;
+    document.body.appendChild(g); drag.ghost = g; drag.el.classList.add("dragging");
+  }
+  if (drag.moved) {
+    e.preventDefault(); drag.ghost.style.left = e.clientX + "px"; drag.ghost.style.top = e.clientY + "px";
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    document.querySelectorAll(".dz").forEach(z => z.classList.toggle("hover", !!under && z.contains(under)));
+  }
+}
+function onUp(e) {
+  if (!drag) return; const d = drag; drag = null; if (!d.moved) return;
+  suppressClick = true; setTimeout(() => { suppressClick = false; }, 400);
+  if (d.ghost) d.ghost.remove(); d.el.classList.remove("dragging");
+  const under = document.elementFromPoint(e.clientX, e.clientY); const z = under ? under.closest(".dz") : null;
+  document.querySelectorAll(".dz").forEach(x => x.classList.remove("hover"));
+  if (z && !z.disabled) place(d.l, parseInt(z.dataset.z, 10));
+}
+function onCancel() { if (drag) { if (drag.ghost) drag.ghost.remove(); drag.el.classList.remove("dragging"); drag = null; } }
+
+/* ---------- Démarrage ---------- */
+function init() {
+  main = $("#main"); nav = $("#nav"); prog = $("#prog"); live = $("#live");
+  $("#langSel").innerHTML = LANGS.map(l => `<option value="${l}" lang="${l}">${esc(L[l].name)}</option>`).join("");
+  const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  S.paused = rm.matches;
+  if (rm.addEventListener) rm.addEventListener("change", e => { S.paused = e.matches; renderPause(); });
+  document.addEventListener("click", e => { const b = e.target.closest("[data-act]"); if (!b || b.disabled || b.getAttribute("aria-disabled") === "true") return; act(b.dataset.act, b); });
+  $("#pauseBtn").addEventListener("click", () => act("pause"));
+  document.addEventListener("change", e => {
+    const t = e.target;
+    if (t.id === "langSel") { S.lang = t.value; render("#langSel"); announce(L[S.lang].name); }
+    else if (t.matches("select[data-row]")) { S.resp[S.i][parseInt(t.dataset.row, 10)] = t.value; render("#" + t.id); }
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && S.sel != null) { const l = S.sel; S.sel = null; render(`[data-key="chip-${l}"]`); } });
+  document.addEventListener("pointerdown", onDown);
+  document.addEventListener("pointermove", onMove, { passive: false });
+  document.addEventListener("pointerup", onUp);
+  document.addEventListener("pointercancel", onCancel);
+  let to = null;
+  window.addEventListener("resize", () => { clearTimeout(to); to = setTimeout(() => { if (S.view === "review") render(); else fit(); }, 120); });
+  render();
+}
+if (typeof document !== "undefined" && document.getElementById("app")) init();
+
+})();
+</script>
+</body>
+</html>
